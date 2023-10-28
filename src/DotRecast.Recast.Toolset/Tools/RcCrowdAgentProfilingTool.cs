@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DotRecast.Core;
 using DotRecast.Core.Collections;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
 using DotRecast.Recast.Toolset.Builder;
@@ -74,14 +75,14 @@ namespace DotRecast.Recast.Toolset.Tools
             return ap;
         }
 
-        private DtStatus GetMobPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out RcVec3f randomPt)
+        private DtStatus GetMobPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out Vector3 randomPt)
         {
             return navquery.FindRandomPoint(filter, rnd, out var randomRef, out randomPt);
         }
 
-        private DtStatus GetVillagerPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out RcVec3f randomPt)
+        private DtStatus GetVillagerPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out Vector3 randomPt)
         {
-            randomPt = RcVec3f.Zero;
+            randomPt = Vector3.Zero;
 
             if (0 >= _polyPoints.Count)
                 return DtStatus.DT_FAILURE;
@@ -107,7 +108,7 @@ namespace DotRecast.Recast.Toolset.Tools
                         bool valid = true;
                         foreach (var zone in _polyPoints)
                         {
-                            if (RcVec3f.DistanceSquared(zone.pt, randomPt) < zoneSeparation)
+                            if (Vector3.DistanceSquared(zone.pt, randomPt) < zoneSeparation)
                             {
                                 valid = false;
                                 break;
@@ -189,7 +190,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 }
 
                 var status = DtStatus.DT_FAILURE;
-                var randomPt = RcVec3f.Zero;
+                var randomPt = Vector3.Zero;
                 switch (type)
                 {
                     case RcCrowdAgentType.MOB:
@@ -285,7 +286,7 @@ namespace DotRecast.Recast.Toolset.Tools
             List<DtPolyPoint> potentialTargets = new List<DtPolyPoint>();
             foreach (var zone in _polyPoints)
             {
-                if (RcVec3f.DistanceSquared(zone.pt, ag.npos) > _cfg.zoneRadius * _cfg.zoneRadius)
+                if (Vector3.DistanceSquared(zone.pt, ag.npos) > _cfg.zoneRadius * _cfg.zoneRadius)
                 {
                     potentialTargets.Add(zone);
                 }
@@ -317,7 +318,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return false;
         }
 
-        private DtCrowdAgent AddAgent(RcVec3f p, RcCrowdAgentType type, float agentRadius, float agentHeight, float agentMaxAcceleration, float agentMaxSpeed)
+        private DtCrowdAgent AddAgent(Vector3 p, RcCrowdAgentType type, float agentRadius, float agentHeight, float agentMaxAcceleration, float agentMaxSpeed)
         {
             DtCrowdAgentParams ap = GetAgentParams(agentRadius, agentHeight, agentMaxAcceleration, agentMaxSpeed);
             ap.userData = new RcCrowdAgentData(type, p);

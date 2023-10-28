@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 using static DotRecast.Recast.RcConstants;
 
 namespace DotRecast.Recast
@@ -49,7 +50,7 @@ namespace DotRecast.Recast
             return overlap;
         }
 
-        private static bool OverlapBounds(RcVec3f amin, RcVec3f amax, RcVec3f bmin, RcVec3f bmax)
+        private static bool OverlapBounds(Vector3 amin, Vector3 amax, Vector3 bmin, Vector3 bmax)
         {
             bool overlap = true;
             overlap = (amin.X > bmax.X || amax.X < bmin.X) ? false : overlap;
@@ -230,15 +231,15 @@ namespace DotRecast.Recast
         /// @param[in] 	flagMergeThreshold	The threshold in which area flags will be merged 
         /// @returns true if the operation completes successfully.  false if there was an error adding spans to the heightfield.
         private static void RasterizeTri(float[] verts, int v0, int v1, int v2, int area, RcHeightfield heightfield,
-            RcVec3f heightfieldBBMin, RcVec3f heightfieldBBMax,
+            Vector3 heightfieldBBMin, Vector3 heightfieldBBMax,
             float cellSize, float inverseCellSize, float inverseCellHeight,
             int flagMergeThreshold)
         {
             float by = heightfieldBBMax.Y - heightfieldBBMin.Y;
 
             // Calculate the bounding box of the triangle.
-            RcVec3f tmin = RcVecUtils.Create(verts, v0 * 3);
-            RcVec3f tmax = RcVecUtils.Create(verts, v0 * 3);
+            Vector3 tmin = RcVecUtils.Create(verts, v0 * 3);
+            Vector3 tmax = RcVecUtils.Create(verts, v0 * 3);
             tmin = RcVecUtils.Min(tmin, verts, v1 * 3);
             tmin = RcVecUtils.Min(tmin, verts, v2 * 3);
             tmax = RcVecUtils.Max(tmax, verts, v1 * 3);

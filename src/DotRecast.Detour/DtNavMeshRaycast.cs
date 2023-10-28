@@ -19,6 +19,7 @@ freely, subject to the following restrictions:
 
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 
 namespace DotRecast.Detour
 {
@@ -27,7 +28,7 @@ namespace DotRecast.Detour
  */
     public static class DtNavMeshRaycast
     {
-        public static bool Raycast(DtNavMesh mesh, RcVec3f src, RcVec3f dst, out float hitTime)
+        public static bool Raycast(DtNavMesh mesh, Vector3 src, Vector3 dst, out float hitTime)
         {
             hitTime = 0.0f;
             for (int t = 0; t < mesh.GetMaxTiles(); ++t)
@@ -45,7 +46,7 @@ namespace DotRecast.Detour
             return false;
         }
 
-        private static bool Raycast(DtMeshTile tile, RcVec3f sp, RcVec3f sq, out float hitTime)
+        private static bool Raycast(DtMeshTile tile, Vector3 sp, Vector3 sq, out float hitTime)
         {
             hitTime = 0.0f;
             for (int i = 0; i < tile.data.header.polyCount; ++i)

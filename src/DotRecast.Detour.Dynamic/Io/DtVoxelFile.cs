@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 using DotRecast.Recast;
 
 namespace DotRecast.Detour.Dynamic.Io
@@ -54,7 +55,7 @@ namespace DotRecast.Detour.Dynamic.Io
         public bool useTiles;
         public int tileSizeX;
         public int tileSizeZ;
-        public RcVec3f rotation = new RcVec3f();
+        public Vector3 rotation = new Vector3();
         public float[] bounds = new float[6];
         public readonly List<DtVoxelTile> tiles = new List<DtVoxelTile>();
 

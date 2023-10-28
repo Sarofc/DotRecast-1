@@ -20,6 +20,7 @@ using System.IO;
 using System.IO.Compression;
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 using DotRecast.Detour.Io;
 
 namespace DotRecast.Detour.Extras.Unity.Astar
