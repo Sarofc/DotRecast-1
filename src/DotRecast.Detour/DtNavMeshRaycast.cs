@@ -59,7 +59,7 @@ namespace DotRecast.Detour
 
                 ref DtPolyDetail pd = ref tile.data.detailMeshes[i];
 
-                RcVec3f[] verts = new RcVec3f[3];
+                Vector3[] verts = new Vector3[3];
                 for (int j = 0; j < pd.triCount; ++j)
                 {
                     int t = (pd.triBase + j) * 4;
