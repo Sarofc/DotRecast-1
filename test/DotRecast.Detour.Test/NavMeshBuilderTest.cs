@@ -18,6 +18,7 @@ freely, subject to the following restrictions:
 */
 
 using DotRecast.Core.Numerics;
+using System.Numerics;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.Test;

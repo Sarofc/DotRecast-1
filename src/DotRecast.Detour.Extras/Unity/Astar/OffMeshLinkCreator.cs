@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
 using System;
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 
 namespace DotRecast.Detour.Extras.Unity.Astar
 {
@@ -49,7 +50,7 @@ namespace DotRecast.Detour.Extras.Unity.Astar
                         startTile.header.vertCount += 2;
                         DtOffMeshConnection connection = new DtOffMeshConnection();
                         connection.poly = poly;
-                        connection.pos = new RcVec3f[]
+                        connection.pos = new Vector3[]
                         {
                             l.clamped1, l.clamped2
                         };

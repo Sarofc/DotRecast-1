@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using DotRecast.Core;
 using DotRecast.Core.Numerics;
+using System.Numerics;
 
 
 namespace DotRecast.Recast
@@ -33,7 +34,7 @@ namespace DotRecast.Recast
     {
         public const int RC_UNSET_HEIGHT = RC_SPAN_MAX_HEIGHT;
 
-        public static float Vdot2(RcVec3f a, RcVec3f b)
+        public static float Vdot2(Vector3 a, Vector3 b)
         {
             return a.X * b.X + a.Z * b.Z;
         }
@@ -51,14 +52,14 @@ namespace DotRecast.Recast
             return MathF.Sqrt(VdistSq2(verts, p, q));
         }
 
-        public static float VdistSq2(RcVec3f p, RcVec3f q)
+        public static float VdistSq2(Vector3 p, Vector3 q)
         {
             float dx = q.X - p.X;
             float dy = q.Z - p.Z;
             return dx * dx + dy * dy;
         }
 
-        public static float Vdist2(RcVec3f p, RcVec3f q)
+        public static float Vdist2(Vector3 p, Vector3 q)
         {
             return MathF.Sqrt(VdistSq2(p, q));
         }
@@ -72,7 +73,7 @@ namespace DotRecast.Recast
             return u1 * v2 - v1 * u2;
         }
 
-        public static float Vcross2(RcVec3f p1, RcVec3f p2, RcVec3f p3)
+        public static float Vcross2(Vector3 p1, Vector3 p2, Vector3 p3)
         {
             float u1 = p2.X - p1.X;
             float v1 = p2.Z - p1.Z;
@@ -82,11 +83,11 @@ namespace DotRecast.Recast
         }
 
 
-        public static bool CircumCircle(RcVec3f p1, RcVec3f p2, RcVec3f p3, ref RcVec3f c, out float r)
+        public static bool CircumCircle(Vector3 p1, Vector3 p2, Vector3 p3, ref Vector3 c, out float r)
         {
             const float EPS = 1e-6f;
             // Calculate the circle relative to p1, to avoid some precision issues.
-            var v1 = new RcVec3f();
+            var v1 = new Vector3();
             var v2 = p2 - p1;
             var v3 = p3 - p1;
 
@@ -109,7 +110,7 @@ namespace DotRecast.Recast
             return false;
         }
 
-        public static float DistPtTri(RcVec3f p, RcVec3f a, RcVec3f b, RcVec3f c)
+        public static float DistPtTri(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
         {
             var v0 = c - a;
             var v1 = b - a;
@@ -168,7 +169,7 @@ namespace DotRecast.Recast
             return dx * dx + dy * dy + dz * dz;
         }
 
-        public static float DistancePtSeg2d(RcVec3f verts, float[] poly, int p, int q)
+        public static float DistancePtSeg2d(Vector3 verts, float[] poly, int p, int q)
         {
             float pqx = poly[q + 0] - poly[p + 0];
             float pqz = poly[q + 2] - poly[p + 2];
@@ -224,14 +225,14 @@ namespace DotRecast.Recast
             return dx * dx + dz * dz;
         }
 
-        public static float DistToTriMesh(RcVec3f p, float[] verts, int nverts, List<int> tris, int ntris)
+        public static float DistToTriMesh(Vector3 p, float[] verts, int nverts, List<int> tris, int ntris)
         {
             float dmin = float.MaxValue;
             for (int i = 0; i < ntris; ++i)
             {
-                RcVec3f va = RcVecUtils.Create(verts, tris[i * 4 + 0] * 3);
-                RcVec3f vb = RcVecUtils.Create(verts, tris[i * 4 + 1] * 3);
-                RcVec3f vc = RcVecUtils.Create(verts, tris[i * 4 + 2] * 3);
+                Vector3 va = RcVecUtils.Create(verts, tris[i * 4 + 0] * 3);
+                Vector3 vb = RcVecUtils.Create(verts, tris[i * 4 + 1] * 3);
+                Vector3 vc = RcVecUtils.Create(verts, tris[i * 4 + 2] * 3);
                 float d = DistPtTri(p, va, vb, vc);
                 if (d < dmin)
                 {
@@ -247,7 +248,7 @@ namespace DotRecast.Recast
             return dmin;
         }
 
-        public static float DistToPoly(int nvert, float[] verts, RcVec3f p)
+        public static float DistToPoly(int nvert, float[] verts, Vector3 p)
         {
             float dmin = float.MaxValue;
             int i, j;
@@ -459,7 +460,7 @@ namespace DotRecast.Recast
 
             // Find best point on left of edge.
             int pt = npts;
-            RcVec3f c = new RcVec3f();
+            Vector3 c = new Vector3();
             float r = -1f;
             for (int u = 0; u < npts; ++u)
             {
@@ -468,9 +469,9 @@ namespace DotRecast.Recast
                     continue;
                 }
 
-                RcVec3f vs = RcVecUtils.Create(pts, s * 3);
-                RcVec3f vt = RcVecUtils.Create(pts, t * 3);
-                RcVec3f vu = RcVecUtils.Create(pts, u * 3);
+                Vector3 vs = RcVecUtils.Create(pts, s * 3);
+                Vector3 vt = RcVecUtils.Create(pts, t * 3);
+                Vector3 vu = RcVecUtils.Create(pts, u * 3);
 
                 if (Vcross2(vs, vt, vu) > EPS)
                 {
@@ -931,8 +932,8 @@ namespace DotRecast.Recast
             if (sampleDist > 0)
             {
                 // Create sample locations in a grid.
-                RcVec3f bmin = RcVecUtils.Create(@in);
-                RcVec3f bmax = RcVecUtils.Create(@in);
+                Vector3 bmin = RcVecUtils.Create(@in);
+                Vector3 bmax = RcVecUtils.Create(@in);
                 for (int i = 1; i < nin; ++i)
                 {
                     bmin = RcVecUtils.Min(bmin, @in, i * 3);
@@ -948,7 +949,7 @@ namespace DotRecast.Recast
                 {
                     for (int x = x0; x < x1; ++x)
                     {
-                        RcVec3f pt = new RcVec3f();
+                        Vector3 pt = new Vector3();
                         pt.X = x * sampleDist;
                         pt.Y = (bmax.Y + bmin.Y) * 0.5f;
                         pt.Z = z * sampleDist;
@@ -977,7 +978,7 @@ namespace DotRecast.Recast
                     }
 
                     // Find sample with most error.
-                    RcVec3f bestpt = new RcVec3f();
+                    Vector3 bestpt = new Vector3();
                     float bestd = 0;
                     int besti = -1;
                     for (int i = 0; i < nsamples; ++i)
@@ -988,7 +989,7 @@ namespace DotRecast.Recast
                             continue; // skip added.
                         }
 
-                        RcVec3f pt = new RcVec3f();
+                        Vector3 pt = new Vector3();
                         // The sample location is jittered to get rid of some bad triangulations
                         // which are cause by symmetrical data from the grid structure.
                         pt.X = samples[s + 0] * sampleDist + GetJitterX(i) * cs * 0.1f;
@@ -1375,7 +1376,7 @@ namespace DotRecast.Recast
             int nvp = mesh.nvp;
             float cs = mesh.cs;
             float ch = mesh.ch;
-            RcVec3f orig = mesh.bmin;
+            Vector3 orig = mesh.bmin;
             int borderSize = mesh.borderSize;
             int heightSearchRadius = (int)Math.Max(1, MathF.Ceiling(mesh.maxEdgeError));
 
