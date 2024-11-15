@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace DotRecast.Detour
 {
@@ -11,7 +11,7 @@ namespace DotRecast.Detour
             _callback = callback;
         }
 
-        public void Process(DtMeshTile tile, DtPoly[] poly, Span<long> refs, int count)
+        public void Process(DtMeshTile tile, DtPoly[] poly, ReadOnlySpan<long> refs, int count)
         {
             for (int i = 0; i < count; ++i)
             {

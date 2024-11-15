@@ -232,7 +232,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             navQuery.FinalizeSlicedFindPath(path, out var pathCount);
 
-            if (path != null)
+            if (!path.IsEmpty)
             {
                 // In case of partial path, make sure the end point is clamped to the last polygon.
                 Vector3 epos = endPos;

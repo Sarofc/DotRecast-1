@@ -784,7 +784,7 @@ namespace DotRecast.Detour
         {
             pathCount = 0;
 
-            if (null == path)
+            if (path.IsEmpty)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
 
             //path.Clear();
@@ -1363,7 +1363,7 @@ namespace DotRecast.Detour
         {
             pathCount = 0;
 
-            if (null == path)
+            if (path.IsEmpty)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
 
             //path.Clear();
@@ -1417,12 +1417,12 @@ namespace DotRecast.Detour
         {
             pathCount = 0;
 
-            if (null == path)
+            if (path.IsEmpty)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
 
             //path.Clear();
 
-            if (null == existing || existingSize <= 0)
+            if (existing.IsEmpty || existingSize <= 0)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
@@ -1591,8 +1591,8 @@ namespace DotRecast.Detour
             straightPathCount = 0;
 
             if (!startPos.IsFinite() || !endPos.IsFinite() ||
-                null == straightPath ||
-                null == path || pathSize <= 0 || path[0] == 0
+                straightPath.IsEmpty ||
+                path.IsEmpty || pathSize <= 0 || path[0] == 0
                 || maxStraightPath <= 0)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
@@ -2781,7 +2781,7 @@ namespace DotRecast.Detour
 
             // Validate input
             int nverts = verts.Length;
-            if (!m_nav.IsValidPolyRef(startRef) || null == verts || nverts < 3 || null == filter || maxResult < 0)
+            if (!m_nav.IsValidPolyRef(startRef) || verts.IsEmpty || nverts < 3 || null == filter || maxResult < 0)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
@@ -2980,7 +2980,7 @@ namespace DotRecast.Detour
             // Validate input
             if (!m_nav.IsValidPolyRef(startRef) || !centerPos.IsFinite() || radius < 0
                 || !float.IsFinite(radius) || null == filter
-                || null == resultRef || null == resultParent)
+                || resultRef.IsEmpty || resultParent.IsEmpty)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
@@ -3605,7 +3605,7 @@ namespace DotRecast.Detour
         {
             pathCount = 0;
 
-            if (!m_nav.IsValidPolyRef(endRef) || null == path)
+            if (!m_nav.IsValidPolyRef(endRef) || path.IsEmpty)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }

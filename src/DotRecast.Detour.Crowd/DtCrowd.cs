@@ -413,7 +413,7 @@ namespace DotRecast.Detour.Crowd
             return n;
         }
 
-        public ReadOnlySpan<DtCrowdAgent> GetActiveAgents() // TODO 测试一下开销怎么样？跟手动判断active对比
+        public ReadOnlySpan<DtCrowdAgent> GetActiveAgents()
         {
             var nagents = GetActiveAgents(m_activeAgents, m_maxAgents);
             return m_activeAgents.AsSpan(0, nagents);
@@ -1335,7 +1335,6 @@ namespace DotRecast.Detour.Crowd
 
         private unsafe void PlanVelocity(DtCrowdAgentDebugInfo debug, ReadOnlySpan<DtCrowdAgent> agents)
         {
-            // TODO performance check
             using var timer = m_telemetry.ScopedTimer(DtCrowdTimerLabel.PlanVelocity);
 
             DtCrowdAgent debugAgent = debug != null ? debug.agent : null;
@@ -1568,7 +1567,7 @@ namespace DotRecast.Detour.Crowd
             }
         }
 
-        private float Tween(float t, float t0, float t1)
+        private static float Tween(float t, float t0, float t1)
         {
             return Math.Clamp((t - t0) / (t1 - t0), 0.0f, 1.0f);
         }
