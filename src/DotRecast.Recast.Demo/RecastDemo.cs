@@ -256,7 +256,7 @@ public class RecastDemo : IRecastDemoChannel
         float aspect = 16.0f / 9.0f;
         width = Math.Min(_resolution.X, (int)(_resolution.Y * aspect)) - 100;
         height = _resolution.Y - 100;
-        viewport = new int[] { 0, 0, width, height };
+        viewport = [0, 0, width, height];
 
         var options = WindowOptions.Default;
         options.Title = title;
@@ -332,7 +332,7 @@ public class RecastDemo : IRecastDemoChannel
     private void OnWindowFramebufferSizeChanged(Vector2D<int> size)
     {
         _gl.Viewport(size);
-        viewport = new int[] { 0, 0, width, height };
+        viewport = [0, 0, width, height];
     }
 
 

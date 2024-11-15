@@ -116,8 +116,8 @@ namespace DotRecast.Detour.Dynamic
                 float tx = end.X - start.X;
                 float ty = end.Y - start.Y;
                 float tz = end.Z - start.Z;
-                float[] entry = { start.X + tMin * tx, start.Y + tMin * ty, start.Z + tMin * tz };
-                float[] exit = { start.X + tMax * tx, start.Y + tMax * ty, start.Z + tMax * tz };
+                float[] entry = [start.X + tMin * tx, start.Y + tMin * ty, start.Z + tMin * tz];
+                float[] exit = [start.X + tMax * tx, start.Y + tMax * ty, start.Z + tMax * tz];
                 float relStartX = entry[0] - hf.bmin.X;
                 float relStartZ = entry[2] - hf.bmin.Z;
                 int sx = (int)MathF.Floor(relStartX / hf.cs);

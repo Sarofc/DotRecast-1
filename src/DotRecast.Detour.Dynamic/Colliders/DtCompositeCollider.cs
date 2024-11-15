@@ -49,11 +49,11 @@ namespace DotRecast.Detour.Dynamic.Colliders
 
         private static float[] Bounds(List<IDtCollider> colliders)
         {
-            float[] bounds = new float[]
-            {
+            float[] bounds =
+            [
                 float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity,
                 float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity
-            };
+            ];
             foreach (IDtCollider collider in colliders)
             {
                 float[] b = collider.Bounds();

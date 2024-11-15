@@ -45,12 +45,12 @@ namespace DotRecast.Detour.Dynamic.Colliders
 
         private static float[] Bounds(Vector3 start, Vector3 end, float radius)
         {
-            return new float[]
-            {
+            return
+            [
                 Math.Min(start.X, end.X) - radius, Math.Min(start.Y, end.Y) - radius,
                 Math.Min(start.Z, end.Z) - radius, Math.Max(start.X, end.X) + radius, Math.Max(start.Y, end.Y) + radius,
                 Math.Max(start.Z, end.Z) + radius
-            };
+            ];
         }
     }
 }

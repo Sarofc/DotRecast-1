@@ -13,11 +13,11 @@ namespace DotRecast.Recast.Toolset.Gizmos
 
         public RcCapsuleGizmo(Vector3 start, Vector3 end, float radius)
         {
-            center = new float[]
-            {
+            center =
+            [
                 0.5f * (start.X + end.X), 0.5f * (start.Y + end.Y),
                 0.5f * (start.Z + end.Z)
-            };
+            ];
             Vector3 axis = new Vector3(end.X - start.X, end.Y - start.Y, end.Z - start.Z);
             Vector3[] normals = new Vector3[3];
             normals[1] = new Vector3(end.X - start.X, end.Y - start.Y, end.Z - start.Z);

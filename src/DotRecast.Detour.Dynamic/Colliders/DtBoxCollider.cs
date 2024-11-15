@@ -38,11 +38,11 @@ namespace DotRecast.Detour.Dynamic.Colliders
 
         private static float[] Bounds(Vector3 center, Vector3[] halfEdges)
         {
-            float[] bounds = new float[]
-            {
+            float[] bounds =
+            [
                 float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity,
                 float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity
-            };
+            ];
             for (int i = 0; i < 8; ++i)
             {
                 float s0 = (i & 1) != 0 ? 1f : -1f;
@@ -71,11 +71,11 @@ namespace DotRecast.Detour.Dynamic.Colliders
         public static Vector3[] GetHalfEdges(Vector3 up, Vector3 forward, Vector3 extent)
         {
             Vector3[] halfEdges =
-            {
+            [
                 Vector3.Zero,
                 new Vector3(up.X, up.Y, up.Z),
                 Vector3.Zero
-            };
+            ];
 
             halfEdges[1] = Vector3.Normalize(halfEdges[1]);
             halfEdges[0] = Vector3.Cross(up, forward);

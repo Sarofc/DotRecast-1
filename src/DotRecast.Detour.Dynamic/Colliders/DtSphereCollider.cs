@@ -44,15 +44,15 @@ namespace DotRecast.Detour.Dynamic.Colliders
 
         private static float[] Bounds(Vector3 center, float radius)
         {
-            return new float[]
-            {
+            return
+            [
                 center.X - radius,
                 center.Y - radius,
                 center.Z - radius,
                 center.X + radius,
                 center.Y + radius,
                 center.Z + radius
-            };
+            ];
         }
     }
 }

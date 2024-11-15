@@ -20,7 +20,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_ConstructorSizeIndexAccess_CorrectContent()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3]);
 
         Assert.That(buffer.Capacity, Is.EqualTo(5));
         Assert.That(buffer.Size, Is.EqualTo(4));
@@ -33,13 +33,13 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_Constructor_ExceptionWhenSourceIsLargerThanCapacity()
     {
-        Assert.Throws<ArgumentException>(() => new RcCyclicBuffer<int>(3, new[] { 0, 1, 2, 3 }));
+        Assert.Throws<ArgumentException>(() => new RcCyclicBuffer<int>(3, [0, 1, 2, 3]));
     }
 
     [Test]
     public void RcCyclicBuffer_GetEnumeratorConstructorDefinedArray_CorrectContent()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3]);
 
         int x = 0;
         foreach (var item in buffer)
@@ -101,7 +101,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_ToArrayConstructorDefinedArray_CorrectContent()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3]);
 
         Assert.That(buffer.ToArray(), Is.EqualTo(new[] { 0, 1, 2, 3 }));
     }
@@ -148,7 +148,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_Front_CorrectItem()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
 
         Assert.That(buffer.Front(), Is.EqualTo(0));
     }
@@ -156,14 +156,14 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_Back_CorrectItem()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
         Assert.That(buffer.Back(), Is.EqualTo(4));
     }
 
     [Test]
     public void RcCyclicBuffer_BackOfBufferOverflowByOne_CorrectItem()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
         buffer.PushBack(42);
         Assert.That(buffer.ToArray(), Is.EqualTo(new[] { 1, 2, 3, 4, 42 }));
         Assert.That(buffer.Back(), Is.EqualTo(42));
@@ -187,7 +187,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_PopBack_RemovesBackElement()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
 
         Assert.That(buffer.Size, Is.EqualTo(5));
 
@@ -200,7 +200,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_PopBackInOverflowBuffer_RemovesBackElement()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
         buffer.PushBack(5);
 
         Assert.That(buffer.Size, Is.EqualTo(5));
@@ -215,7 +215,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_PopFront_RemovesBackElement()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
 
         Assert.That(buffer.Size, Is.EqualTo(5));
 
@@ -228,7 +228,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_PopFrontInOverflowBuffer_RemovesBackElement()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
         buffer.PushFront(5);
 
         Assert.That(buffer.Size, Is.EqualTo(5));
@@ -243,7 +243,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_SetIndex_ReplacesElement()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
 
         buffer[1] = 10;
         buffer[3] = 30;
@@ -257,7 +257,7 @@ public class RcCyclicBufferTests
         // test to confirm this issue does not happen anymore:
         // https://github.com/joaoportela/RcCyclicBuffer-CSharp/issues/2
 
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
+        var buffer = new RcCyclicBuffer<int>(5, [0, 1, 2, 3, 4]);
 
         buffer.PopFront(); // (make size and capacity different)
 
@@ -267,7 +267,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_Clear_ClearsContent()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 4, 3, 2, 1, 0 });
+        var buffer = new RcCyclicBuffer<int>(5, [4, 3, 2, 1, 0]);
 
         buffer.Clear();
 
@@ -279,7 +279,7 @@ public class RcCyclicBufferTests
     [Test]
     public void RcCyclicBuffer_Clear_WorksNormallyAfterClear()
     {
-        var buffer = new RcCyclicBuffer<int>(5, new[] { 4, 3, 2, 1, 0 });
+        var buffer = new RcCyclicBuffer<int>(5, [4, 3, 2, 1, 0]);
 
         buffer.Clear();
         for (int i = 0; i < 5; i++)

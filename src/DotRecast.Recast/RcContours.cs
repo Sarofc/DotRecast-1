@@ -612,7 +612,7 @@ namespace DotRecast.Recast
                 }
             }
 
-            return new int[] { minx, minz, leftmost };
+            return [minx, minz, leftmost];
         }
 
         private static void MergeRegionHoles(RcContext ctx, RcContourRegion region)

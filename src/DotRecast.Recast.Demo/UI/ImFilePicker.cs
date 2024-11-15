@@ -53,7 +53,7 @@ public class ImFilePicker
                 else
                     fp.AllowedExtensions = new List<string>();
 
-                fp.AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
+                fp.AllowedExtensions.AddRange(searchFilter.Split(['|'], StringSplitOptions.RemoveEmptyEntries));
             }
 
             _filePickers.Add(pickerName, fp);

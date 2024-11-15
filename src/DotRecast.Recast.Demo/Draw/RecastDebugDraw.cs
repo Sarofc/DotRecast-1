@@ -1008,7 +1008,7 @@ public class RecastDebugDraw : DebugDraw
                 }
 
                 int nj = (j + 1 >= nvp || mesh.polys[p + j + 1] == RcRecast.RC_MESH_NULL_IDX) ? 0 : j + 1;
-                int[] vi = { mesh.polys[p + j], mesh.polys[p + nj] };
+                int[] vi = [mesh.polys[p + j], mesh.polys[p + nj]];
 
                 for (int k = 0; k < 2; ++k)
                 {
@@ -1042,7 +1042,7 @@ public class RecastDebugDraw : DebugDraw
                 }
 
                 int nj = (j + 1 >= nvp || mesh.polys[p + j + 1] == RcRecast.RC_MESH_NULL_IDX) ? 0 : j + 1;
-                int[] vi = { mesh.polys[p + j], mesh.polys[p + nj] };
+                int[] vi = [mesh.polys[p + j], mesh.polys[p + nj]];
 
                 int col = colb;
                 if ((mesh.polys[p + nvp + j] & 0xf) != 0xf)

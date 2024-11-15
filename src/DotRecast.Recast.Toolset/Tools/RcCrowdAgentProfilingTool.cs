@@ -143,7 +143,7 @@ namespace DotRecast.Recast.Toolset.Tools
             _crowd = new DtCrowd(_crowdCfg, _navMesh, __ => new DtQueryDefaultFilter(
                 SampleAreaModifications.SAMPLE_POLYFLAGS_ALL,
                 SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED,
-                new float[] { 1f, 10f, 1f, 1f, 2f, 1.5f })
+                [1f, 10f, 1f, 1f, 2f, 1.5f])
             );
 
             DtObstacleAvoidanceParams option = new DtObstacleAvoidanceParams(_crowd.GetObstacleAvoidanceParams(0));

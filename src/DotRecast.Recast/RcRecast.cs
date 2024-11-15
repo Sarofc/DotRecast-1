@@ -94,9 +94,9 @@ namespace DotRecast.Recast
 
         public const int RC_LOG_WARNING = 1;
 
-        private static readonly int[] DirOffsetX = { -1, 0, 1, 0, };
-        private static readonly int[] DirOffsetY = { 0, 1, 0, -1 };
-        private static readonly int[] DirForOffset = { 3, 0, -1, 2, 1 };
+        private static readonly int[] DirOffsetX = [-1, 0, 1, 0,];
+        private static readonly int[] DirOffsetY = [0, 1, 0, -1];
+        private static readonly int[] DirForOffset = [3, 0, -1, 2, 1];
 
         /// Sets the neighbor connection data for the specified direction.
         /// @param[in]		span			The span to update.

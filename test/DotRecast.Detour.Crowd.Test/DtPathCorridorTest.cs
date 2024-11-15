@@ -56,12 +56,14 @@ public class DtPathCorridorTest
     [Test]
     public void ShouldPrunePathInFindCorners()
     {
-        DtStraightPath[] straightPath = new DtStraightPath[5];
-        straightPath[0] = (new DtStraightPath(new Vector3(10, 20, 30.00001f), 0, 0)); // too close
-        straightPath[1] = (new DtStraightPath(new Vector3(10, 20, 30.00002f), 0, 0)); // too close
-        straightPath[2] = (new DtStraightPath(new Vector3(11f, 21, 32f), 0, 0));
-        straightPath[3] = (new DtStraightPath(new Vector3(12f, 22, 33f), DtStraightPathFlags.DT_STRAIGHTPATH_OFFMESH_CONNECTION, 0)); // offmesh
-        straightPath[4] = (new DtStraightPath(new Vector3(11f, 21, 32f), DtStraightPathFlags.DT_STRAIGHTPATH_OFFMESH_CONNECTION, 0)); // offmesh
+        DtStraightPath[] straightPath =
+        [
+            (new DtStraightPath(new Vector3(10, 20, 30.00001f), 0, 0)), // too close
+            (new DtStraightPath(new Vector3(10, 20, 30.00002f), 0, 0)), // too close
+            (new DtStraightPath(new Vector3(11f, 21, 32f), 0, 0)),
+            (new DtStraightPath(new Vector3(12f, 22, 33f), DtStraightPathFlags.DT_STRAIGHTPATH_OFFMESH_CONNECTION, 0)), // offmesh
+            (new DtStraightPath(new Vector3(11f, 21, 32f), DtStraightPathFlags.DT_STRAIGHTPATH_OFFMESH_CONNECTION, 0)), // offmesh
+        ];
 
         var query = new DtNavMeshQueryMock(straightPath, DtStatus.DT_SUCCESS);
 

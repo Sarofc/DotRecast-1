@@ -35,8 +35,8 @@ namespace DotRecast.Detour.TileCache
         public const byte DT_TILECACHE_WALKABLE_AREA = 63;
         public const int DT_TILECACHE_NULL_IDX = 0xffff;
 
-        private static readonly int[] DirOffsetX = { -1, 0, 1, 0, };
-        private static readonly int[] DirOffsetY = { 0, 1, 0, -1 };
+        private static readonly int[] DirOffsetX = [-1, 0, 1, 0,];
+        private static readonly int[] DirOffsetY = [0, 1, 0, -1];
 
         public unsafe static void BuildTileCacheRegions(DtTileCacheLayer layer, int walkableClimb)
         {

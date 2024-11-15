@@ -229,19 +229,19 @@ public class DebugDraw
         Vertex(minx, maxy, maxz, col);
     }
 
-    private readonly int[] boxIndices = { 7, 6, 5, 4, 0, 1, 2, 3, 1, 5, 6, 2, 3, 7, 4, 0, 2, 6, 7, 3, 0, 4, 5, 1, };
+    private readonly int[] boxIndices = [7, 6, 5, 4, 0, 1, 2, 3, 1, 5, 6, 2, 3, 7, 4, 0, 2, 6, 7, 3, 0, 4, 5, 1,];
 
     private readonly float[][] boxVerts =
-    {
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f }
-    };
+    [
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f],
+        [0f, 0f, 0f]
+    ];
 
     public void AppendBox(float minx, float miny, float minz, float maxx, float maxy, float maxz, Span<int> fcol)
     {
@@ -664,14 +664,14 @@ public class DebugDraw
 
 
     private readonly float[][] frustumPlanes =
-    {
-        new[] { 0f, 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f, 0f },
-        new[] { 0f, 0f, 0f, 0f },
-    };
+    [
+        [0f, 0f, 0f, 0f],
+        [0f, 0f, 0f, 0f],
+        [0f, 0f, 0f, 0f],
+        [0f, 0f, 0f, 0f],
+        [0f, 0f, 0f, 0f],
+        [0f, 0f, 0f, 0f],
+    ];
 
     private void UpdateFrustum()
     {

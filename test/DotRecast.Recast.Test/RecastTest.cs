@@ -30,25 +30,25 @@ public class RecastTest
     public void TestClearUnwalkableTriangles()
     {
         float walkableSlopeAngle = 45;
-        float[] verts = { 0, 0, 0, 1, 0, 0, 0, 0, -1 };
+        float[] verts = [0, 0, 0, 1, 0, 0, 0, 0, -1];
         int nv = 3;
-        int[] walkable_tri = { 0, 1, 2 };
-        int[] unwalkable_tri = { 0, 2, 1 };
+        int[] walkable_tri = [0, 1, 2];
+        int[] unwalkable_tri = [0, 2, 1];
         int nt = 1;
 
         RcContext ctx = new RcContext();
         {
-            int[] areas = { 42 };
+            int[] areas = [42];
             RcRecast.ClearUnwalkableTriangles(ctx, walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);
             Assert.That(areas[0], Is.EqualTo(RC_NULL_AREA), "Sets area ID of unwalkable triangle to RC_NULL_AREA");
         }
         {
-            int[] areas = { 42 };
+            int[] areas = [42];
             RcRecast.ClearUnwalkableTriangles(ctx, walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
             Assert.That(areas[0], Is.EqualTo(42), "Does not modify walkable triangle aread ID's");
         }
         {
-            int[] areas = { 42 };
+            int[] areas = [42];
             walkableSlopeAngle = 0;
             RcRecast.ClearUnwalkableTriangles(ctx, walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
             Assert.That(areas[0], Is.EqualTo(RC_NULL_AREA), "Slopes equal to the max slope are considered unwalkable.");

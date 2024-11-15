@@ -44,7 +44,7 @@ namespace DotRecast.Detour.Dynamic.Colliders
 
         public static float[] ComputeBounds(float[] vertices)
         {
-            float[] bounds = new float[] { vertices[0], vertices[1], vertices[2], vertices[0], vertices[1], vertices[2] };
+            float[] bounds = [vertices[0], vertices[1], vertices[2], vertices[0], vertices[1], vertices[2]];
             for (int i = 3; i < vertices.Length; i += 3)
             {
                 bounds[0] = Math.Min(bounds[0], vertices[i]);

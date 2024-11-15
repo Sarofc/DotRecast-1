@@ -102,11 +102,11 @@ namespace DotRecast.Detour.Dynamic.Io
             f.useTiles = config.UseTiles;
             f.tileSizeX = config.TileSizeX;
             f.tileSizeZ = config.TileSizeZ;
-            f.bounds = new float[]
-            {
+            f.bounds =
+            [
                 float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity,
                 float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity
-            };
+            ];
             foreach (RcBuilderResult r in results)
             {
                 f.tiles.Add(new DtVoxelTile(r.TileX, r.TileZ, r.SolidHeightfiled));
@@ -146,11 +146,11 @@ namespace DotRecast.Detour.Dynamic.Io
             f.useTiles = config.useTiles;
             f.tileSizeX = config.tileSizeX;
             f.tileSizeZ = config.tileSizeZ;
-            f.bounds = new float[]
-            {
+            f.bounds =
+            [
                 float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity,
                 float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity
-            };
+            ];
             foreach (DtVoxelTile vt in mesh.VoxelTiles())
             {
                 RcHeightfield heightfield = vt.Heightfield();
