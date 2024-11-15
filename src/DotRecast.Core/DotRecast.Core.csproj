@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <PackageId>DotRecast.Core</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>ikpil</Authors>
@@ -19,23 +19,8 @@
     <None Include="../../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;CHECKMATH;PROFILE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;RELEASE;PROFILE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='ReleaseNoProfiling'">
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;RELEASE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
   </ItemGroup>
 
 

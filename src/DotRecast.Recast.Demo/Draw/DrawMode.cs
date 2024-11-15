@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Immutable;
-using DotRecast.Core.Collections;
 
 namespace DotRecast.Recast.Demo.Draw;
 
