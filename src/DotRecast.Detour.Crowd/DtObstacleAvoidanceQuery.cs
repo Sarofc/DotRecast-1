@@ -56,7 +56,6 @@ namespace DotRecast.Detour.Crowd
             m_segments = new DtObstacleSegment[m_maxSegments];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             m_ncircles = 0;
@@ -85,16 +84,12 @@ namespace DotRecast.Detour.Crowd
             seg.q = q;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetObstacleCircleCount() => m_ncircles;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtObstacleCircle GetObstacleCircle(int i) => m_circles[i];
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetObstacleSegmentCount() => m_nsegments;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtObstacleSegment GetObstacleSegment(int i) => m_segments[i];
 
         private void Prepare(Vector3 pos, Vector3 dvel)
@@ -346,7 +341,6 @@ namespace DotRecast.Detour.Crowd
         }
 
         // vector normalization that ignores the y-component.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void DtNormalize2D(Span<float> v)
         {
             float d = MathF.Sqrt(v[0] * v[0] + v[2] * v[2]);
@@ -358,7 +352,6 @@ namespace DotRecast.Detour.Crowd
         }
 
         // vector normalization that ignores the y-component.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         Vector3 DtRotate2D(Span<float> v, float ang)
         {
             Vector3 dest = new Vector3();

@@ -1,4 +1,5 @@
-﻿using DotRecast.Core;
+using System.Collections.Immutable;
+using DotRecast.Core;
 using DotRecast.Core.Collections;
 
 namespace DotRecast.Detour
@@ -9,9 +10,7 @@ namespace DotRecast.Detour
         public static readonly DtStraightPathOption AreaCrossings = new DtStraightPathOption(DtStraightPathOptions.DT_STRAIGHTPATH_AREA_CROSSINGS, "Area");
         public static readonly DtStraightPathOption AllCrossings = new DtStraightPathOption(DtStraightPathOptions.DT_STRAIGHTPATH_ALL_CROSSINGS, "All");
 
-        public static readonly RcImmutableArray<DtStraightPathOption> Values = RcImmutableArray.Create(
-            None, AreaCrossings, AllCrossings
-        );
+        public static readonly ImmutableArray<DtStraightPathOption> Values = [None, AreaCrossings, AllCrossings];
 
         public readonly int Value;
         public readonly string Label;

@@ -1,3 +1,4 @@
+#if false
 using BenchmarkDotNet.Attributes;
 using DotRecast.Core.Collections;
 
@@ -239,3 +240,5 @@ namespace CSharpBencchmark
         }
     }
 }
+
+#endif

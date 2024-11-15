@@ -19,9 +19,6 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using DotRecast.Core;
 
 namespace DotRecast.Detour
@@ -54,14 +51,12 @@ namespace DotRecast.Detour
             m_first.AsSpan().Fill(DT_NULL_IDX);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
             m_first.AsSpan().Fill(DT_NULL_IDX);
             m_nodeCount = 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetNodeCount()
         {
             return m_nodeCount;
@@ -131,7 +126,6 @@ namespace DotRecast.Detour
             return node;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetNodeIdx(DtNode node)
         {
             return node != null
@@ -139,7 +133,6 @@ namespace DotRecast.Detour
                 : 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtNode GetNodeAtIdx(int idx)
         {
             return idx != 0
@@ -147,19 +140,16 @@ namespace DotRecast.Detour
                 : null;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtNode GetNode(long refs)
         {
             return GetNode(refs, 0);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<DtNode> AsSpan()
         {
             return m_nodes.AsSpan(0, m_nodeCount);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static uint dtHashRef(long a)
         {
             a += ~(a << 15);

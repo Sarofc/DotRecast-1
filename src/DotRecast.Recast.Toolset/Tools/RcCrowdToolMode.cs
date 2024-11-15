@@ -1,4 +1,5 @@
-﻿using DotRecast.Core.Collections;
+using System.Collections.Immutable;
+using DotRecast.Core.Collections;
 
 namespace DotRecast.Recast.Toolset.Tools
 {
@@ -9,12 +10,12 @@ namespace DotRecast.Recast.Toolset.Tools
         public static readonly RcCrowdToolMode SELECT = new RcCrowdToolMode(2, "Select Agent");
         public static readonly RcCrowdToolMode TOGGLE_POLYS = new RcCrowdToolMode(3, "Toggle Polys");
 
-        public static readonly RcImmutableArray<RcCrowdToolMode> Values = RcImmutableArray.Create(
+        public static readonly ImmutableArray<RcCrowdToolMode> Values = [
             CREATE,
             MOVE_TARGET,
             SELECT,
             TOGGLE_POLYS
-        );
+        ];
 
         public readonly int Idx;
         public readonly string Label;

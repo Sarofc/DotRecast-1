@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace DotRecast.Core.Collections
@@ -36,7 +36,7 @@ namespace DotRecast.Core.Collections
 
         public static void Shuffle<T>(this IList<T> list)
         {
-            Random random = new Random();
+            var random = Random.Shared;
             int n = list.Count;
             while (n > 1)
             {

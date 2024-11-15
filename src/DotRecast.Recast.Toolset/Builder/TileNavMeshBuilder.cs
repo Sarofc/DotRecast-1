@@ -171,12 +171,12 @@ namespace DotRecast.Recast.Toolset.Builder
             return tileBits;
         }
 
-        public static int[] GetTiles(DemoInputGeomProvider geom, float cellSize, int tileSize)
+        public static (int tw, int th) GetTiles(DemoInputGeomProvider geom, float cellSize, int tileSize)
         {
             RcRecast.CalcGridSize(geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), cellSize, out var gw, out var gh);
             int tw = (gw + tileSize - 1) / tileSize;
             int th = (gh + tileSize - 1) / tileSize;
-            return new int[] { tw, th };
+            return (tw, th);
         }
     }
 }

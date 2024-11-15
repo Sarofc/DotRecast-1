@@ -44,7 +44,6 @@ namespace DotRecast.Detour.Crowd
             m_center.X = m_center.Y = m_center.Z = float.MaxValue;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             m_center.X = m_center.Y = m_center.Z = float.MaxValue;
@@ -156,13 +155,10 @@ namespace DotRecast.Detour.Crowd
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3 GetCenter() => m_center;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref DtSegment GetSegment(int j) => ref m_segs[j];
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetSegmentCount() => m_nsegs;
     }
 }

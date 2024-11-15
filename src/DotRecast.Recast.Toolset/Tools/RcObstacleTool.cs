@@ -9,6 +9,7 @@ using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
+using System.Collections.Immutable;
 
 namespace DotRecast.Recast.Toolset.Tools
 {
@@ -80,7 +81,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 _tc.BuildNavMeshTile(refs);
             }
 
-            return new NavMeshBuildResult(RcImmutableArray<RcBuilderResult>.Empty, _tc.GetNavMesh());
+            return new NavMeshBuildResult(ImmutableArray<RcBuilderResult>.Empty, _tc.GetNavMesh());
         }
 
         public void ClearAllTempObstacles()

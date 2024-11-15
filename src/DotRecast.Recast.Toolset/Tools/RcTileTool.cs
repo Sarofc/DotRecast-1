@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using DotRecast.Core;
 using DotRecast.Core.Collections;
 using System.Numerics;
@@ -97,7 +97,7 @@ namespace DotRecast.Recast.Toolset.Tools
             var result = rb.BuildTile(geom, cfg, bmin, bmax, tx, ty, new RcAtomicInteger(0), 1, settings.keepInterResults);
 
             var tb = new TileNavMeshBuilder();
-            var meshData = tb.BuildMeshData(geom, settings.cellSize, settings.cellHeight, settings.agentHeight, settings.agentRadius, settings.agentMaxClimb, RcImmutableArray.Create(result)
+            var meshData = tb.BuildMeshData(geom, settings.cellSize, settings.cellHeight, settings.agentHeight, settings.agentRadius, settings.agentMaxClimb, [result]
             ).FirstOrDefault();
 
             if (null == meshData)

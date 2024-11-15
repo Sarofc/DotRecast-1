@@ -50,7 +50,7 @@ namespace DotRecast.Detour
  *
  * @see NavMeshQuery
  */
-    public class DtQueryDefaultFilter : IDtQueryFilter // TODO struct
+    public class DtQueryDefaultFilter : IDtQueryFilter
     {
         private readonly float[] m_areaCost = new float[DT_MAX_AREAS]; //< Cost per area type. (Used by default implementation.)
         private int m_includeFlags; //< Flags for polygons that can be visited. (Used by default implementation.) 

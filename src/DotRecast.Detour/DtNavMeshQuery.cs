@@ -3587,7 +3587,6 @@ namespace DotRecast.Detour
 
         /// Gets the navigation mesh the query object is using.
         /// @return The navigation mesh the query object is using.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtNavMesh GetAttachedNavMesh() => m_nav;
 
         /// Gets a path from the explored nodes in the previous search.
@@ -3611,7 +3610,7 @@ namespace DotRecast.Detour
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
 
-            var endNodes = nodes.AsSpan(0, 1); // only 1
+            var endNodes = m_nodes.AsSpan(0, 1); // only 1
             if (m_nodePool.FindNodes(endRef, endNodes) != 1
                 || (endNodes[0].flags & DtNodeFlags.DT_NODE_CLOSED) == 0)
             {
@@ -3662,7 +3661,7 @@ namespace DotRecast.Detour
             return DtStatus.DT_SUCCESS;
         }
 
-        DtNode[] nodes = new DtNode[DT_MAX_STATES_PER_NODE];
+        readonly DtNode[] m_nodes = new DtNode[DT_MAX_STATES_PER_NODE];
         /// @par
         ///
         /// The closed list is the list of polygons that were fully evaluated during 
@@ -3675,10 +3674,10 @@ namespace DotRecast.Detour
                 return false;
             }
 
-            int n = m_nodePool.FindNodes(refs, nodes);
+            int n = m_nodePool.FindNodes(refs, m_nodes);
             for (int i = 0; i < n; ++i)
             {
-                if ((nodes[i].flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                if ((m_nodes[i].flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
                 {
                     return true;
                 }
@@ -3687,7 +3686,6 @@ namespace DotRecast.Detour
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public DtNodePool GetNodePool() => m_nodePool;
     }
 }

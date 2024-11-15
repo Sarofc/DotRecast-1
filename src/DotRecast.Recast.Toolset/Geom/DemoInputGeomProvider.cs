@@ -136,7 +136,7 @@ namespace DotRecast.Recast.Toolset.Geom
 
         public IList<RcConvexVolume> ConvexVolumes() => _convexVolumes;
 
-        public IEnumerable<RcTriMesh> Meshes() => RcImmutableArray.Create(_mesh);
+        public IEnumerable<RcTriMesh> Meshes() => [_mesh];
 
         public void AddOffMeshConnection(Vector3 spos, Vector3 epos, float radius, bool bidir, int area, int flags)
         {

@@ -18,46 +18,86 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Runtime.CompilerServices;
-using DotRecast.Core.Collections;
-
 namespace DotRecast.Detour
 {
     public class DtNodeQueue
     {
-        private readonly RcSortedQueue<DtNode> m_heap;
-
-        public DtNodeQueue() : this(512)
-        { }
+        private DtNode[] m_heap;
+        private int m_size;
 
         public DtNodeQueue(int capacity)
         {
-            m_heap = new RcSortedQueue<DtNode>(capacity, DtNode.ComparisonNodeTotal);
+            System.Diagnostics.Debug.Assert(capacity > 0);
+            m_heap = new DtNode[capacity];
+            m_size = 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Count() => m_heap.Count();
+        public void Clear() { m_size = 0; }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear() => m_heap.Clear();
+        public DtNode Top() { return m_heap[0]; }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public DtNode Peek() => m_heap.Peek();
+        public DtNode Pop()
+        {
+            DtNode result = m_heap[0];
+            m_size--;
+            trickleDown(0, m_heap[m_size]);
+            return result;
+        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public DtNode Pop() => m_heap.Dequeue();
+        public void Push(DtNode node)
+        {
+            System.Diagnostics.Debug.Assert(node != null);
+            m_size++;
+            bubbleUp(m_size - 1, node);
+        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Push(DtNode node) => m_heap.Enqueue(node);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Modify(DtNode node)
         {
-            m_heap.Remove(node);
-            Push(node);
+            System.Diagnostics.Debug.Assert(node != null);
+            for (int i = 0; i < m_size; ++i)
+            {
+                if (m_heap[i] == node)
+                {
+                    bubbleUp(i, node);
+                    return;
+                }
+            }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsEmpty() => m_heap.IsEmpty();
+        public int Count() => m_size;
+
+        public bool IsEmpty() { return m_size == 0; }
+
+        public int GetCapacity() { return m_heap.Length; }
+
+        void bubbleUp(int i, DtNode node)
+        {
+            int parent = (i - 1) / 2;
+            // note: (index > 0) means there is a parent
+            while ((i > 0) && (m_heap[parent].total > node.total))
+            {
+                m_heap[i] = m_heap[parent];
+                i = parent;
+                parent = (i - 1) / 2;
+            }
+            m_heap[i] = node;
+        }
+
+        void trickleDown(int i, DtNode node)
+        {
+            int child = (i * 2) + 1;
+            while (child < m_size)
+            {
+                if (((child + 1) < m_size) &&
+                    (m_heap[child].total > m_heap[child + 1].total))
+                {
+                    child++;
+                }
+                m_heap[i] = m_heap[child];
+                i = child;
+                child = (i * 2) + 1;
+            }
+            bubbleUp(i, node);
+        }
     }
 }

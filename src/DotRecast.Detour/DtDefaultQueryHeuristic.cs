@@ -27,7 +27,6 @@ namespace DotRecast.Detour
     {
         public const float H_SCALE = 0.999f; // Search heuristic scale.
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetCost(Vector3 neighbourPos, Vector3 endPos)
         {
             return Vector3.Distance(neighbourPos, endPos) * H_SCALE;

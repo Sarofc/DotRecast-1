@@ -78,7 +78,6 @@ namespace DotRecast.Detour.Crowd
             m_bounds[3] = -0xffff;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static int hashPos2(int x, int y, int n)
         {
             return ((x * 73856093) ^ (y * 19349663)) & (n - 1);
@@ -178,10 +177,8 @@ namespace DotRecast.Detour.Crowd
             return n;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<int> GetBounds() => m_bounds;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float GetCellSize() => m_cellSize;
     }
 }

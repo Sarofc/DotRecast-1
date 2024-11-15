@@ -25,9 +25,9 @@ namespace DotRecast.Detour.Dynamic
     public class DtDynamicTileCheckpoint
     {
         public readonly RcHeightfield heightfield;
-        public readonly ISet<long> colliders;
+        public readonly HashSet<long> colliders;
 
-        public DtDynamicTileCheckpoint(RcHeightfield heightfield, ISet<long> colliders)
+        public DtDynamicTileCheckpoint(RcHeightfield heightfield, HashSet<long> colliders)
         {
             this.colliders = colliders;
             this.heightfield = Clone(heightfield);

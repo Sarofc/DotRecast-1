@@ -5,7 +5,6 @@ using System.Numerics;
 using DotRecast.Core;
 using DotRecast.Core.Buffers;
 using DotRecast.Core.Collections;
-using System.Numerics;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
 using DotRecast.Recast.Toolset.Builder;
@@ -33,6 +32,8 @@ namespace DotRecast.Recast.Toolset.Tools
         private double _minUpdateTime;
         private double _maxUpdateTime;
         private DtNavMeshQuery m_navquery;
+
+        IDtQueryFilter _filter = new DtQueryDefaultFilter();
 
         public RcCrowdAgentProfilingTool()
         {
@@ -244,7 +245,6 @@ namespace DotRecast.Recast.Toolset.Tools
             long endTime = RcFrequency.Ticks;
             if (_crowd != null)
             {
-                IDtQueryFilter filter = new DtQueryDefaultFilter();
                 foreach (DtCrowdAgent ag in _crowd.GetActiveAgents())
                 {
                     if (NeedsNewTarget(ag))
@@ -253,13 +253,13 @@ namespace DotRecast.Recast.Toolset.Tools
                         switch (crowAgentData.type)
                         {
                             case RcCrowdAgentType.MOB:
-                                MoveMob(m_navquery, filter, ag, crowAgentData);
+                                MoveMob(m_navquery, _filter, ag, crowAgentData);
                                 break;
                             case RcCrowdAgentType.VILLAGER:
-                                MoveVillager(m_navquery, filter, ag, crowAgentData);
+                                MoveVillager(m_navquery, _filter, ag, crowAgentData);
                                 break;
                             case RcCrowdAgentType.TRAVELLER:
-                                MoveTraveller(m_navquery, filter, ag, crowAgentData);
+                                MoveTraveller(m_navquery, _filter, ag, crowAgentData);
                                 break;
                         }
                     }

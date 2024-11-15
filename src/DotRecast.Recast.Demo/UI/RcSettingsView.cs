@@ -258,10 +258,10 @@ public class RcSettingsView : IRcView
         voxels[1] = gh;
     }
 
-    public void SetTiles(int[] tiles)
+    public void SetTiles(int tw, int th)
     {
-        this.tiles[0] = tiles[0];
-        this.tiles[1] = tiles[1];
+        this.tiles[0] = tw;
+        this.tiles[1] = th;
     }
 
     public void SetMaxTiles(int maxTiles)

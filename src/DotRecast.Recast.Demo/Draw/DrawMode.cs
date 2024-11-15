@@ -18,6 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System.Collections.Immutable;
 using DotRecast.Core.Collections;
 
 namespace DotRecast.Recast.Demo.Draw;
@@ -43,7 +44,7 @@ public class DrawMode
     public static readonly DrawMode DRAWMODE_POLYMESH = new(16, "Poly Mesh");
     public static readonly DrawMode DRAWMODE_POLYMESH_DETAIL = new(17, "Poly Mesh Detils");
 
-    public static readonly RcImmutableArray<DrawMode> Values = RcImmutableArray.Create(
+    public static readonly ImmutableArray<DrawMode> Values = [
         DRAWMODE_MESH,
         DRAWMODE_NAVMESH,
         DRAWMODE_NAVMESH_INVIS,
@@ -62,7 +63,7 @@ public class DrawMode
         DRAWMODE_CONTOURS,
         DRAWMODE_POLYMESH,
         DRAWMODE_POLYMESH_DETAIL
-    );
+    ];
 
     public readonly int Idx;
     public readonly string Text;

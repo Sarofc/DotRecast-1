@@ -105,7 +105,6 @@ namespace DotRecast.Detour.Crowd
         /// Resets the path corridor to the specified position.
         ///  @param[in]		ref		The polygon reference containing the position.
         ///  @param[in]		pos		The new position in the corridor. [(x, y, z)]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset(long refs, Vector3 pos)
         {
             m_pos = pos;
@@ -483,32 +482,26 @@ namespace DotRecast.Detour.Crowd
 
         /// Gets the current position within the corridor. (In the first polygon.)
         /// @return The current position within the corridor.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3 GetPos() => m_pos;
 
         /// Gets the current target within the corridor. (In the last polygon.)
         /// @return The current target within the corridor.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3 GetTarget() => m_target;
 
         /// The polygon reference id of the first polygon in the corridor, the polygon containing the position.
         /// @return The polygon reference id of the first polygon in the corridor. (Or zero if there is no path.)
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetFirstPoly() => 0 == m_npath ? 0 : m_path[0];
 
         /// The polygon reference id of the last polygon in the corridor, the polygon containing the target.
         /// @return The polygon reference id of the last polygon in the corridor. (Or zero if there is no path.)
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetLastPoly() => 0 == m_npath ? 0 : m_path[m_npath - 1];
 
         /// The corridor's path.
         /// @return The corridor's path. [(polyRef) * #getPathCount()]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<long> GetPath() => m_path;
 
         /// The number of polygons in the current corridor path.
         /// @return The number of polygons in the current corridor path.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetPathCount() => m_npath;
     }
 }

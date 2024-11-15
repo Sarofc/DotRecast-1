@@ -124,7 +124,7 @@ namespace DotRecast.Recast.Geom
 
         public IEnumerable<RcTriMesh> Meshes()
         {
-            return RcImmutableArray.Create(_mesh);
+            return [_mesh];
         }
 
         public int OffMeshConCount => throw new NotImplementedException();

@@ -1,4 +1,5 @@
-﻿using DotRecast.Core.Collections;
+using System.Collections.Immutable;
+using DotRecast.Core.Collections;
 
 namespace DotRecast.Recast.Toolset.Tools
 {
@@ -14,7 +15,7 @@ namespace DotRecast.Recast.Toolset.Tools
         public static readonly RcTestNavmeshToolMode FIND_LOCAL_NEIGHBOURHOOD = new RcTestNavmeshToolMode(7, "Find Local Neighbourhood");
         public static readonly RcTestNavmeshToolMode RANDOM_POINTS_IN_CIRCLE = new RcTestNavmeshToolMode(8, "Random Points in Circle");
 
-        public static readonly RcImmutableArray<RcTestNavmeshToolMode> Values = RcImmutableArray.Create(
+        public static readonly ImmutableArray<RcTestNavmeshToolMode> Values = [
             PATHFIND_FOLLOW,
             PATHFIND_STRAIGHT,
             PATHFIND_SLICED,
@@ -24,7 +25,7 @@ namespace DotRecast.Recast.Toolset.Tools
             FIND_POLYS_IN_SHAPE,
             FIND_LOCAL_NEIGHBOURHOOD,
             RANDOM_POINTS_IN_CIRCLE
-        );
+        ];
 
 
         public readonly int Idx;

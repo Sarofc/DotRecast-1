@@ -60,10 +60,8 @@ namespace DotRecast.Recast
             Mask = other.Mask;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly int GetMaskedValue() => Value & Mask;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly int Apply(int area) => (Value & Mask) | (area & ~Mask);
     }
 }

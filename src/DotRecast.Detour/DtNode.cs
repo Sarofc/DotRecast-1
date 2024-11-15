@@ -34,20 +34,11 @@ namespace DotRecast.Detour
         public int state; // extra state information. A polyRef can have multiple nodes with different extra info. see DT_MAX_STATES_PER_NODE
         public int flags; // Node flags. A combination of dtNodeFlags.
         public long id; // Polygon ref the node corresponds to.
-        public List<long> shortcut; // Shortcut found by raycast.
+        public List<long> shortcut; // Shortcut found by raycast. // TODO 导致了DtNode不方便使用struct连续内存
 
         public DtNode(int ptr)
         {
             this.ptr = ptr;
-        }
-
-        public static int ComparisonNodeTotal(DtNode a, DtNode b)
-        {
-            int compare = a.total.CompareTo(b.total);
-            if (0 != compare)
-                return compare;
-
-            return a.ptr.CompareTo(b.ptr);
         }
 
         public override string ToString()
