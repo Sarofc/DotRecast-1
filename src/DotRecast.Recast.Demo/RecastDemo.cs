@@ -43,6 +43,8 @@ using DotRecast.Recast.Demo.Tools;
 using DotRecast.Recast.Demo.UI;
 using MouseButton = Silk.NET.Input.MouseButton;
 using Window = Silk.NET.Windowing.Window;
+using Silk.NET.Input.Glfw;
+using Silk.NET.Windowing.Glfw;
 
 namespace DotRecast.Recast.Demo;
 
@@ -126,6 +128,10 @@ public class RecastDemo : IRecastDemoChannel
 
     public void Run()
     {
+        // nativeaot
+        GlfwWindowing.RegisterPlatform();
+        GlfwInput.RegisterPlatform();
+
         window = CreateWindow();
         window.Run();
     }
