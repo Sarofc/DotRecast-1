@@ -19,6 +19,7 @@ static void InitializeLogger()
         .Enrich.WithThreadId()
         .Enrich.WithThreadName()
         .WriteTo.Async(c => c.LogMessageBroker(outputTemplate: format))
+        .WriteTo.Async(c => c.Console())
         .CreateLogger();
 }
 

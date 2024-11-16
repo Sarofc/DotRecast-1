@@ -66,7 +66,7 @@ namespace DotRecast.Detour
             }
         }
 
-        public DtQueryDefaultFilter(int includeFlags, int excludeFlags, float[] areaCost)
+        public DtQueryDefaultFilter(int includeFlags, int excludeFlags, ReadOnlySpan<float> areaCost)
         {
             m_includeFlags = includeFlags;
             m_excludeFlags = excludeFlags;

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace DotRecast.Detour
 {
-    public class DtFindNearestPolyQuery : IDtPolyQuery
+    public struct DtFindNearestPolyQuery : IDtPolyQuery
     {
         private readonly DtNavMeshQuery _query;
         private readonly Vector3 _center;
@@ -53,17 +53,17 @@ namespace DotRecast.Detour
             }
         }
 
-        public long NearestRef()
+        public readonly long NearestRef()
         {
             return _nearestRef;
         }
 
-        public Vector3 NearestPt()
+        public readonly Vector3 NearestPt()
         {
             return _nearestPoint;
         }
 
-        public bool OverPoly()
+        public readonly bool OverPoly()
         {
             return _overPoly;
         }

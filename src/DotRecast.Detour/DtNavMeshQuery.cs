@@ -527,8 +527,8 @@ namespace DotRecast.Detour
             isOverPoly = false;
 
             // Get nearby polygons from proximity grid.
-            DtFindNearestPolyQuery query = new DtFindNearestPolyQuery(this, center); // TODO cache ?
-            DtStatus status = QueryPolygons(center, halfExtents, filter, query);
+            DtFindNearestPolyQuery query = new(this, center);
+            DtStatus status = QueryPolygons(center, halfExtents, filter, ref query);
             if (status.Failed())
             {
                 return status;
@@ -545,7 +545,7 @@ namespace DotRecast.Detour
         DtPoly[] polys = new DtPoly[batchSize];  // cache
 
         /// Queries polygons within a tile.
-        protected unsafe void QueryPolygonsInTile(DtMeshTile tile, Vector3 qmin, Vector3 qmax, IDtQueryFilter filter, IDtPolyQuery query)
+        protected unsafe void QueryPolygonsInTile<TPolyQuery>(DtMeshTile tile, Vector3 qmin, Vector3 qmax, IDtQueryFilter filter, ref TPolyQuery query) where TPolyQuery : IDtPolyQuery
         {
             Span<long> polyRefs = stackalloc long[batchSize];
             int n = 0;
@@ -701,8 +701,8 @@ namespace DotRecast.Detour
             if (null == polys || maxPolys < 0)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
 
-            DtCollectPolysQuery collector = new DtCollectPolysQuery(polys, maxPolys);
-            DtStatus status = QueryPolygons(center, halfExtents, filter, collector);
+            DtCollectPolysQuery collector = new(polys, maxPolys);
+            DtStatus status = QueryPolygons(center, halfExtents, filter, ref collector);
             if (status.Failed())
                 return status;
 
@@ -727,7 +727,7 @@ namespace DotRecast.Detour
         ///  @param[in]		halfExtents		The search distance along each axis. [(x, y, z)]
         ///  @param[in]		filter		The polygon filter to apply to the query.
         ///  @param[in]		query		The query. Polygons found will be batched together and passed to this query.
-        public DtStatus QueryPolygons(Vector3 center, Vector3 halfExtents, IDtQueryFilter filter, IDtPolyQuery query)
+        public DtStatus QueryPolygons<TPolyQuery>(Vector3 center, Vector3 halfExtents, IDtQueryFilter filter, ref TPolyQuery query) where TPolyQuery : IDtPolyQuery
         {
             if (!center.IsFinite() || !halfExtents.IsFinite() || null == filter)
             {
@@ -749,7 +749,7 @@ namespace DotRecast.Detour
                     int nneis = m_nav.GetTilesAt(x, y, neis, MAX_NEIS);
                     for (int j = 0; j < nneis; ++j)
                     {
-                        QueryPolygonsInTile(neis[j], bmin, bmax, filter, query);
+                        QueryPolygonsInTile(neis[j], bmin, bmax, filter, ref query);
                     }
                 }
             }
