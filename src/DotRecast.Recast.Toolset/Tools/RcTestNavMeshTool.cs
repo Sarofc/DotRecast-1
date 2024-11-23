@@ -264,7 +264,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             //var path = new List<long>();
             //polys ??= new List<long>();
-            var status = navQuery.Raycast(startRef, startPos, endPos, filter, out var t, out var hitNormal2, polys, out var polysCount);
+            var status = navQuery.Raycast(startRef, startPos, endPos, filter, out var t, out hitNormal, polys, out var polysCount);
             if (!status.Succeeded())
             {
                 return status;
@@ -283,7 +283,6 @@ namespace DotRecast.Recast.Toolset.Tools
             {
                 // Hit
                 hitPos = Vector3.Lerp(startPos, endPos, t);
-                hitNormal = hitNormal2;
                 hitResult = true;
             }
 

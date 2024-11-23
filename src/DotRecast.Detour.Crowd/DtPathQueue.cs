@@ -18,14 +18,8 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Collections.Generic;
-using DotRecast.Core;
 using System.Numerics;
-using DotRecast.Detour;
-using System.IO;
-using System.Net.NetworkInformation;
 using System;
-
 
 namespace DotRecast.Detour.Crowd
 {
@@ -58,10 +52,10 @@ namespace DotRecast.Detour.Crowd
 
         public const uint DT_PATHQ_INVALID = 0;
 
-        public DtPathQueue(int maxPathSize, DtNavMesh navMesh, DtCrowdConfig config)
+        public DtPathQueue(int maxPathSize, DtCrowdConfig config)
         {
             m_config = config;
-            m_navquery = new DtNavMeshQuery(navMesh, DtCrowdConst.MAX_PATHQUEUE_NODES);
+            m_navquery = new DtNavMeshQuery(DtCrowdConst.MAX_PATHQUEUE_NODES);
 
             m_maxPathSize = maxPathSize;
             m_queue = new PathQuery[MAX_QUEUE];
@@ -77,6 +71,16 @@ namespace DotRecast.Detour.Crowd
             }
 
             m_queueHead = 0;
+        }
+
+        public DtPathQueue(DtNavMesh nav, int maxPathSize, DtCrowdConfig config) : this(maxPathSize, config)
+        {
+            SetNavmesh(nav);
+        }
+
+        public void SetNavmesh(DtNavMesh nav)
+        {
+            m_navquery.SetNavmesh(nav);
         }
 
         public void Update()

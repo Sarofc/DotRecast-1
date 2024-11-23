@@ -149,11 +149,11 @@ namespace DotRecast.Detour.Crowd
         private DtNavMesh m_navMesh;
         private readonly DtCrowdTelemetry m_telemetry = new DtCrowdTelemetry();
 
-        public DtCrowd(DtCrowdConfig config, DtNavMesh nav) : this(config, nav, i => new DtQueryDefaultFilter())
+        public DtCrowd(DtCrowdConfig config) : this(config, i => new DtQueryDefaultFilter())
         {
         }
 
-        public DtCrowd(DtCrowdConfig config, DtNavMesh nav, Func<int, IDtQueryFilter> queryFilterFactory)
+        public DtCrowd(DtCrowdConfig config, Func<int, IDtQueryFilter> queryFilterFactory)
         {
             m_config = config;
             m_maxAgents = config.maxAgents;
@@ -190,15 +190,24 @@ namespace DotRecast.Detour.Crowd
                 m_agents[i].corridor.Init(m_maxPathResult);
             }
 
+            m_navQuery = new DtNavMeshQuery(DtCrowdConst.MAX_COMMON_NODES);
+            m_pathq = new DtPathQueue(m_maxPathResult, m_config);
+
             // The navQuery is mostly used for local searches, no need for large node pool.
+            //SetNavMesh(nav);
+        }
+
+        public DtCrowd(DtCrowdConfig config, DtNavMesh nav, Func<int, IDtQueryFilter> queryFilterFactory)
+            : this(config, queryFilterFactory)
+        {
             SetNavMesh(nav);
         }
 
         public void SetNavMesh(DtNavMesh nav)
         {
             m_navMesh = nav;
-            m_navQuery = new DtNavMeshQuery(nav, DtCrowdConst.MAX_COMMON_NODES);
-            m_pathq = new DtPathQueue(m_maxPathResult, nav, m_config);
+            m_navQuery.SetNavmesh(nav);
+            m_pathq.SetNavmesh(nav);
         }
 
         public DtNavMesh GetNavMesh() => m_navMesh;
@@ -234,7 +243,7 @@ namespace DotRecast.Detour.Crowd
         /// Updates the specified agent's configuration.
         /// @param[in] idx The agent index. [Limits: 0 <= value < #GetAgentCount()]
         /// @param[in] params The new agent configuration.
-        public void UpdateAgentParameters(DtCrowdAgent agent, DtCrowdAgentParams option)
+        public void UpdateAgentParameters(DtCrowdAgent agent, in DtCrowdAgentParams option)
         {
             agent.option = option;
         }
@@ -246,7 +255,7 @@ namespace DotRecast.Detour.Crowd
         ///  @param[in]		pos		The requested position of the agent. [(x, y, z)]
         ///  @param[in]		params	The configuration of the agent.
         /// @return The index of the agent in the agent pool. Or -1 if the agent could not be added.
-        public int AddAgent(Vector3 pos, DtCrowdAgentParams option)
+        public int AddAgent(Vector3 pos, in DtCrowdAgentParams option)
         {
             //int idx = _agentId.GetAndIncrement();
             //DtCrowdAgent ag = new DtCrowdAgent(idx);
@@ -315,13 +324,15 @@ namespace DotRecast.Detour.Crowd
      *            Agent to be removed
      */
         //public void RemoveAgent(DtCrowdAgent agent)
-        public void RemoveAgent(int idx)
+        public bool RemoveAgent(int idx)
         {
             //_agents.Remove(agent);
             if (idx >= 0 && idx < m_maxAgents)
             {
                 m_agents[idx].active = false;
+                return true;
             }
+            return false;
         }
 
         private bool RequestMoveTargetReplan(DtCrowdAgent ag, long refs, Vector3 pos)

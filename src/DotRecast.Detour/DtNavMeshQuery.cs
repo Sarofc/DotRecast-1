@@ -33,7 +33,7 @@ namespace DotRecast.Detour
     /// @ingroup detour
     public class DtNavMeshQuery
     {
-        protected readonly DtNavMesh m_nav; //< Pointer to navmesh data.
+        protected DtNavMesh m_nav; //< Pointer to navmesh data.
         protected DtQueryData m_query; //< Sliced query state.
 
         protected readonly DtNodePool m_tinyNodePool; //< Pointer to small node pool. 
@@ -57,12 +57,21 @@ namespace DotRecast.Detour
         /// A portal may be treated as a wall based on the dtQueryFilter used for a query.
         ///
         /// @see dtNavMesh, dtQueryFilter, #dtAllocNavMeshQuery(), #dtAllocNavMeshQuery()
-        public DtNavMeshQuery(DtNavMesh nav, int maxNodes)
+        public DtNavMeshQuery(int maxNodes)
         {
-            m_nav = nav;
             m_nodePool = new DtNodePool(maxNodes);
             m_openList = new DtNodeQueue(maxNodes);
             m_tinyNodePool = new DtNodePool(maxNodes);
+        }
+
+        public DtNavMeshQuery(DtNavMesh nav, int maxNodes) : this(maxNodes)
+        {
+            SetNavmesh(nav);
+        }
+
+        public void SetNavmesh(DtNavMesh nav)
+        {
+            m_nav = nav;
         }
 
         /// Returns random location on navmesh.
