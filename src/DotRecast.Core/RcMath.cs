@@ -24,19 +24,16 @@ namespace DotRecast.Core
 {
     public static class RcMath
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sqr(float f)
         {
             return f * f;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(float value1, float value2, float amount)
         {
             return (value1 * (1.0f - amount)) + (value2 * amount);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint dtNextPow2(uint v)
         {
             v--;

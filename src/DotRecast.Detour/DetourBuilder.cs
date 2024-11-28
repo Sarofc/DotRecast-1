@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 
 namespace DotRecast.Detour
 {
-    public class DetourBuilder
+    public struct DetourBuilder
     {
         public DtMeshData Build(DtNavMeshCreateParams option, int tileX, int tileY)
         {

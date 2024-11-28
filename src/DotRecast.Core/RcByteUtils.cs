@@ -21,11 +21,6 @@ namespace DotRecast.Core
 {
     public static class RcByteUtils
     {
-        public static int GetInt(byte[] data, int position, RcByteOrder order)
-        {
-            return order == RcByteOrder.BIG_ENDIAN ? GetIntBE(data, position) : GetIntLE(data, position);
-        }
-
         public static int GetIntBE(byte[] data, int position)
         {
             return ((data[position] & 0xff) << 24)
@@ -40,11 +35,6 @@ namespace DotRecast.Core
                    | ((data[position + 2] & 0xff) << 16)
                    | ((data[position + 1] & 0xff) << 8)
                    | (data[position] & 0xff);
-        }
-
-        public static int GetShort(byte[] data, int position, RcByteOrder order)
-        {
-            return order == RcByteOrder.BIG_ENDIAN ? GetShortBE(data, position) : GetShortLE(data, position);
         }
 
         public static int GetShortBE(byte[] data, int position)
