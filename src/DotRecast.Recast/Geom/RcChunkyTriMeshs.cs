@@ -36,16 +36,13 @@ namespace DotRecast.Recast.Geom
             cm.ntris = ntris;
 
             // Build tree
-            BoundsItem[] items = new BoundsItem[ntris];
-            for (int i = 0; i < ntris; ++i)
-            {
-                items[i] = new BoundsItem();
-            }
+            //BoundsItem[] items = new BoundsItem[ntris];
+            Span<BoundsItem> items = stackalloc BoundsItem[ntris];
 
             for (int i = 0; i < ntris; i++)
             {
                 int t = i * 3;
-                BoundsItem it = items[i];
+                ref BoundsItem it = ref items[i];
                 it.i = i;
                 // Calc triangle XZ bounds.
                 it.bmin.X = it.bmax.X = verts[tris[t] * 3 + 0];
@@ -99,7 +96,7 @@ namespace DotRecast.Recast.Geom
         }
 
         /// Returns the chunk indices which overlap the input rectable.
-        public static List<RcChunkyTriMeshNode> GetChunksOverlappingRect(RcChunkyTriMesh cm, float[] bmin, float[] bmax)
+        public static List<RcChunkyTriMeshNode> GetChunksOverlappingRect(RcChunkyTriMesh cm, Vector2 bmin, Vector2 bmax)
         {
             // Traverse tree
             List<RcChunkyTriMeshNode> ids = new List<RcChunkyTriMeshNode>();
@@ -159,7 +156,7 @@ namespace DotRecast.Recast.Geom
         }
 
 
-        private static void CalcExtends(BoundsItem[] items, int imin, int imax, ref Vector2 bmin, ref Vector2 bmax)
+        private static void CalcExtends(Span<BoundsItem> items, int imin, int imax, ref Vector2 bmin, ref Vector2 bmax)
         {
             bmin.X = items[imin].bmin.X;
             bmin.Y = items[imin].bmin.Y;
@@ -169,7 +166,7 @@ namespace DotRecast.Recast.Geom
 
             for (int i = imin + 1; i < imax; ++i)
             {
-                BoundsItem it = items[i];
+                ref readonly BoundsItem it = ref items[i];
                 if (it.bmin.X < bmin.X)
                 {
                     bmin.X = it.bmin.X;
@@ -197,7 +194,7 @@ namespace DotRecast.Recast.Geom
             return y > x ? 1 : 0;
         }
 
-        private static void Subdivide(BoundsItem[] items, int imin, int imax, int trisPerChunk, List<RcChunkyTriMeshNode> nodes, int[] inTris)
+        private static void Subdivide(Span<BoundsItem> items, int imin, int imax, int trisPerChunk, List<RcChunkyTriMeshNode> nodes, int[] inTris)
         {
             int inum = imax - imin;
 
@@ -231,12 +228,14 @@ namespace DotRecast.Recast.Geom
 
                 if (axis == 0)
                 {
-                    Array.Sort(items, imin, imax - imin, BoundsItemXComparer.Shared);
+                    items[imin..imax].Sort(BoundsItemXComparer.Shared);
+                    //Array.Sort(items, imin, imax - imin, BoundsItemXComparer.Shared);
                     // Sort along x-axis
                 }
                 else if (axis == 1)
                 {
-                    Array.Sort(items, imin, imax - imin, BoundsItemYComparer.Shared);
+                    items[imin..imax].Sort(BoundsItemYComparer.Shared);
+                    //Array.Sort(items, imin, imax - imin, BoundsItemYComparer.Shared);
                     // Sort along y-axis
                 }
 
@@ -252,7 +251,7 @@ namespace DotRecast.Recast.Geom
             }
         }
 
-        private static bool CheckOverlapRect(float[] amin, float[] amax, Vector2 bmin, Vector2 bmax)
+        private static bool CheckOverlapRect(Vector2 amin, Vector2 amax, Vector2 bmin, Vector2 bmax)
         {
             bool overlap = true;
             overlap = (amin[0] > bmax.X || amax[0] < bmin.X) ? false : overlap;

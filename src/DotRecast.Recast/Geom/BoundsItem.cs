@@ -1,8 +1,8 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 namespace DotRecast.Recast.Geom
 {
-    public class BoundsItem
+    public struct BoundsItem
     {
         public Vector2 bmin;
         public Vector2 bmax;

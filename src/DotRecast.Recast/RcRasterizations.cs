@@ -116,6 +116,7 @@ namespace DotRecast.Recast
         {
             // Create the new span.
             RcSpan newSpan = new RcSpan();
+            //RcSpan newSpan = AllocSpan(heightfield); // TODO
             newSpan.smin = min;
             newSpan.smax = max;
             newSpan.area = areaID;
@@ -171,6 +172,7 @@ namespace DotRecast.Recast
                     // Remove the current span since it's now merged with newSpan.
                     // Keep going because there might be other overlapping spans that also need to be merged.
                     RcSpan next = currentSpan.next;
+                    //FreeSpan(heightfield, currentSpan); // TODO
                     if (previousSpan != null)
                     {
                         previousSpan.next = next;

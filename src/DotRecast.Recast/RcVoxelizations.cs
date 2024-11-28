@@ -17,7 +17,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Numerics;
 using DotRecast.Core;
 using DotRecast.Recast.Geom;
 
@@ -44,8 +46,8 @@ namespace DotRecast.Recast
                 float[] verts = geom.GetVerts();
                 if (cfg.UseTiles)
                 {
-                    float[] tbmin = new float[2];
-                    float[] tbmax = new float[2];
+                    Vector2 tbmin = default;
+                    Vector2 tbmax = default;
                     tbmin[0] = builderCfg.bmin.X;
                     tbmin[1] = builderCfg.bmin.Z;
                     tbmax[0] = builderCfg.bmax.X;
