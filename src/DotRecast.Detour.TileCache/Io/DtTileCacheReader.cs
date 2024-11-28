@@ -25,7 +25,7 @@ using DotRecast.Detour.TileCache.Io.Compress;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public class DtTileCacheReader
+    public struct DtTileCacheReader
     {
         private readonly DtNavMeshParamsReader paramReader = new DtNavMeshParamsReader();
         private readonly IDtTileCacheCompressorFactory _compFactory;

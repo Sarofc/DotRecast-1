@@ -646,7 +646,7 @@ namespace DotRecast.Detour.TileCache
             }
 
             // Allocate temp buffer for contour tracing.
-            DtTempContour temp = new DtTempContour();
+            DtTempContour temp = new DtTempContour(); // TODO
 
             // Find contours.
             for (int y = 0; y < h; ++y)
@@ -1961,7 +1961,8 @@ namespace DotRecast.Detour.TileCache
             DtTileCacheLayer layer = new DtTileCacheLayer();
             try
             {
-                layer.header = DtTileCacheLayerHeaderReader.Read(ref buf, cCompatibility);
+                var reader = new DtTileCacheLayerHeaderReader();
+                layer.header = reader.Read(ref buf, cCompatibility);
             }
             catch (IOException e)
             {
@@ -1985,7 +1986,7 @@ namespace DotRecast.Detour.TileCache
         }
 
         public static void MarkBoxArea(DtTileCacheLayer layer, Vector3 orig, float cs, float ch, Vector3 center, Vector3 extents,
-            float[] rotAux, byte areaId)
+            Vector2 rotAux, byte areaId)
         {
             int w = layer.header.width;
             int h = layer.header.height;

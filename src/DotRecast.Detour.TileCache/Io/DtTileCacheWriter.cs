@@ -25,7 +25,7 @@ using DotRecast.Detour.TileCache.Io.Compress;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public class DtTileCacheWriter
+    public struct DtTileCacheWriter
     {
         private readonly DtNavMeshParamWriter paramWriter = new DtNavMeshParamWriter();
         private readonly IDtTileCacheCompressorFactory _compFactory;

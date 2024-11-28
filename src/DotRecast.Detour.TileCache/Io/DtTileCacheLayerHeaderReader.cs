@@ -23,9 +23,9 @@ using DotRecast.Core;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public static class DtTileCacheLayerHeaderReader
+    public struct DtTileCacheLayerHeaderReader
     {
-        public static DtTileCacheLayerHeader Read(ref RcByteBuffer data, bool cCompatibility)
+        public DtTileCacheLayerHeader Read(ref RcByteBuffer data, bool cCompatibility)
         {
             DtTileCacheLayerHeader header = new DtTileCacheLayerHeader();
             header.magic = data.ReadInt32();

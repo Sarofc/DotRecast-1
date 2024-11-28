@@ -242,7 +242,8 @@ namespace DotRecast.Detour.TileCache
             // Make sure the data is in right format.
             RcByteBuffer buf = new RcByteBuffer(data);
             buf.Order(m_storageParams.Order);
-            DtTileCacheLayerHeader header = DtTileCacheLayerHeaderReader.Read(ref buf, m_storageParams.Compatibility);
+            var reader = new DtTileCacheLayerHeaderReader();
+            DtTileCacheLayerHeader header = reader.Read(ref buf, m_storageParams.Compatibility);
             // Make sure the location is free.
             if (GetTileAt(header.tx, header.ty, header.tlayer) != null)
             {
@@ -436,9 +437,10 @@ namespace DotRecast.Detour.TileCache
             return m_obstacles[i];
         }
 
-        private List<long> QueryTiles(Vector3 bmin, Vector3 bmax)
+        private void QueryTiles(Vector3 bmin, Vector3 bmax, List<long> results)
         {
-            List<long> results = new List<long>();
+            results.Clear();
+
             float tw = m_params.width * m_params.cs;
             float th = m_params.height * m_params.cs;
             int tx0 = (int)MathF.Floor((bmin.X - m_params.orig.X) / tw);
@@ -463,8 +465,6 @@ namespace DotRecast.Detour.TileCache
                     }
                 }
             }
-
-            return results;
         }
 
         /**
@@ -500,7 +500,7 @@ namespace DotRecast.Detour.TileCache
                         Vector3 bmin = new Vector3();
                         Vector3 bmax = new Vector3();
                         GetObstacleBounds(ob, ref bmin, ref bmax);
-                        ob.touched = QueryTiles(bmin, bmax);
+                        QueryTiles(bmin, bmax, ob.touched);
                         // Add tiles to update list.
                         ob.pending.Clear();
                         foreach (long j in ob.touched)

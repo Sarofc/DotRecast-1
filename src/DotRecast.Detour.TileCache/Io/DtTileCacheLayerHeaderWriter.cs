@@ -24,7 +24,7 @@ using DotRecast.Detour.Io;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public class DtTileCacheLayerHeaderWriter
+    public struct DtTileCacheLayerHeaderWriter
     {
         public void Write(BinaryWriter stream, DtTileCacheLayerHeader header, RcByteOrder order, bool cCompatibility)
         {

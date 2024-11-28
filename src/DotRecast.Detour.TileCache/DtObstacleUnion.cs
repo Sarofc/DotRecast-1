@@ -18,31 +18,39 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace DotRecast.Detour.TileCache
 {
-    public class DtTileCacheObstacle
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct DtObstacleUnion
     {
-        public readonly int index;
+        [FieldOffset(0)]
+        public DtObstacleCylinder cylinder;
+        [FieldOffset(0)]
+        public DtObstacleBox box;
+        [FieldOffset(0)]
+        public DtObstacleOrientedBox orientedBox;
+    }
 
-        private DtObstacleUnion union;
+    public struct DtObstacleCylinder
+    {
+        public Vector3 pos;
+        public float radius;
+        public float height;
+    }
 
-        public ref DtObstacleCylinder cylinder => ref union.cylinder;
-        public ref DtObstacleBox box => ref union.box;
-        public ref DtObstacleOrientedBox orientedBox => ref union.orientedBox;
+    public struct DtObstacleOrientedBox
+    {
+        public Vector3 center;
+        public Vector3 extents;
+        public Vector2 rotAux; // { Cos(0.5f*angle)*Sin(-0.5f*angle); Cos(0.5f*angle)*Cos(0.5f*angle) - 0.5 } 
+    }
 
-        public List<long> touched = new List<long>();
-        public readonly List<long> pending = new List<long>();
-        public int salt;
-        public DtTileCacheObstacleType type;
-        public DtObstacleState state = DtObstacleState.DT_OBSTACLE_EMPTY;
-        public DtTileCacheObstacle next;
-
-        public DtTileCacheObstacle(int index)
-        {
-            this.index = index;
-            salt = 1;
-        }
+    public struct DtObstacleBox
+    {
+        public Vector3 bmin;
+        public Vector3 bmax;
     }
 }
