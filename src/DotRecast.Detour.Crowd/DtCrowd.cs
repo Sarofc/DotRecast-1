@@ -606,6 +606,9 @@ namespace DotRecast.Detour.Crowd
         const int OPT_MAX_AGENTS = 1;
         DtCrowdAgent[] queue = new DtCrowdAgent[Math.Max(PATH_MAX_AGENTS, OPT_MAX_AGENTS)];
 
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         private void UpdateMoveRequest(ReadOnlySpan<DtCrowdAgent> agents, float dt)
         {
             using var timer = m_telemetry.ScopedTimer(DtCrowdTimerLabel.UpdateMoveRequest);
@@ -1069,11 +1072,14 @@ namespace DotRecast.Detour.Crowd
             }
         }
 
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         int GetNeighbours(Vector3 pos, float height, float range, DtCrowdAgent skip, Span<DtCrowdNeighbour> result, int maxResult, ReadOnlySpan<DtCrowdAgent> agents, DtProximityGrid grid)
         {
             int n = 0;
 
-            const int MAX_NEIS = 32;
+            const int MAX_NEIS = 32; // TODO 当agent很多时，越大，越不容易挤在一起，但是会影响性能
             Span<ushort> ids = stackalloc ushort[MAX_NEIS];
 
             int nids = grid.QueryItems(pos.X - range, pos.Z - range, pos.X + range, pos.Z + range,

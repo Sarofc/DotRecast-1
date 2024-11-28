@@ -193,6 +193,9 @@ namespace DotRecast.Detour.Crowd
         ///  @param[in]		pathOptimizationRange	The maximum range to search. [Limit: > 0]
         ///  @param[in]		navquery				The query object used to build the corridor.
         ///  @param[in]		filter					The filter to apply to the operation.	
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public void OptimizePathVisibility(Vector3 next, float pathOptimizationRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Clamp the ray to max distance.
@@ -236,6 +239,9 @@ namespace DotRecast.Detour.Crowd
         /// Attempts to optimize the path using a local area search. (Partial replanning.) 
         ///  @param[in]		navquery	The query object used to build the corridor.
         ///  @param[in]		filter		The filter to apply to the operation.	
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public bool OptimizePathTopology(DtNavMeshQuery navquery, IDtQueryFilter filter, int maxIterations)
         {
             if (m_npath < 3)
@@ -319,6 +325,9 @@ namespace DotRecast.Detour.Crowd
         ///  @param[in]		navquery	The query object used to build the corridor.
         ///  @param[in]		filter		The filter to apply to the operation.
         /// @return Returns true if move succeeded.
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public bool MovePosition(Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Move along navmesh and update new position.
@@ -362,6 +371,9 @@ namespace DotRecast.Detour.Crowd
         ///  @param[in]		navquery	The query object used to build the corridor.
         ///  @param[in]		filter		The filter to apply to the operation.
         /// @return Returns true if move succeeded.
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public bool MoveTargetPosition(Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Move along navmesh and update new position.

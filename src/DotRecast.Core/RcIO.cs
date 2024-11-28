@@ -19,6 +19,7 @@ freely, subject to the following restrictions:
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace DotRecast.Core
 {
@@ -35,6 +36,9 @@ namespace DotRecast.Core
             return new RcByteBuffer(data);
         }
 
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public static byte[] ToByteArray(BinaryReader br)
         {
             using var ms = new MemoryStream();

@@ -1137,6 +1137,9 @@ namespace DotRecast.Detour
             return Vector3.Lerp(pmin, pmax, tmin);
         }
 
+#if NET5_0_OR_GREATER
+        [SkipLocalsInit]
+#endif
         public bool GetPolyHeight(DtMeshTile tile, DtPoly poly, Vector3 pos, out float height)
         {
             height = 0;

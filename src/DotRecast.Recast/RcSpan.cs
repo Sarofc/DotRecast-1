@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
 namespace DotRecast.Recast
 {
     /** Represents a span in a heightfield. */
-    public class RcSpan // TODO build nav_test.obj alloc 6m
+    public class RcSpan // TODO 生成 tilemesh nav_test.obj 分配了 11m 内存
     {
         /** The lower limit of the span. [Limit: &lt; smax] */
         public int smin;

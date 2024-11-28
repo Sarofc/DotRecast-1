@@ -57,10 +57,6 @@ namespace DotRecast.Recast
                 // Create new page.
                 // Allocate memory for the new pool.
                 RcSpanPool spanPool = new RcSpanPool();
-                if (spanPool == null)
-                {
-                    return null;
-                }
 
                 // Add the pool into the list of pools.
                 spanPool.next = heightfield.pools;
@@ -116,7 +112,7 @@ namespace DotRecast.Recast
         {
             // Create the new span.
             RcSpan newSpan = new RcSpan();
-            //RcSpan newSpan = AllocSpan(heightfield); // TODO
+            //RcSpan newSpan = AllocSpan(heightfield); // 效果还没直接new好
             newSpan.smin = min;
             newSpan.smax = max;
             newSpan.area = areaID;
@@ -172,7 +168,7 @@ namespace DotRecast.Recast
                     // Remove the current span since it's now merged with newSpan.
                     // Keep going because there might be other overlapping spans that also need to be merged.
                     RcSpan next = currentSpan.next;
-                    //FreeSpan(heightfield, currentSpan); // TODO
+                    //FreeSpan(heightfield, currentSpan);
                     if (previousSpan != null)
                     {
                         previousSpan.next = next;
