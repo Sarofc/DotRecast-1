@@ -242,7 +242,7 @@ namespace DotRecast.Detour.TileCache
             // Make sure the data is in right format.
             RcByteBuffer buf = new RcByteBuffer(data);
             buf.Order(m_storageParams.Order);
-            DtTileCacheLayerHeader header = DtTileCacheLayerHeaderReader.Read(buf, m_storageParams.Compatibility);
+            DtTileCacheLayerHeader header = DtTileCacheLayerHeaderReader.Read(ref buf, m_storageParams.Compatibility);
             // Make sure the location is free.
             if (GetTileAt(header.tx, header.ty, header.tlayer) != null)
             {

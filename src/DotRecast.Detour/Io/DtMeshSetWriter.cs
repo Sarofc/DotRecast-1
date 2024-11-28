@@ -22,11 +22,8 @@ using System.Numerics;
 
 namespace DotRecast.Detour.Io
 {
-    public class DtMeshSetWriter
+    public struct DtMeshSetWriter
     {
-        private readonly DtMeshDataWriter writer = new DtMeshDataWriter();
-        private readonly DtNavMeshParamWriter paramWriter = new DtNavMeshParamWriter();
-
         public void Write(BinaryWriter stream, DtNavMesh mesh, RcByteOrder order, bool cCompatibility)
         {
             WriteHeader(stream, mesh, order, cCompatibility);
@@ -50,6 +47,7 @@ namespace DotRecast.Detour.Io
             }
 
             RcIO.Write(stream, numTiles, order);
+            DtNavMeshParamWriter paramWriter;
             paramWriter.Write(stream, mesh.GetParams(), order);
             if (!cCompatibility)
             {
@@ -71,6 +69,7 @@ namespace DotRecast.Detour.Io
                 tileHeader.tileRef = mesh.GetTileRef(tile);
                 using MemoryStream msw = new MemoryStream();
                 using BinaryWriter bw = new BinaryWriter(msw);
+                DtMeshDataWriter writer;
                 writer.Write(bw, tile.data, order, cCompatibility);
                 bw.Flush();
                 bw.Close();

@@ -39,7 +39,7 @@ namespace DotRecast.Detour.Dynamic.Io
         public readonly byte[] spanData;
 
         public DtVoxelTile(int tileX, int tileZ, int width, int depth, Vector3 boundsMin, Vector3 boundsMax, float cellSize,
-            float cellHeight, int borderSize, RcByteBuffer buffer)
+            float cellHeight, int borderSize, ref RcByteBuffer buffer)
         {
             this.tileX = tileX;
             this.tileZ = tileZ;
@@ -50,7 +50,7 @@ namespace DotRecast.Detour.Dynamic.Io
             this.cellSize = cellSize;
             this.cellHeight = cellHeight;
             this.borderSize = borderSize;
-            spanData = ToByteArray(buffer, width, depth, DtVoxelFile.PREFERRED_BYTE_ORDER);
+            spanData = ToByteArray(ref buffer, width, depth, DtVoxelFile.PREFERRED_BYTE_ORDER);
         }
 
         public DtVoxelTile(int tileX, int tileZ, RcHeightfield heightfield)
@@ -185,7 +185,7 @@ namespace DotRecast.Detour.Dynamic.Io
             return data;
         }
 
-        private byte[] ToByteArray(RcByteBuffer buf, int width, int height, RcByteOrder order)
+        private byte[] ToByteArray(ref RcByteBuffer buf, int width, int height, RcByteOrder order)
         {
             byte[] data;
             if (buf.Order() == order)
@@ -199,16 +199,16 @@ namespace DotRecast.Detour.Dynamic.Io
                 int position = 0;
                 for (int i = 0; i < l; i++)
                 {
-                    int count = buf.GetShort();
+                    int count = buf.ReadInt16();
                     RcByteUtils.PutShort(count, data, position, order);
                     position += 2;
                     for (int j = 0; j < count; j++)
                     {
-                        RcByteUtils.PutInt(buf.GetInt(), data, position, order);
+                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
                         position += 4;
-                        RcByteUtils.PutInt(buf.GetInt(), data, position, order);
+                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
                         position += 4;
-                        RcByteUtils.PutInt(buf.GetInt(), data, position, order);
+                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
                         position += 4;
                     }
                 }

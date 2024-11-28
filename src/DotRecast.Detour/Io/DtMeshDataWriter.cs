@@ -23,7 +23,7 @@ namespace DotRecast.Detour.Io
 {
     using static DtDetour;
 
-    public class DtMeshDataWriter
+    public struct DtMeshDataWriter
     {
         public void Write(BinaryWriter stream, DtMeshData data, RcByteOrder order, bool cCompatibility)
         {

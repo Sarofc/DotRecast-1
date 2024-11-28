@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace DotRecast.Detour.Io
 {
-    public class DtNavMeshParamWriter
+    public struct DtNavMeshParamWriter
     {
         public void Write(BinaryWriter stream, DtNavMeshParams option, RcByteOrder order)
         {

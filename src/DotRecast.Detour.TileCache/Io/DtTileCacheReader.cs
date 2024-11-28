@@ -38,13 +38,13 @@ namespace DotRecast.Detour.TileCache.Io
         public DtTileCache Read(BinaryReader @is, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
         {
             RcByteBuffer bb = RcIO.ToByteBuffer(@is);
-            return Read(bb, maxVertPerPoly, meshProcessor);
+            return Read(ref bb, maxVertPerPoly, meshProcessor);
         }
 
-        public DtTileCache Read(RcByteBuffer bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
+        public DtTileCache Read(ref RcByteBuffer bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
         {
             DtTileCacheSetHeader header = new DtTileCacheSetHeader();
-            header.magic = bb.GetInt();
+            header.magic = bb.ReadInt32();
             if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
             {
                 header.magic = RcIO.SwapEndianness(header.magic);
@@ -56,7 +56,7 @@ namespace DotRecast.Detour.TileCache.Io
                 bb.Order(bb.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
             }
 
-            header.version = bb.GetInt();
+            header.version = bb.ReadInt32();
             if (header.version != DtTileCacheSetHeader.TILECACHESET_VERSION)
             {
                 if (header.version != DtTileCacheSetHeader.TILECACHESET_VERSION_RECAST4J)
@@ -66,9 +66,9 @@ namespace DotRecast.Detour.TileCache.Io
             }
 
             bool cCompatibility = header.version == DtTileCacheSetHeader.TILECACHESET_VERSION;
-            header.numTiles = bb.GetInt();
-            header.meshParams = paramReader.Read(bb);
-            header.cacheParams = ReadCacheParams(bb, cCompatibility);
+            header.numTiles = bb.ReadInt32();
+            header.meshParams = paramReader.Read(ref bb);
+            header.cacheParams = ReadCacheParams(ref bb, cCompatibility);
             DtNavMesh mesh = new DtNavMesh();
             mesh.Init(header.meshParams, maxVertPerPoly);
             IRcCompressor comp = _compFactory.Create(cCompatibility ? 0 : 1);
@@ -77,8 +77,8 @@ namespace DotRecast.Detour.TileCache.Io
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {
-                long tileRef = bb.GetInt();
-                int dataSize = bb.GetInt();
+                long tileRef = bb.ReadInt32();
+                int dataSize = bb.ReadInt32();
                 if (tileRef == 0 || dataSize == 0)
                 {
                     break;
@@ -95,24 +95,24 @@ namespace DotRecast.Detour.TileCache.Io
             return tc;
         }
 
-        private DtTileCacheParams ReadCacheParams(RcByteBuffer bb, bool cCompatibility)
+        private DtTileCacheParams ReadCacheParams(ref RcByteBuffer bb, bool cCompatibility)
         {
             DtTileCacheParams option = new DtTileCacheParams();
 
-            option.orig.X = bb.GetFloat();
-            option.orig.Y = bb.GetFloat();
-            option.orig.Z = bb.GetFloat();
+            option.orig.X = bb.ReadSingle();
+            option.orig.Y = bb.ReadSingle();
+            option.orig.Z = bb.ReadSingle();
 
-            option.cs = bb.GetFloat();
-            option.ch = bb.GetFloat();
-            option.width = bb.GetInt();
-            option.height = bb.GetInt();
-            option.walkableHeight = bb.GetFloat();
-            option.walkableRadius = bb.GetFloat();
-            option.walkableClimb = bb.GetFloat();
-            option.maxSimplificationError = bb.GetFloat();
-            option.maxTiles = bb.GetInt();
-            option.maxObstacles = bb.GetInt();
+            option.cs = bb.ReadSingle();
+            option.ch = bb.ReadSingle();
+            option.width = bb.ReadInt32();
+            option.height = bb.ReadInt32();
+            option.walkableHeight = bb.ReadSingle();
+            option.walkableRadius = bb.ReadSingle();
+            option.walkableClimb = bb.ReadSingle();
+            option.maxSimplificationError = bb.ReadSingle();
+            option.maxTiles = bb.ReadInt32();
+            option.maxObstacles = bb.ReadInt32();
             return option;
         }
     }

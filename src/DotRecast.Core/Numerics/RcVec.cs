@@ -9,29 +9,11 @@ namespace DotRecast.Core
         public const float EPSILON = 1e-6f;
         public static readonly float EQUAL_THRESHOLD = RcMath.Sqr(1.0f / 16384.0f);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 Create(ReadOnlySpan<float> values)
-        {
-#if NET8_0_OR_GREATER
-            return new Vector3(values);
-#else
-            return new Vector3(values[0], values[1], values[2]);
-#endif
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static Vector3 Create(float* values)
-        {
-            return *(Vector3*)(values);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe static Vector3 Create(float* values, int n)
         {
             return *(Vector3*)(values + n);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Create(ReadOnlySpan<float> values, int n)
         {
 #if NET8_0_OR_GREATER
@@ -54,15 +36,11 @@ namespace DotRecast.Core
             return d < EQUAL_THRESHOLD;
         }
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot2(Vector3 a, Vector3 b)
         {
             return a.X * b.X + a.Z * b.Z;
         }
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DistSq2(ReadOnlySpan<float> verts, int p, int q)
         {
             float dx = verts[q + 0] - verts[p + 0];
@@ -70,13 +48,11 @@ namespace DotRecast.Core
             return dx * dx + dy * dy;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dist2(ReadOnlySpan<float> verts, int p, int q)
         {
             return MathF.Sqrt(DistSq2(verts, p, q));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DistSq2(Vector3 p, Vector3 q)
         {
             float dx = q.X - p.X;
@@ -84,13 +60,11 @@ namespace DotRecast.Core
             return dx * dx + dy * dy;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dist2(Vector3 p, Vector3 q)
         {
             return MathF.Sqrt(DistSq2(p, q));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Cross2(ReadOnlySpan<float> verts, int p1, int p2, int p3)
         {
             float u1 = verts[p2 + 0] - verts[p1 + 0];
@@ -100,7 +74,6 @@ namespace DotRecast.Core
             return u1 * v2 - v1 * u2;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Cross2(Vector3 p1, Vector3 p2, Vector3 p3)
         {
             float u1 = p2.X - p1.X;
@@ -110,21 +83,6 @@ namespace DotRecast.Core
             return u1 * v2 - v1 * u2;
         }
 
-        /// Derives the dot product of two vectors on the xz-plane. (@p u . @p v)
-        /// @param[in] u A vector [(x, y, z)]
-        /// @param[in] v A vector [(x, y, z)]
-        /// @return The dot product on the xz-plane.
-        ///
-        /// The vectors are projected onto the xz-plane, so the y-values are
-        /// ignored.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Dot2D(this Vector3 @this, Vector3 v)
-        {
-            return @this.X * v.X +
-                   @this.Z * v.Z;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Cross(Span<float> dst, ReadOnlySpan<float> v1, ReadOnlySpan<float> v2)
         {
             dst[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -132,7 +90,6 @@ namespace DotRecast.Core
             dst[2] = v1[0] * v2[1] - v1[1] * v2[0];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Copy(Span<float> dst, ReadOnlySpan<float> src)
         {
             dst[0] = src[0];
@@ -140,7 +97,6 @@ namespace DotRecast.Core
             dst[2] = src[2];
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Copy(Span<float> dst, int n, ReadOnlySpan<float> src, int m)
         {
             dst[n + 0] = src[m + 0];
@@ -152,7 +108,6 @@ namespace DotRecast.Core
         /// @param[in] v1 A point. [(x, y, z)]
         /// @param[in] v2 A point. [(x, y, z)]
         /// @return The distance between the two points.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DistanceSquared(Vector3 v1, ReadOnlySpan<float> v2, int i)
         {
             float dx = v2[i] - v1.X;
@@ -164,7 +119,6 @@ namespace DotRecast.Core
         /// Normalizes the vector if the length is greater than zero.
         /// If the magnitude is zero, the vector is unchanged.
         /// @param[in,out]	v	The vector to normalize. [(x, y, z)]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 SafeNormalize(Vector3 v)
         {
             float sqMag = RcMath.Sqr(v.X) + RcMath.Sqr(v.Y) + RcMath.Sqr(v.Z);
@@ -188,7 +142,6 @@ namespace DotRecast.Core
         ///
         /// The vectors are projected onto the xz-plane, so the y-values are
         /// ignored.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dist2D(Vector3 v1, Vector3 v2)
         {
             float dx = v2.X - v1.X;
@@ -200,7 +153,6 @@ namespace DotRecast.Core
         ///  @param[in]		v1	A point. [(x, y, z)]
         ///  @param[in]		v2	A point. [(x, y, z)]
         /// @return The square of the distance between the point on the xz-plane.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dist2DSqr(Vector3 v1, Vector3 v2)
         {
             float dx = v2.X - v1.X;
@@ -208,7 +160,6 @@ namespace DotRecast.Core
             return dx * dx + dz * dz;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dist2DSqr(Vector3 p, ReadOnlySpan<float> verts, int i)
         {
             float dx = verts[i] - p.X;
@@ -223,7 +174,6 @@ namespace DotRecast.Core
         ///
         /// The vectors are projected onto the xz-plane, so the y-values are
         /// ignored.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Perp2D(Vector3 u, Vector3 v)
         {
             return u.Z * v.X - u.X * v.Z;
@@ -233,7 +183,6 @@ namespace DotRecast.Core
         /// @param[in] v A point. [(x, y, z)]
         /// @return True if all of the point's components are finite, i.e. not NaN
         /// or any of the infinities.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsFinite(this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
@@ -241,13 +190,11 @@ namespace DotRecast.Core
 
         /// Checks that the specified vector's 2D components are finite.
         /// @param[in] v A point. [(x, y, z)]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsFinite2D(this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Z);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float PerpXZ(Vector3 a, Vector3 b)
         {
             return (a.X * b.Z) - (a.Z * b.X);
@@ -259,7 +206,6 @@ namespace DotRecast.Core
         /// @param[in] v1 The starting vector.
         /// @param[in] v2 The destination vector.
         /// @param[in] t The interpolation factor. [Limits: 0 <= value <= 1.0]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Lerp(ReadOnlySpan<float> verts, int v1, int v2, float t)
         {
             return new Vector3(
@@ -274,7 +220,6 @@ namespace DotRecast.Core
         /// @param[in] v1 The base vector. [(x, y, z)]
         /// @param[in] v2 The vector to scale and add to @p v1. [(x, y, z)]
         /// @param[in] s The amount to scale @p v2 by before adding to @p v1.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Mad(Vector3 v1, Vector3 v2, float s)
         {
             return new Vector3()

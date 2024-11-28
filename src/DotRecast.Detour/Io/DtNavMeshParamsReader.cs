@@ -2,18 +2,18 @@ using DotRecast.Core;
 
 namespace DotRecast.Detour.Io
 {
-    public class DtNavMeshParamsReader
+    public struct DtNavMeshParamsReader
     {
-        public DtNavMeshParams Read(RcByteBuffer bb)
+        public DtNavMeshParams Read(ref RcByteBuffer bb)
         {
             DtNavMeshParams option = new DtNavMeshParams();
-            option.orig.X = bb.GetFloat();
-            option.orig.Y = bb.GetFloat();
-            option.orig.Z = bb.GetFloat();
-            option.tileWidth = bb.GetFloat();
-            option.tileHeight = bb.GetFloat();
-            option.maxTiles = bb.GetInt();
-            option.maxPolys = bb.GetInt();
+            option.orig.X = bb.ReadSingle();
+            option.orig.Y = bb.ReadSingle();
+            option.orig.Z = bb.ReadSingle();
+            option.tileWidth = bb.ReadSingle();
+            option.tileHeight = bb.ReadSingle();
+            option.maxTiles = bb.ReadInt32();
+            option.maxPolys = bb.ReadInt32();
             return option;
         }
     }

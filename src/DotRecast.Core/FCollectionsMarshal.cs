@@ -10,7 +10,6 @@ namespace DotRecast.Core
         /// <summary>
         /// similar as AsSpan but modify size to create fixed-size span.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Span<T> CreateSpan<T>(List<T> list, int count)
         {
 #if NET8_0_OR_GREATER
@@ -30,7 +29,6 @@ namespace DotRecast.Core
         /// <summary>
         /// similar as AsSpan but modify size to create fixed-size span.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Span<T> AsSpan<T>(List<T> list)
         {
 #if NET6_0_OR_GREATER

@@ -27,14 +27,13 @@ namespace DotRecast.Detour.Test.Io;
 
 public class MeshSetReaderTest
 {
-    private readonly DtMeshSetReader reader = new DtMeshSetReader();
-
     [Test]
     public void TestNavmesh()
     {
         byte[] @is = RcIO.ReadFileIfFound("all_tiles_navmesh.bin");
         using var ms = new MemoryStream(@is);
         using var br = new BinaryReader(ms);
+        DtMeshSetReader reader = new DtMeshSetReader();
         DtNavMesh mesh = reader.Read(br, 6);
         Assert.That(mesh.GetMaxTiles(), Is.EqualTo(128));
         Assert.That(mesh.GetParams().maxPolys, Is.EqualTo(0x8000));
@@ -72,6 +71,7 @@ public class MeshSetReaderTest
         using var ms = new MemoryStream(@is);
         using var br = new BinaryReader(ms);
 
+        DtMeshSetReader reader = new DtMeshSetReader();
         DtNavMesh mesh = reader.Read(br, 6);
         Assert.That(mesh.GetMaxTiles(), Is.EqualTo(128));
         Assert.That(mesh.GetParams().maxPolys, Is.EqualTo(0x8000));
@@ -109,6 +109,7 @@ public class MeshSetReaderTest
         using var ms = new MemoryStream(@is);
         using var br = new BinaryReader(ms);
 
+        DtMeshSetReader reader = new DtMeshSetReader();
         DtNavMesh mesh = reader.Read32Bit(br, 6);
         Assert.That(mesh.GetMaxTiles(), Is.EqualTo(128));
         Assert.That(mesh.GetParams().maxPolys, Is.EqualTo(0x8000));

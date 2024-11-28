@@ -3,13 +3,13 @@ using System.Buffers.Binary;
 
 namespace DotRecast.Core
 {
-    public class RcByteBuffer
+    public ref struct RcByteBuffer
     {
         private RcByteOrder _order;
-        private byte[] _bytes;
+        private Span<byte> _bytes;
         private int _position;
 
-        public RcByteBuffer(byte[] bytes)
+        public RcByteBuffer(Span<byte> bytes)
         {
             _order = BitConverter.IsLittleEndian
                 ? RcByteOrder.LITTLE_ENDIAN
@@ -56,16 +56,16 @@ namespace DotRecast.Core
             var nextPos = _position + length;
             (nextPos, _position) = (_position, nextPos);
 
-            return _bytes.AsSpan(nextPos, length);
+            return _bytes.Slice(nextPos, length);
         }
 
-        public byte Get()
+        public byte ReadByte()
         {
             var span = ReadBytes(1);
             return span[0];
         }
 
-        public short GetShort()
+        public short ReadInt16()
         {
             var span = ReadBytes(2);
             if (_order == RcByteOrder.BIG_ENDIAN)
@@ -79,7 +79,7 @@ namespace DotRecast.Core
         }
 
 
-        public int GetInt()
+        public int ReadInt32()
         {
             var span = ReadBytes(4);
             if (_order == RcByteOrder.BIG_ENDIAN)
@@ -92,7 +92,7 @@ namespace DotRecast.Core
             }
         }
 
-        public float GetFloat()
+        public float ReadSingle()
         {
             var span = ReadBytes(4);
             if (_order == RcByteOrder.BIG_ENDIAN && BitConverter.IsLittleEndian)
@@ -107,7 +107,7 @@ namespace DotRecast.Core
             return BitConverter.ToSingle(span);
         }
 
-        public long GetLong()
+        public long ReadInt64()
         {
             var span = ReadBytes(8);
             if (_order == RcByteOrder.BIG_ENDIAN)
@@ -118,25 +118,6 @@ namespace DotRecast.Core
             {
                 return BinaryPrimitives.ReadInt64LittleEndian(span);
             }
-        }
-
-        public void PutFloat(float v)
-        {
-            // if (_order == ByteOrder.BIG_ENDIAN)
-            // {
-            //     BinaryPrimitives.WriteInt32BigEndian(_bytes[_position]);
-            // }
-            // else
-            // {
-            //     BinaryPrimitives.ReadInt64LittleEndian(span);
-            // }
-
-            // ?
-        }
-
-        public void PutInt(int v)
-        {
-            // ?
         }
     }
 }

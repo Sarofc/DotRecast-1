@@ -31,8 +31,8 @@ public class RcIoTests
             var byteBuffer = RcIO.ToByteBuffer(br);
             byteBuffer.Order(RcByteOrder.LITTLE_ENDIAN);
 
-            Assert.That(byteBuffer.GetLong(), Is.EqualTo(tileRef));
-            Assert.That(byteBuffer.GetInt(), Is.EqualTo(dataSize));
+            Assert.That(byteBuffer.ReadInt64(), Is.EqualTo(tileRef));
+            Assert.That(byteBuffer.ReadInt32(), Is.EqualTo(dataSize));
         }
     }
 }

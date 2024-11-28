@@ -25,39 +25,39 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public static class DtTileCacheLayerHeaderReader
     {
-        public static DtTileCacheLayerHeader Read(RcByteBuffer data, bool cCompatibility)
+        public static DtTileCacheLayerHeader Read(ref RcByteBuffer data, bool cCompatibility)
         {
             DtTileCacheLayerHeader header = new DtTileCacheLayerHeader();
-            header.magic = data.GetInt();
-            header.version = data.GetInt();
+            header.magic = data.ReadInt32();
+            header.version = data.ReadInt32();
 
             if (header.magic != DtTileCacheLayerHeader.DT_TILECACHE_MAGIC)
                 throw new IOException("Invalid magic");
             if (header.version != DtTileCacheLayerHeader.DT_TILECACHE_VERSION)
                 throw new IOException("Invalid version");
 
-            header.tx = data.GetInt();
-            header.ty = data.GetInt();
-            header.tlayer = data.GetInt();
+            header.tx = data.ReadInt32();
+            header.ty = data.ReadInt32();
+            header.tlayer = data.ReadInt32();
 
-            header.bmin.X = data.GetFloat();
-            header.bmin.Y = data.GetFloat();
-            header.bmin.Z = data.GetFloat();
-            header.bmax.X = data.GetFloat();
-            header.bmax.Y = data.GetFloat();
-            header.bmax.Z = data.GetFloat();
+            header.bmin.X = data.ReadSingle();
+            header.bmin.Y = data.ReadSingle();
+            header.bmin.Z = data.ReadSingle();
+            header.bmax.X = data.ReadSingle();
+            header.bmax.Y = data.ReadSingle();
+            header.bmax.Z = data.ReadSingle();
 
-            header.hmin = data.GetShort() & 0xFFFF;
-            header.hmax = data.GetShort() & 0xFFFF;
-            header.width = data.Get() & 0xFF;
-            header.height = data.Get() & 0xFF;
-            header.minx = data.Get() & 0xFF;
-            header.maxx = data.Get() & 0xFF;
-            header.miny = data.Get() & 0xFF;
-            header.maxy = data.Get() & 0xFF;
+            header.hmin = data.ReadInt16() & 0xFFFF;
+            header.hmax = data.ReadInt16() & 0xFFFF;
+            header.width = data.ReadByte() & 0xFF;
+            header.height = data.ReadByte() & 0xFF;
+            header.minx = data.ReadByte() & 0xFF;
+            header.maxx = data.ReadByte() & 0xFF;
+            header.miny = data.ReadByte() & 0xFF;
+            header.maxy = data.ReadByte() & 0xFF;
             if (cCompatibility)
             {
-                data.GetShort(); // C struct padding
+                data.ReadInt16(); // C struct padding
             }
 
             return header;

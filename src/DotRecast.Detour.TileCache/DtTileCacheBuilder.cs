@@ -1961,7 +1961,7 @@ namespace DotRecast.Detour.TileCache
             DtTileCacheLayer layer = new DtTileCacheLayer();
             try
             {
-                layer.header = DtTileCacheLayerHeaderReader.Read(buf, cCompatibility);
+                layer.header = DtTileCacheLayerHeaderReader.Read(ref buf, cCompatibility);
             }
             catch (IOException e)
             {

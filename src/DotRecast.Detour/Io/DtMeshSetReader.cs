@@ -24,44 +24,44 @@ namespace DotRecast.Detour.Io
 {
     using static DtDetour;
 
-    public class DtMeshSetReader
+    public struct DtMeshSetReader
     {
-        private readonly DtMeshDataReader meshReader = new DtMeshDataReader();
-        private readonly DtNavMeshParamsReader paramReader = new DtNavMeshParamsReader();
-
         public DtNavMesh Read(BinaryReader @is, int maxVertPerPoly)
         {
-            return Read(RcIO.ToByteBuffer(@is), maxVertPerPoly, false);
+            var bb = RcIO.ToByteBuffer(@is);
+            return Read(ref bb, maxVertPerPoly, false);
         }
 
-        public DtNavMesh Read(RcByteBuffer bb, int maxVertPerPoly)
+        public DtNavMesh Read(ref RcByteBuffer bb, int maxVertPerPoly)
         {
-            return Read(bb, maxVertPerPoly, false);
+            return Read(ref bb, maxVertPerPoly, false);
         }
 
         public DtNavMesh Read32Bit(BinaryReader @is, int maxVertPerPoly)
         {
-            return Read(RcIO.ToByteBuffer(@is), maxVertPerPoly, true);
+            var bb = RcIO.ToByteBuffer(@is);
+            return Read(ref bb, maxVertPerPoly, true);
         }
 
-        public DtNavMesh Read32Bit(RcByteBuffer bb, int maxVertPerPoly)
+        public DtNavMesh Read32Bit(ref RcByteBuffer bb, int maxVertPerPoly)
         {
-            return Read(bb, maxVertPerPoly, true);
+            return Read(ref bb, maxVertPerPoly, true);
         }
 
         public DtNavMesh Read(BinaryReader @is)
         {
-            return Read(RcIO.ToByteBuffer(@is));
+            var bb = RcIO.ToByteBuffer(@is);
+            return Read(ref bb);
         }
 
-        public DtNavMesh Read(RcByteBuffer bb)
+        public DtNavMesh Read(ref RcByteBuffer bb)
         {
-            return Read(bb, -1, false);
+            return Read(ref bb, -1, false);
         }
 
-        DtNavMesh Read(RcByteBuffer bb, int maxVertPerPoly, bool is32Bit)
+        DtNavMesh Read(ref RcByteBuffer bb, int maxVertPerPoly, bool is32Bit)
         {
-            NavMeshSetHeader header = ReadHeader(bb, maxVertPerPoly);
+            NavMeshSetHeader header = ReadHeader(ref bb, maxVertPerPoly);
             if (header.maxVertsPerPoly <= 0)
             {
                 throw new IOException("Invalid number of verts per poly " + header.maxVertsPerPoly);
@@ -70,14 +70,14 @@ namespace DotRecast.Detour.Io
             bool cCompatibility = header.version == NavMeshSetHeader.NAVMESHSET_VERSION;
             DtNavMesh mesh = new DtNavMesh();
             mesh.Init(header.option, header.maxVertsPerPoly);
-            ReadTiles(bb, is32Bit, ref header, cCompatibility, mesh);
+            ReadTiles(ref bb, is32Bit, ref header, cCompatibility, mesh);
             return mesh;
         }
 
-        private NavMeshSetHeader ReadHeader(RcByteBuffer bb, int maxVertsPerPoly)
+        private NavMeshSetHeader ReadHeader(ref RcByteBuffer bb, int maxVertsPerPoly)
         {
             NavMeshSetHeader header = new NavMeshSetHeader();
-            header.magic = bb.GetInt();
+            header.magic = bb.ReadInt32();
             if (header.magic != NavMeshSetHeader.NAVMESHSET_MAGIC)
             {
                 header.magic = RcIO.SwapEndianness(header.magic);
@@ -89,25 +89,26 @@ namespace DotRecast.Detour.Io
                 bb.Order(bb.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
             }
 
-            header.version = bb.GetInt();
+            header.version = bb.ReadInt32();
             if (header.version != NavMeshSetHeader.NAVMESHSET_VERSION && header.version != NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J_1
                                                                       && header.version != NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J)
             {
                 throw new IOException("Invalid version " + header.version);
             }
 
-            header.numTiles = bb.GetInt();
-            header.option = paramReader.Read(bb);
+            header.numTiles = bb.ReadInt32();
+            DtNavMeshParamsReader paramReader;
+            header.option = paramReader.Read(ref bb);
             header.maxVertsPerPoly = maxVertsPerPoly;
             if (header.version == NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J)
             {
-                header.maxVertsPerPoly = bb.GetInt();
+                header.maxVertsPerPoly = bb.ReadInt32();
             }
 
             return header;
         }
 
-        private void ReadTiles(RcByteBuffer bb, bool is32Bit, ref NavMeshSetHeader header, bool cCompatibility, DtNavMesh mesh)
+        private void ReadTiles(ref RcByteBuffer bb, bool is32Bit, ref NavMeshSetHeader header, bool cCompatibility, DtNavMesh mesh)
         {
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
@@ -115,14 +116,14 @@ namespace DotRecast.Detour.Io
                 NavMeshTileHeader tileHeader = new NavMeshTileHeader();
                 if (is32Bit)
                 {
-                    tileHeader.tileRef = Convert32BitRef(bb.GetInt(), header.option);
+                    tileHeader.tileRef = Convert32BitRef(bb.ReadInt32(), header.option);
                 }
                 else
                 {
-                    tileHeader.tileRef = bb.GetLong();
+                    tileHeader.tileRef = bb.ReadInt64();
                 }
 
-                tileHeader.dataSize = bb.GetInt();
+                tileHeader.dataSize = bb.ReadInt32();
                 if (tileHeader.tileRef == 0 || tileHeader.dataSize == 0)
                 {
                     break;
@@ -130,10 +131,11 @@ namespace DotRecast.Detour.Io
 
                 if (cCompatibility && !is32Bit)
                 {
-                    bb.GetInt(); // C struct padding
+                    bb.ReadInt32(); // C struct padding
                 }
 
-                DtMeshData data = meshReader.Read(bb, mesh.GetMaxVertsPerPoly(), is32Bit);
+                DtMeshDataReader meshReader;
+                DtMeshData data = meshReader.Read(ref bb, mesh.GetMaxVertsPerPoly(), is32Bit);
                 mesh.AddTile(data, i, tileHeader.tileRef, out _);
             }
         }

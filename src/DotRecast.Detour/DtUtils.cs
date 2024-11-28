@@ -239,10 +239,10 @@ namespace DotRecast.Detour
         public static Vector2 ProjectPoly(Vector3 axis, Span<float> poly, int npoly)
         {
             float rmin, rmax;
-            rmin = rmax = axis.Dot2D(new Vector3(poly));
+            rmin = rmax = RcVec.Dot2(axis, new Vector3(poly));
             for (int i = 1; i < npoly; ++i)
             {
-                float d = axis.Dot2D(RcVec.Create(poly, i * 3));
+                float d = RcVec.Dot2(axis, RcVec.Create(poly, i * 3));
                 rmin = Math.Min(rmin, d);
                 rmax = Math.Max(rmax, d);
             }

@@ -37,7 +37,7 @@ namespace DotRecast.Detour.Dynamic.Io
         {
             RcByteBuffer buf = RcIO.ToByteBuffer(stream);
             DtVoxelFile file = new DtVoxelFile();
-            int magic = buf.GetInt();
+            int magic = buf.ReadInt32();
             if (magic != DtVoxelFile.MAGIC)
             {
                 magic = RcIO.SwapEndianness(magic);
@@ -49,24 +49,24 @@ namespace DotRecast.Detour.Dynamic.Io
                 buf.Order(buf.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
             }
 
-            file.version = buf.GetInt();
+            file.version = buf.ReadInt32();
             bool isExportedFromAstar = (file.version & DtVoxelFile.VERSION_EXPORTER_MASK) == 0;
             bool compression = (file.version & DtVoxelFile.VERSION_COMPRESSION_MASK) == DtVoxelFile.VERSION_COMPRESSION_LZ4;
-            file.walkableRadius = buf.GetFloat();
-            file.walkableHeight = buf.GetFloat();
-            file.walkableClimb = buf.GetFloat();
-            file.walkableSlopeAngle = buf.GetFloat();
-            file.cellSize = buf.GetFloat();
-            file.maxSimplificationError = buf.GetFloat();
-            file.maxEdgeLen = buf.GetFloat();
-            file.minRegionArea = (int)buf.GetFloat();
+            file.walkableRadius = buf.ReadSingle();
+            file.walkableHeight = buf.ReadSingle();
+            file.walkableClimb = buf.ReadSingle();
+            file.walkableSlopeAngle = buf.ReadSingle();
+            file.cellSize = buf.ReadSingle();
+            file.maxSimplificationError = buf.ReadSingle();
+            file.maxEdgeLen = buf.ReadSingle();
+            file.minRegionArea = (int)buf.ReadSingle();
             if (!isExportedFromAstar)
             {
-                file.regionMergeArea = buf.GetFloat();
-                file.vertsPerPoly = buf.GetInt();
-                file.buildMeshDetail = buf.Get() != 0;
-                file.detailSampleDistance = buf.GetFloat();
-                file.detailSampleMaxError = buf.GetFloat();
+                file.regionMergeArea = buf.ReadSingle();
+                file.vertsPerPoly = buf.ReadInt32();
+                file.buildMeshDetail = buf.ReadByte() != 0;
+                file.detailSampleDistance = buf.ReadSingle();
+                file.detailSampleMaxError = buf.ReadSingle();
             }
             else
             {
@@ -77,18 +77,18 @@ namespace DotRecast.Detour.Dynamic.Io
                 file.detailSampleMaxError = file.maxSimplificationError * 0.8f;
             }
 
-            file.useTiles = buf.Get() != 0;
-            file.tileSizeX = buf.GetInt();
-            file.tileSizeZ = buf.GetInt();
-            file.rotation.X = buf.GetFloat();
-            file.rotation.Y = buf.GetFloat();
-            file.rotation.Z = buf.GetFloat();
-            file.bounds[0] = buf.GetFloat();
-            file.bounds[1] = buf.GetFloat();
-            file.bounds[2] = buf.GetFloat();
-            file.bounds[3] = buf.GetFloat();
-            file.bounds[4] = buf.GetFloat();
-            file.bounds[5] = buf.GetFloat();
+            file.useTiles = buf.ReadByte() != 0;
+            file.tileSizeX = buf.ReadInt32();
+            file.tileSizeZ = buf.ReadInt32();
+            file.rotation.X = buf.ReadSingle();
+            file.rotation.Y = buf.ReadSingle();
+            file.rotation.Z = buf.ReadSingle();
+            file.bounds[0] = buf.ReadSingle();
+            file.bounds[1] = buf.ReadSingle();
+            file.bounds[2] = buf.ReadSingle();
+            file.bounds[3] = buf.ReadSingle();
+            file.bounds[4] = buf.ReadSingle();
+            file.bounds[5] = buf.ReadSingle();
             if (isExportedFromAstar)
             {
                 // bounds are saved as center + size
@@ -100,22 +100,22 @@ namespace DotRecast.Detour.Dynamic.Io
                 file.bounds[5] += file.bounds[2];
             }
 
-            int tileCount = buf.GetInt();
+            int tileCount = buf.ReadInt32();
             for (int tile = 0; tile < tileCount; tile++)
             {
-                int tileX = buf.GetInt();
-                int tileZ = buf.GetInt();
-                int width = buf.GetInt();
-                int depth = buf.GetInt();
-                int borderSize = buf.GetInt();
+                int tileX = buf.ReadInt32();
+                int tileZ = buf.ReadInt32();
+                int width = buf.ReadInt32();
+                int depth = buf.ReadInt32();
+                int borderSize = buf.ReadInt32();
                 Vector3 boundsMin = new Vector3();
-                boundsMin.X = buf.GetFloat();
-                boundsMin.Y = buf.GetFloat();
-                boundsMin.Z = buf.GetFloat();
+                boundsMin.X = buf.ReadSingle();
+                boundsMin.Y = buf.ReadSingle();
+                boundsMin.Z = buf.ReadSingle();
                 Vector3 boundsMax = new Vector3();
-                boundsMax.X = buf.GetFloat();
-                boundsMax.Y = buf.GetFloat();
-                boundsMax.Z = buf.GetFloat();
+                boundsMax.X = buf.ReadSingle();
+                boundsMax.Y = buf.ReadSingle();
+                boundsMax.Z = buf.ReadSingle();
                 if (isExportedFromAstar)
                 {
                     // bounds are local
@@ -127,9 +127,9 @@ namespace DotRecast.Detour.Dynamic.Io
                     boundsMax.Z += file.bounds[2];
                 }
 
-                float cellSize = buf.GetFloat();
-                float cellHeight = buf.GetFloat();
-                int voxelSize = buf.GetInt();
+                float cellSize = buf.ReadSingle();
+                float cellHeight = buf.ReadSingle();
+                int voxelSize = buf.ReadInt32();
                 int position = buf.Position();
                 byte[] bytes = buf.ReadBytes(voxelSize).ToArray();
                 if (compression)
@@ -139,7 +139,7 @@ namespace DotRecast.Detour.Dynamic.Io
 
                 RcByteBuffer data = new RcByteBuffer(bytes);
                 data.Order(buf.Order());
-                file.AddTile(new DtVoxelTile(tileX, tileZ, width, depth, boundsMin, boundsMax, cellSize, cellHeight, borderSize, data));
+                file.AddTile(new DtVoxelTile(tileX, tileZ, width, depth, boundsMin, boundsMax, cellSize, cellHeight, borderSize, ref data));
                 buf.Position(position + voxelSize);
             }
 
