@@ -30,13 +30,13 @@ namespace DotRecast.Core
         ///
         /// Basically, this function will return true if the specified points are
         /// close enough to eachother to be considered colocated.
-        public static bool Equal(Vector3 p0, Vector3 p1)
+        public static bool Equal(in Vector3 p0, in Vector3 p1)
         {
             float d = Vector3.DistanceSquared(p0, p1);
             return d < EQUAL_THRESHOLD;
         }
 
-        public static float Dot2(Vector3 a, Vector3 b)
+        public static float Dot2(in Vector3 a, in Vector3 b)
         {
             return a.X * b.X + a.Z * b.Z;
         }
@@ -53,14 +53,14 @@ namespace DotRecast.Core
             return MathF.Sqrt(DistSq2(verts, p, q));
         }
 
-        public static float DistSq2(Vector3 p, Vector3 q)
+        public static float DistSq2(in Vector3 p, in Vector3 q)
         {
             float dx = q.X - p.X;
             float dy = q.Z - p.Z;
             return dx * dx + dy * dy;
         }
 
-        public static float Dist2(Vector3 p, Vector3 q)
+        public static float Dist2(in Vector3 p, in Vector3 q)
         {
             return MathF.Sqrt(DistSq2(p, q));
         }
@@ -74,7 +74,7 @@ namespace DotRecast.Core
             return u1 * v2 - v1 * u2;
         }
 
-        public static float Cross2(Vector3 p1, Vector3 p2, Vector3 p3)
+        public static float Cross2(in Vector3 p1, in Vector3 p2, in Vector3 p3)
         {
             float u1 = p2.X - p1.X;
             float v1 = p2.Z - p1.Z;
@@ -108,7 +108,7 @@ namespace DotRecast.Core
         /// @param[in] v1 A point. [(x, y, z)]
         /// @param[in] v2 A point. [(x, y, z)]
         /// @return The distance between the two points.
-        public static float DistanceSquared(Vector3 v1, ReadOnlySpan<float> v2, int i)
+        public static float DistanceSquared(in Vector3 v1, ReadOnlySpan<float> v2, int i)
         {
             float dx = v2[i] - v1.X;
             float dy = v2[i + 1] - v1.Y;
@@ -142,7 +142,7 @@ namespace DotRecast.Core
         ///
         /// The vectors are projected onto the xz-plane, so the y-values are
         /// ignored.
-        public static float Dist2D(Vector3 v1, Vector3 v2)
+        public static float Dist2D(in Vector3 v1, in Vector3 v2)
         {
             float dx = v2.X - v1.X;
             float dz = v2.Z - v1.Z;
@@ -153,14 +153,14 @@ namespace DotRecast.Core
         ///  @param[in]		v1	A point. [(x, y, z)]
         ///  @param[in]		v2	A point. [(x, y, z)]
         /// @return The square of the distance between the point on the xz-plane.
-        public static float Dist2DSqr(Vector3 v1, Vector3 v2)
+        public static float Dist2DSqr(in Vector3 v1, in Vector3 v2)
         {
             float dx = v2.X - v1.X;
             float dz = v2.Z - v1.Z;
             return dx * dx + dz * dz;
         }
 
-        public static float Dist2DSqr(Vector3 p, ReadOnlySpan<float> verts, int i)
+        public static float Dist2DSqr(in Vector3 p, ReadOnlySpan<float> verts, int i)
         {
             float dx = verts[i] - p.X;
             float dz = verts[i + 2] - p.Z;
@@ -174,7 +174,7 @@ namespace DotRecast.Core
         ///
         /// The vectors are projected onto the xz-plane, so the y-values are
         /// ignored.
-        public static float Perp2D(Vector3 u, Vector3 v)
+        public static float Perp2D(in Vector3 u, in Vector3 v)
         {
             return u.Z * v.X - u.X * v.Z;
         }
@@ -183,19 +183,19 @@ namespace DotRecast.Core
         /// @param[in] v A point. [(x, y, z)]
         /// @return True if all of the point's components are finite, i.e. not NaN
         /// or any of the infinities.
-        public static bool IsFinite(this Vector3 v)
+        public static bool IsFinite(ref this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
         }
 
         /// Checks that the specified vector's 2D components are finite.
         /// @param[in] v A point. [(x, y, z)]
-        public static bool IsFinite2D(this Vector3 v)
+        public static bool IsFinite2D(ref this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Z);
         }
 
-        public static float PerpXZ(Vector3 a, Vector3 b)
+        public static float PerpXZ(in Vector3 a, in Vector3 b)
         {
             return (a.X * b.Z) - (a.Z * b.X);
         }
@@ -220,7 +220,7 @@ namespace DotRecast.Core
         /// @param[in] v1 The base vector. [(x, y, z)]
         /// @param[in] v2 The vector to scale and add to @p v1. [(x, y, z)]
         /// @param[in] s The amount to scale @p v2 by before adding to @p v1.
-        public static Vector3 Mad(Vector3 v1, Vector3 v2, float s)
+        public static Vector3 Mad(in Vector3 v1, in Vector3 v2, float s)
         {
             return new Vector3()
             {

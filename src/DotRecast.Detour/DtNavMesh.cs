@@ -1168,7 +1168,7 @@ namespace DotRecast.Detour
             // Find height at the location.
             if (tile.data.detailMeshes != null)
             {
-                ref DtPolyDetail pd = ref tile.data.detailMeshes[ip];
+                ref readonly DtPolyDetail pd = ref tile.data.detailMeshes[ip];
                 Span<Vector3> v = stackalloc Vector3[3];
                 for (int j = 0; j < pd.triCount; ++j)
                 {

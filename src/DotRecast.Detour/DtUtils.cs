@@ -48,18 +48,18 @@ namespace DotRecast.Detour
         public static bool OverlapQuantBounds(Span<int> amin, Span<int> amax, Span<int> bmin, Span<int> bmax)
         {
             bool overlap = true;
-            overlap = (amin[0] > bmax[0] || amax[0] < bmin[0]) ? false : overlap;
-            overlap = (amin[1] > bmax[1] || amax[1] < bmin[1]) ? false : overlap;
-            overlap = (amin[2] > bmax[2] || amax[2] < bmin[2]) ? false : overlap;
+            overlap = amin[0] <= bmax[0] && amax[0] >= bmin[0] && overlap;
+            overlap = amin[1] <= bmax[1] && amax[1] >= bmin[1] && overlap;
+            overlap = amin[2] <= bmax[2] && amax[2] >= bmin[2] && overlap;
             return overlap;
         }
 
         internal unsafe static bool OverlapQuantBounds(Span<int> amin, Span<int> amax, int* bmin, int* bmax)
         {
             bool overlap = true;
-            overlap = (amin[0] > bmax[0] || amax[0] < bmin[0]) ? false : overlap;
-            overlap = (amin[1] > bmax[1] || amax[1] < bmin[1]) ? false : overlap;
-            overlap = (amin[2] > bmax[2] || amax[2] < bmin[2]) ? false : overlap;
+            overlap = amin[0] <= bmax[0] && amax[0] >= bmin[0] && overlap;
+            overlap = amin[1] <= bmax[1] && amax[1] >= bmin[1] && overlap;
+            overlap = amin[2] <= bmax[2] && amax[2] >= bmin[2] && overlap;
             return overlap;
         }
 
@@ -73,15 +73,15 @@ namespace DotRecast.Detour
         public static bool OverlapBounds(Vector3 amin, Vector3 amax, Vector3 bmin, Vector3 bmax)
         {
             bool overlap = true;
-            overlap = (amin.X > bmax.X || amax.X < bmin.X) ? false : overlap;
-            overlap = (amin.Y > bmax.Y || amax.Y < bmin.Y) ? false : overlap;
-            overlap = (amin.Z > bmax.Z || amax.Z < bmin.Z) ? false : overlap;
+            overlap = amin.X <= bmax.X && amax.X >= bmin.X && overlap;
+            overlap = amin.Y <= bmax.Y && amax.Y >= bmin.Y && overlap;
+            overlap = amin.Z <= bmax.Z && amax.Z >= bmin.Z && overlap;
             return overlap;
         }
 
         public static bool OverlapRange(float amin, float amax, float bmin, float bmax, float eps)
         {
-            return ((amin + eps) > bmax || (amax - eps) < bmin) ? false : true;
+            return (amin + eps) <= bmax && (amax - eps) >= bmin;
         }
 
         /// @par
@@ -135,7 +135,7 @@ namespace DotRecast.Detour
         /// @param[in] b Vertex B. [(x, y, z)]
         /// @param[in] c Vertex C. [(x, y, z)]
         /// @return The signed xz-plane area of the triangle.
-        public static float TriArea2D(Span<float> verts, int a, int b, int c)
+        public static float TriArea2D(ReadOnlySpan<float> verts, int a, int b, int c)
         {
             float abx = verts[b] - verts[a];
             float abz = verts[b + 2] - verts[a + 2];
@@ -155,7 +155,7 @@ namespace DotRecast.Detour
 
         // Returns a random point in a convex polygon.
         // Adapted from Graphics Gems article.
-        public static void RandomPointInConvexPoly(Span<float> pts, int npts, Span<float> areas, float s, float t, out Vector3 @out)
+        public static void RandomPointInConvexPoly(ReadOnlySpan<float> pts, int npts, Span<float> areas, float s, float t, out Vector3 @out)
         {
             // Calc triangle araes
             float areasum = 0.0f;

@@ -170,6 +170,7 @@ public static class GizmoRenderer
 
     public static void RenderComposite(RecastDebugDraw debugDraw, RcCompositeGizmo composite)
     {
-        composite.gizmoMeshes.ForEach(g => Render(debugDraw, g));
+        foreach (var g in composite.gizmoMeshes)
+            Render(debugDraw, g);
     }
 }

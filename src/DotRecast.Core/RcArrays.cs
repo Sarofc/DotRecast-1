@@ -1,18 +1,15 @@
 using System;
-using System.Runtime.CompilerServices;
 
 namespace DotRecast.Core
 {
     public static class RcArrays
     {
         // Type Safe Copy
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Copy<T>(T[] sourceArray, long sourceIndex, T[] destinationArray, long destinationIndex, long length)
         {
             Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Copy<T>(Span<T> sourceArray, int sourceIndex, Span<T> destinationArray, int destinationIndex, int length)
         {
             sourceArray.Slice(sourceIndex, length).CopyTo(destinationArray.Slice(destinationIndex));

@@ -100,7 +100,9 @@ public class RcToolsetView : IRcView
 
     public void SetSample(DemoSample sample)
     {
-        tools.ForEach(t => t.SetSample(sample));
-        tools.ForEach(t => t.OnSampleChanged());
+        foreach (var t in tools)
+            t.SetSample(sample);
+        foreach (var t in tools)
+            t.OnSampleChanged();
     }
 }

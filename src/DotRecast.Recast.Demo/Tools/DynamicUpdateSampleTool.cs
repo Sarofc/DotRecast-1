@@ -34,6 +34,7 @@ using ImGuiNET;
 using Serilog;
 using static DotRecast.Recast.Demo.Draw.DebugDraw;
 using static DotRecast.Recast.Demo.Draw.DebugDrawPrimitives;
+using System.Collections.Concurrent;
 
 namespace DotRecast.Recast.Demo.Tools;
 
@@ -117,7 +118,7 @@ public class DynamicUpdateSampleTool : ISampleTool
         if (mode == RcDynamicUpdateToolMode.BUILD)
         {
             const string loadVoxelPopupStrId = "Load Voxels Popup";
-            
+
             bool isLoadVoxelPopup = true;
             if (ImGui.Button("Load Voxels..."))
             {
@@ -178,12 +179,12 @@ public class DynamicUpdateSampleTool : ISampleTool
 
             ImGui.Text("Partitioning");
             ImGui.Separator();
-            RcPartitionType.Values.ForEach(partition =>
+            foreach (var partition in RcPartitionType.Values)
             {
                 var label = partition.Name.Substring(0, 1).ToUpper()
                             + partition.Name.Substring(1).ToLower();
                 ImGui.RadioButton(label, ref partitioning, partition.Value);
-            });
+            }
             ImGui.NewLine();
 
             ImGui.Text("Filtering");

@@ -133,7 +133,7 @@ namespace DotRecast.Detour.Crowd
             }
         }
 
-        private bool SweepCircleCircle(Vector3 c0, float r0, Vector3 v, Vector3 c1, float r1, out float tmin, out float tmax)
+        private static bool SweepCircleCircle(in Vector3 c0, float r0, in Vector3 v, in Vector3 c1, float r1, out float tmin, out float tmax)
         {
             const float EPS = 0.0001f;
 
@@ -162,7 +162,7 @@ namespace DotRecast.Detour.Crowd
             return true;
         }
 
-        private bool IsectRaySeg(Vector3 ap, Vector3 u, Vector3 bp, Vector3 bq, ref float t)
+        static bool IsectRaySeg(in Vector3 ap, in Vector3 u, in Vector3 bp, in Vector3 bq, ref float t)
         {
             Vector3 v = Vector3.Subtract(bq, bp);
             Vector3 w = Vector3.Subtract(ap, bp);
@@ -192,7 +192,7 @@ namespace DotRecast.Detour.Crowd
      * @param minPenalty
      *            threshold penalty for early out
      */
-        private float ProcessSample(Vector3 vcand, float cs, Vector3 pos, float rad, Vector3 vel, Vector3 dvel,
+        private float ProcessSample(in Vector3 vcand, float cs, in Vector3 pos, float rad, in Vector3 vel, in Vector3 dvel,
             float minPenalty, DtObstacleAvoidanceDebugData debug)
         {
             // penalty for straying away from the desired and current velocities
@@ -297,7 +297,7 @@ namespace DotRecast.Detour.Crowd
             return penalty;
         }
 
-        public int SampleVelocityGrid(Vector3 pos, float rad, float vmax, Vector3 vel, Vector3 dvel, out Vector3 nvel,
+        public int SampleVelocityGrid(in Vector3 pos, float rad, float vmax, in Vector3 vel, in Vector3 dvel, out Vector3 nvel,
             DtObstacleAvoidanceParams option, DtObstacleAvoidanceDebugData debug)
         {
             Prepare(pos, dvel);
@@ -341,7 +341,7 @@ namespace DotRecast.Detour.Crowd
         }
 
         // vector normalization that ignores the y-component.
-        void DtNormalize2D(Span<float> v)
+        static void DtNormalize2D(Span<float> v)
         {
             float d = MathF.Sqrt(v[0] * v[0] + v[2] * v[2]);
             if (d == 0)
@@ -352,9 +352,9 @@ namespace DotRecast.Detour.Crowd
         }
 
         // vector normalization that ignores the y-component.
-        Vector3 DtRotate2D(Span<float> v, float ang)
+        static Vector3 DtRotate2D(ReadOnlySpan<float> v, float ang)
         {
-            Vector3 dest = new Vector3();
+            Vector3 dest;
             float c = MathF.Cos(ang);
             float s = MathF.Sin(ang);
             dest.X = v[0] * c - v[2] * s;
@@ -366,7 +366,7 @@ namespace DotRecast.Detour.Crowd
 #if NET5_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        public int SampleVelocityAdaptive(Vector3 pos, float rad, float vmax, Vector3 vel, Vector3 dvel, out Vector3 nvel,
+        public int SampleVelocityAdaptive(in Vector3 pos, float rad, float vmax, in Vector3 vel, in Vector3 dvel, out Vector3 nvel,
             DtObstacleAvoidanceParams option,
             DtObstacleAvoidanceDebugData debug)
         {
@@ -449,8 +449,7 @@ namespace DotRecast.Detour.Crowd
             for (int k = 0; k < depth; ++k)
             {
                 float minPenalty = float.MaxValue;
-                Vector3 bvel = new Vector3();
-                bvel = Vector3.Zero;
+                Vector3 bvel = Vector3.Zero;
 
                 for (int i = 0; i < npat; ++i)
                 {

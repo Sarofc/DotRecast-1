@@ -26,14 +26,6 @@ namespace DotRecast.Core.Collections
             }
         }
 
-        public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
-        {
-            foreach (var item in collection)
-            {
-                action.Invoke(item);
-            }
-        }
-
         public static void Shuffle<T>(this IList<T> list)
         {
             var random = Random.Shared;

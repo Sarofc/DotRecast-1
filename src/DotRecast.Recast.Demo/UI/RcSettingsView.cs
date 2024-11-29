@@ -18,6 +18,7 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Numerics;
 using DotRecast.Core.Collections;
@@ -140,11 +141,11 @@ public class RcSettingsView : IRcView
 
         ImGui.Text("Partitioning");
         ImGui.Separator();
-        RcPartitionType.Values.ForEach(partition =>
+        foreach (var partition in RcPartitionType.Values)
         {
             var label = partition.Name.Substring(0, 1).ToUpper() + partition.Name.Substring(1).ToLower();
             ImGui.RadioButton(label, ref settings.partitioning, partition.Value);
-        });
+        }
         ImGui.NewLine();
 
         ImGui.Text("Filtering");
@@ -230,7 +231,9 @@ public class RcSettingsView : IRcView
         ImGui.Text("Draw");
         ImGui.Separator();
 
-        DrawMode.Values.ForEach(dm => { ImGui.RadioButton(dm.Text, ref drawMode, dm.Idx); });
+        foreach (var dm in DrawMode.Values)
+            ImGui.RadioButton(dm.Text, ref drawMode, dm.Idx);
+
         ImGui.NewLine();
 
         ImGui.Separator();
