@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
-using DotRecast.Detour.Dynamic.Colliders;
 using DotRecast.Recast.Toolset.Builder;
 using Silk.NET.OpenGL;
 

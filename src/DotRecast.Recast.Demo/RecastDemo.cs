@@ -388,8 +388,7 @@ public class RecastDemo : IRecastDemoChannel
             new OffMeshConnectionSampleTool(),
             new ConvexVolumeSampleTool(),
             new CrowdSampleTool(),
-            new CrowdAgentProfilingSampleTool(),
-            new DynamicUpdateSampleTool()
+            new CrowdAgentProfilingSampleTool()
         );
         _toolsetView.SetEnabled(true);
         logView = new RcLogView();

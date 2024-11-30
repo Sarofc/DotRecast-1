@@ -1,5 +1,4 @@
 using System.Numerics;
-using DotRecast.Detour.Dynamic.Colliders;
 
 namespace DotRecast.Recast.Toolset.Gizmos
 {
@@ -26,11 +25,6 @@ namespace DotRecast.Recast.Toolset.Gizmos
         public readonly float[] vertices = new float[8 * 3];
         public readonly Vector3 center;
         public readonly Vector3[] halfEdges;
-
-        public RcBoxGizmo(Vector3 center, Vector3 extent, Vector3 forward, Vector3 up) :
-            this(center, DtBoxCollider.GetHalfEdges(up, forward, extent))
-        {
-        }
 
         public RcBoxGizmo(Vector3 center, Vector3[] halfEdges)
         {
