@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using DotRecast.Core;
-using DotRecast.Core.Collections;
 using System.Numerics;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
@@ -115,6 +114,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             p.Y -= 0.5f;
             return _tc.AddObstacle(p, 1.0f, 2.0f);
+            //return _tc.AddBoxObstacle(p, new Vector3(1, 1, 2), float.DegreesToRadians(35));
         }
 
         public DtTileCache GetTileCache()

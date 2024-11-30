@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DotRecast.Core.Buffers;
-using DotRecast.Core.Collections;
+
 using NUnit.Framework;
 
 namespace DotRecast.Core.Test;
@@ -91,11 +91,11 @@ public class RcCyclicBufferTests
 
         // buffer should have [5,6,7,8,9]
         int x = 5;
-        buffer.ForEach(item =>
+        foreach (var item in buffer)
         {
             Assert.That(item, Is.EqualTo(x));
             x++;
-        });
+        }
     }
 
     [Test]

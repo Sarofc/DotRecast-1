@@ -36,10 +36,11 @@ public class GLCheckerTexture
     {
         if (m_texId != 0)
         {
-            fixed (uint* p = &m_texId)
-            {
-                _gl.DeleteTextures(1, p);
-            }
+            _gl.DeleteTextures(1, ref m_texId);
+            //fixed (uint* p = &m_texId)
+            //{
+            //    _gl.DeleteTextures(1, p);
+            //}
         }
     }
 
@@ -53,10 +54,11 @@ public class GLCheckerTexture
             uint TSIZE = 64;
             int[] data = new int[TSIZE * TSIZE];
 
-            fixed (uint* p = &m_texId)
-            {
-                _gl.GenTextures(1, p);
-            }
+            m_texId = _gl.GenTextures(1);
+            //fixed (uint* p = &m_texId)
+            //{
+            //    _gl.GenTextures(1, p);
+            //}
 
             _gl.BindTexture(GLEnum.Texture2D, m_texId);
 

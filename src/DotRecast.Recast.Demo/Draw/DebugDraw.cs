@@ -139,8 +139,10 @@ public class DebugDraw
             for (int i = 0; i < CYLINDER_NUM_SEG; ++i)
             {
                 float a = (float)(i * MathF.PI * 2 / CYLINDER_NUM_SEG);
-                cylinderDir[i * 2] = MathF.Cos(a);
-                cylinderDir[i * 2 + 1] = MathF.Sin(a);
+
+                var (s, c) = MathF.SinCos(a);
+                cylinderDir[i * 2] = c;
+                cylinderDir[i * 2 + 1] = s;
             }
         }
     }
@@ -398,6 +400,13 @@ public class DebugDraw
         Vertex(x, y + s, z, col);
         Vertex(x, y, z - s, col);
         Vertex(x, y, z + s, col);
+    }
+
+    public void DebugDrawBox(float minx, float miny, float minz, float maxx, float maxy, float maxz, int col)
+    {
+        Span<int> fcol = stackalloc int[6];
+        fcol.Fill(col);
+        DebugDrawBox(minx, miny, minz, maxx, maxy, maxz, fcol);
     }
 
     public void DebugDrawBox(float minx, float miny, float minz, float maxx, float maxy, float maxz, Span<int> fcol)

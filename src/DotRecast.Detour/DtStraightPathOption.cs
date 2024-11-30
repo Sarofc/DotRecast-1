@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using DotRecast.Core;
-using DotRecast.Core.Collections;
 
 namespace DotRecast.Detour
 {

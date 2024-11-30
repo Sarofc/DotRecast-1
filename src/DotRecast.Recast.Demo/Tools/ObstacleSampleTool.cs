@@ -1,4 +1,4 @@
-﻿using DotRecast.Core;
+using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Detour.TileCache;
 using DotRecast.Detour.TileCache.Io.Compress;
@@ -78,8 +78,23 @@ public class ObstacleSampleTool : ISampleTool
             else if (ob.state == DtObstacleState.DT_OBSTACLE_REMOVING)
                 col = DebugDraw.DuRGBA(220, 0, 0, 128);
 
-            dd.DebugDrawCylinder(bmin.X, bmin.Y, bmin.Z, bmax.X, bmax.Y, bmax.Z, col);
-            dd.DebugDrawCylinderWire(bmin.X, bmin.Y, bmin.Z, bmax.X, bmax.Y, bmax.Z, DebugDraw.DuDarkenCol(col), 2);
+            switch (ob.type)
+            {
+                case DtTileCacheObstacleType.DT_OBSTACLE_CYLINDER:
+                    {
+                        dd.DebugDrawCylinder(bmin.X, bmin.Y, bmin.Z, bmax.X, bmax.Y, bmax.Z, col);
+                        dd.DebugDrawCylinderWire(bmin.X, bmin.Y, bmin.Z, bmax.X, bmax.Y, bmax.Z, DebugDraw.DuDarkenCol(col), 2);
+                    }
+                    break;
+                case DtTileCacheObstacleType.DT_OBSTACLE_BOX:
+                case DtTileCacheObstacleType.DT_OBSTACLE_ORIENTED_BOX: // TODO obb 没有绘制函数，以后再说
+                    {
+                        dd.DebugDrawBox(bmin.X, bmin.Y, bmin.Z, bmax.X, bmax.Y, bmax.Z, col);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

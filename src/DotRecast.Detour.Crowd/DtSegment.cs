@@ -2,11 +2,10 @@ using System.Numerics;
 
 namespace DotRecast.Detour.Crowd
 {
-    public unsafe struct DtSegment
+    public struct DtSegment
     {
         /** Segment start/end */
-        //public RcVec3f[] s = new RcVec3f[2];
-        public fixed float s[2 * 3];
+        public Vector3 s, e;
 
         /** Distance for pruning. */
         public float d;

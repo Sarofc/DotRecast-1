@@ -18,8 +18,6 @@ freely, subject to the following restrictions:
 */
 
 using System.Numerics;
-using System.Runtime.CompilerServices;
-
 
 namespace DotRecast.Detour
 {

@@ -18,7 +18,6 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using DotRecast.Core;
@@ -51,21 +50,21 @@ namespace DotRecast.Detour.Crowd
             m_nsegs = 0;
         }
 
-        protected unsafe void AddSegment(float dist, RcSegmentVert s)
+        protected unsafe void AddSegment(float dist, in RcSegmentVert s)
         {
             // Insert neighbour based on the distance.
-            var p_segs = (DtSegment*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(m_segs));
-            DtSegment* seg = null;
+            ref var p_segs = ref MemoryMarshal.GetArrayDataReference(m_segs);
+            ref DtSegment seg = ref Unsafe.NullRef<DtSegment>();
             if (0 == m_nsegs)
             {
-                seg = &p_segs[0];
+                seg = ref Unsafe.Add(ref p_segs, 0);
             }
             else if (dist >= m_segs[m_nsegs - 1].d)
             {
                 if (m_nsegs >= MAX_LOCAL_SEGS)
                     return;
 
-                seg = &p_segs[m_nsegs];
+                seg = ref Unsafe.Add(ref p_segs, m_nsegs);
             }
             else
             {
@@ -80,11 +79,12 @@ namespace DotRecast.Detour.Crowd
                 System.Diagnostics.Debug.Assert(tgt + n <= MAX_LOCAL_SEGS);
                 if (n > 0)
                     m_segs.AsSpan(i, n).CopyTo(m_segs.AsSpan(tgt));
-                seg = &p_segs[i];
+                seg = ref Unsafe.Add(ref p_segs, i);
             }
 
-            seg->d = dist;
-            Unsafe.CopyBlockUnaligned((float*)&s, seg->s, (uint)sizeof(RcSegmentVert));
+            seg.d = dist;
+            seg.s = s.vmin;
+            seg.e = s.vmax;
 
             if (m_nsegs < MAX_LOCAL_SEGS)
                 m_nsegs++;
@@ -93,7 +93,7 @@ namespace DotRecast.Detour.Crowd
 #if NET5_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        public void Update(long startRef, Vector3 pos, float collisionQueryRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
+        public void Update(long startRef, in Vector3 pos, float collisionQueryRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             const int MAX_SEGS_PER_POLY = DtDetour.DT_VERTS_PER_POLYGON * 3;
 

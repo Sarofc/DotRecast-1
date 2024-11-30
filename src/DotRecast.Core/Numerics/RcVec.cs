@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Numerics;
 
 namespace DotRecast.Core
@@ -16,11 +15,7 @@ namespace DotRecast.Core
 
         public static Vector3 Create(ReadOnlySpan<float> values, int n)
         {
-#if NET8_0_OR_GREATER
             return new Vector3(values.Slice(n, 3));
-#else
-            return new Vector3(values[n + 0], values[n + 1], values[n + 2]);
-#endif
         }
 
         /// Performs a 'sloppy' colocation check of the specified points.
@@ -183,14 +178,14 @@ namespace DotRecast.Core
         /// @param[in] v A point. [(x, y, z)]
         /// @return True if all of the point's components are finite, i.e. not NaN
         /// or any of the infinities.
-        public static bool IsFinite(ref this Vector3 v)
+        public static bool IsFinite(in this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
         }
 
         /// Checks that the specified vector's 2D components are finite.
         /// @param[in] v A point. [(x, y, z)]
-        public static bool IsFinite2D(ref this Vector3 v)
+        public static bool IsFinite2D(in this Vector3 v)
         {
             return float.IsFinite(v.X) && float.IsFinite(v.Z);
         }

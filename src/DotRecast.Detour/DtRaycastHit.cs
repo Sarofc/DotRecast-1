@@ -44,5 +44,10 @@ namespace DotRecast.Detour
 
         ///  The cost of the path until hit.
         public float pathCost;
+
+        public DtRaycastHit(Span<long> path)
+        {
+            this.path = path;
+        }
     }
 }

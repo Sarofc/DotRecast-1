@@ -32,7 +32,7 @@ namespace DotRecast.Detour
     {
         const int MESH_NULL_IDX = 0xffff;
 
-        private static void CalcExtends(BVItem[] items, int nitems, int imin, int imax, int* bmin, int* bmax)
+        private static void CalcExtends(BVItem[] items, int nitems, int imin, int imax, ref Int3 bmin, ref Int3 bmax)
         {
             bmin[0] = items[imin].bmin[0];
             bmin[1] = items[imin].bmin[1];
@@ -92,29 +92,25 @@ namespace DotRecast.Detour
             if (inum == 1)
             {
                 // Leaf
-                node.bmin[0] = items[imin].bmin[0];
-                node.bmin[1] = items[imin].bmin[1];
-                node.bmin[2] = items[imin].bmin[2];
+                node.bmin.X = items[imin].bmin[0];
+                node.bmin.Y = items[imin].bmin[1];
+                node.bmin.Z = items[imin].bmin[2];
 
-                node.bmax[0] = items[imin].bmax[0];
-                node.bmax[1] = items[imin].bmax[1];
-                node.bmax[2] = items[imin].bmax[2];
+                node.bmax.X = items[imin].bmax[0];
+                node.bmax.Y = items[imin].bmax[1];
+                node.bmax.Z = items[imin].bmax[2];
 
                 node.i = items[imin].i;
             }
             else
             {
                 // Split
-                fixed (int* nmim = node.bmin)
-                fixed (int* nmax = node.bmax)
-                {
-                    CalcExtends(items, nitems, imin, imax, nmim, nmax);
-                }
+                CalcExtends(items, nitems, imin, imax, ref node.bmin, ref node.bmax);
 
                 int axis = LongestAxis(
-                    node.bmax[0] - node.bmin[0],
-                    node.bmax[1] - node.bmin[1],
-                    node.bmax[2] - node.bmin[2]
+                    node.bmax.X - node.bmin.X,
+                    node.bmax.Y - node.bmin.Y,
+                    node.bmax.Z - node.bmin.Z
                 );
 
                 if (axis == 0)

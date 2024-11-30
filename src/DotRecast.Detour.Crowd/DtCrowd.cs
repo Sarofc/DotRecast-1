@@ -19,13 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using DotRecast.Core;
 using System.Numerics;
-using System.Net.NetworkInformation;
 
 namespace DotRecast.Detour.Crowd
 {
@@ -684,12 +680,11 @@ namespace DotRecast.Detour.Crowd
                         }
                     }
                     else
-#if true // TODO
                     {
                         reqPathCount = 0;
                     }
+
                     if (reqPathCount == 0)
-#endif
                     {
                         // Could not find path, start the request from current
                         // location.
@@ -1377,9 +1372,9 @@ namespace DotRecast.Detour.Crowd
                     // Append neighbour segments as obstacles.
                     for (int j = 0; j < ag.boundary.GetSegmentCount(); ++j)
                     {
-                        var s = (DtSegment*)Unsafe.AsPointer(ref ag.boundary.GetSegment(j));
-                        Vector3 s0 = *(Vector3*)(s->s);
-                        Vector3 s3 = *(Vector3*)(s->s + 3);
+                        ref readonly var s = ref ag.boundary.GetSegment(j);
+                        Vector3 s0 = s.s;
+                        Vector3 s3 = s.e;
 
                         if (DtUtils.TriArea2D(ag.npos, s0, s3) < 0.0f)
                         {

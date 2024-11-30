@@ -45,21 +45,12 @@ namespace DotRecast.Detour
         /// @param[in] bmax Maximum bounds of box B. [(x, y, z)]
         /// @return True if the two AABB's overlap.
         /// @see dtOverlapBounds
-        public static bool OverlapQuantBounds(Span<int> amin, Span<int> amax, Span<int> bmin, Span<int> bmax)
+        public static bool OverlapQuantBounds(in Int3 amin, in Int3 amax, in Int3 bmin, in Int3 bmax)
         {
             bool overlap = true;
-            overlap = amin[0] <= bmax[0] && amax[0] >= bmin[0] && overlap;
-            overlap = amin[1] <= bmax[1] && amax[1] >= bmin[1] && overlap;
-            overlap = amin[2] <= bmax[2] && amax[2] >= bmin[2] && overlap;
-            return overlap;
-        }
-
-        internal unsafe static bool OverlapQuantBounds(Span<int> amin, Span<int> amax, int* bmin, int* bmax)
-        {
-            bool overlap = true;
-            overlap = amin[0] <= bmax[0] && amax[0] >= bmin[0] && overlap;
-            overlap = amin[1] <= bmax[1] && amax[1] >= bmin[1] && overlap;
-            overlap = amin[2] <= bmax[2] && amax[2] >= bmin[2] && overlap;
+            overlap = amin.X <= bmax.X && amax.X >= bmin.X && overlap;
+            overlap = amin.Y <= bmax.Y && amax.Y >= bmin.Y && overlap;
+            overlap = amin.Z <= bmax.Z && amax.Z >= bmin.Z && overlap;
             return overlap;
         }
 
@@ -70,7 +61,7 @@ namespace DotRecast.Detour
         /// @param[in] bmax Maximum bounds of box B. [(x, y, z)]
         /// @return True if the two AABB's overlap.
         /// @see dtOverlapQuantBounds
-        public static bool OverlapBounds(Vector3 amin, Vector3 amax, Vector3 bmin, Vector3 bmax)
+        public static bool OverlapBounds(in Vector3 amin, in Vector3 amax, in Vector3 bmin, in Vector3 bmax)
         {
             bool overlap = true;
             overlap = amin.X <= bmax.X && amax.X >= bmin.X && overlap;
@@ -144,7 +135,7 @@ namespace DotRecast.Detour
             return acx * abz - abx * acz;
         }
 
-        public static float TriArea2D(Vector3 a, Vector3 b, Vector3 c)
+        public static float TriArea2D(in Vector3 a, in Vector3 b, in Vector3 c)
         {
             float abx = b.X - a.X;
             float abz = b.Z - a.Z;
@@ -200,7 +191,7 @@ namespace DotRecast.Detour
             };
         }
 
-        public static bool ClosestHeightPointTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c, out float h)
+        public static bool ClosestHeightPointTriangle(in Vector3 p, in Vector3 a, in Vector3 b, in Vector3 c, out float h)
         {
             const float EPS = 1e-6f;
 
@@ -236,7 +227,7 @@ namespace DotRecast.Detour
             return false;
         }
 
-        public static Vector2 ProjectPoly(Vector3 axis, Span<float> poly, int npoly)
+        public static Vector2 ProjectPoly(in Vector3 axis, Span<float> poly, int npoly)
         {
             float rmin, rmax;
             rmin = rmax = RcVec.Dot2(axis, new Vector3(poly));
@@ -257,7 +248,7 @@ namespace DotRecast.Detour
         /// @par
         ///
         /// All points are projected onto the xz-plane, so the y-values are ignored.
-        public static bool PointInPolygon(Vector3 pt, ReadOnlySpan<float> verts, int nverts)
+        public static bool PointInPolygon(in Vector3 pt, ReadOnlySpan<float> verts, int nverts)
         {
             // TODO: Replace pnpoly with triArea2D tests?
             int i, j;
@@ -276,7 +267,7 @@ namespace DotRecast.Detour
             return c;
         }
 
-        public static bool DistancePtPolyEdgesSqr(Vector3 pt, Span<float> verts, int nverts, Span<float> ed, Span<float> et)
+        public static bool DistancePtPolyEdgesSqr(in Vector3 pt, Span<float> verts, int nverts, Span<float> ed, Span<float> et)
         {
             // TODO: Replace pnpoly with triArea2D tests?
             int i, j;
@@ -297,14 +288,14 @@ namespace DotRecast.Detour
             return c;
         }
 
-        public static float DistancePtSegSqr2D(Vector3 pt, Span<float> verts, int p, int q, out float t)
+        public static float DistancePtSegSqr2D(in Vector3 pt, Span<float> verts, int p, int q, out float t)
         {
             var vp = RcVec.Create(verts, p);
             var vq = RcVec.Create(verts, q);
             return DistancePtSegSqr2D(pt, vp, vq, out t);
         }
 
-        public static float DistancePtSegSqr2D(Vector3 pt, Vector3 p, Vector3 q, out float t)
+        public static float DistancePtSegSqr2D(in Vector3 pt, in Vector3 p, in Vector3 q, out float t)
         {
             float pqx = q.X - p.X;
             float pqz = q.Z - p.Z;
@@ -331,7 +322,7 @@ namespace DotRecast.Detour
             return dx * dx + dz * dz;
         }
 
-        public static bool IntersectSegmentPoly2D(Vector3 p0, Vector3 p1,
+        public static bool IntersectSegmentPoly2D(in Vector3 p0, in Vector3 p1,
             Span<Vector3> verts, int nverts,
             out float tmin, out float tmax,
             out int segMin, out int segMax)
@@ -407,7 +398,7 @@ namespace DotRecast.Detour
         }
 
 
-        public static bool IntersectSegSeg2D(Vector3 ap, Vector3 aq, Vector3 bp, Vector3 bq, out float s, out float t)
+        public static bool IntersectSegSeg2D(in Vector3 ap, in Vector3 aq, in Vector3 bp, in Vector3 bq, out float s, out float t)
         {
             s = 0;
             t = 0;

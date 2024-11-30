@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using DotRecast.Core;
 using DotRecast.Core.Buffers;
-using DotRecast.Core.Collections;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
 using DotRecast.Recast.Toolset.Builder;
@@ -321,7 +321,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             if (0 < potentialTargets.Count)
             {
-                potentialTargets.Shuffle();
+                Random.Shared.Shuffle(CollectionsMarshal.AsSpan(potentialTargets));
                 _crowd.RequestMoveTarget(ag, potentialTargets[0].refs, potentialTargets[0].pt);
             }
         }

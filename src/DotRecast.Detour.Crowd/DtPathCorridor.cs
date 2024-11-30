@@ -105,7 +105,7 @@ namespace DotRecast.Detour.Crowd
         /// Resets the path corridor to the specified position.
         ///  @param[in]		ref		The polygon reference containing the position.
         ///  @param[in]		pos		The new position in the corridor. [(x, y, z)]
-        public void Reset(long refs, Vector3 pos)
+        public void Reset(long refs, in Vector3 pos)
         {
             m_pos = pos;
             m_target = pos;
@@ -196,7 +196,7 @@ namespace DotRecast.Detour.Crowd
 #if NET5_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        public void OptimizePathVisibility(Vector3 next, float pathOptimizationRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
+        public void OptimizePathVisibility(in Vector3 next, float pathOptimizationRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Clamp the ray to max distance.
             float dist = RcVec.Dist2D(m_pos, next);
@@ -328,7 +328,7 @@ namespace DotRecast.Detour.Crowd
 #if NET5_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        public bool MovePosition(Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
+        public bool MovePosition(in Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Move along navmesh and update new position.
             const int MAX_VISITED = 16;
@@ -374,7 +374,7 @@ namespace DotRecast.Detour.Crowd
 #if NET5_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        public bool MoveTargetPosition(Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
+        public bool MoveTargetPosition(in Vector3 npos, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Move along navmesh and update new position.
             const int MAX_VISITED = 16;
@@ -408,7 +408,7 @@ namespace DotRecast.Detour.Crowd
         ///  @param[in]		target		The target location within the last polygon of the path. [(x, y, z)]
         ///  @param[in]		path		The path corridor. [(polyRef) * @p npolys]
         ///  @param[in]		npath		The number of polygons in the path.
-        public void SetCorridor(Vector3 target, ReadOnlySpan<long> path, int npath)
+        public void SetCorridor(in Vector3 target, ReadOnlySpan<long> path, int npath)
         {
             System.Diagnostics.Debug.Assert(npath > 0);
             System.Diagnostics.Debug.Assert(npath <= m_maxPath);
@@ -418,7 +418,7 @@ namespace DotRecast.Detour.Crowd
             m_npath = npath;
         }
 
-        public void FixPathStart(long safeRef, Vector3 safePos)
+        public void FixPathStart(long safeRef, in Vector3 safePos)
         {
             m_pos = safePos;
             if (m_npath < 3 && m_npath > 0)
@@ -436,7 +436,7 @@ namespace DotRecast.Detour.Crowd
             }
         }
 
-        public bool TrimInvalidPath(long safeRef, float[] safePos, DtNavMeshQuery navquery, IDtQueryFilter filter)
+        public bool TrimInvalidPath(long safeRef, ReadOnlySpan<float> safePos, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             // Keep valid path as far as possible.
             int n = 0;

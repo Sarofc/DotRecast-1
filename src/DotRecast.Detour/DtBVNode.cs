@@ -18,15 +18,17 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using DotRecast.Core;
+
 namespace DotRecast.Detour
 {
     /// Bounding volume node.
     /// @note This structure is rarely if ever used by the end user.
     /// @see dtMeshTile
-    public unsafe struct DtBVNode
+    public struct DtBVNode
     {
-        public fixed int bmin[3]; //< Minimum bounds of the node's AABB. [(x, y, z)]
-        public fixed int bmax[3]; //< Maximum bounds of the node's AABB. [(x, y, z)]
+        public Int3 bmin; //< Minimum bounds of the node's AABB. [(x, y, z)]
+        public Int3 bmax; //< Maximum bounds of the node's AABB. [(x, y, z)]
         public int i; //< The node's index. (Negative for escape sequence.)
     }
 }

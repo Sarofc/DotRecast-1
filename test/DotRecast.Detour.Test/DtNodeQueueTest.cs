@@ -1,23 +1,23 @@
+using System;
 using System.Collections.Generic;
 using DotRecast.Core;
-using DotRecast.Core.Collections;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.Test;
 
 public class DtNodeQueueTest
 {
-    private static List<DtNode> ShuffledNodes(int count)
+    private static DtNode[] ShuffledNodes(int count)
     {
-        var nodes = new List<DtNode>();
+        var nodes = new DtNode[count];
         for (int i = 0; i < count; ++i)
         {
             var node = new DtNode(i);
             node.total = i;
-            nodes.Add(node);
+            nodes[i] = (node);
         }
 
-        nodes.Shuffle();
+        Random.Shared.Shuffle(nodes);
         return nodes;
     }
 
@@ -45,7 +45,7 @@ public class DtNodeQueueTest
         Assert.That(queue.Count(), Is.EqualTo(count));
 
         // test pop
-        expectedNodes.Sort((x, y) => x.total.CompareTo(y.total));
+        Array.Sort(expectedNodes, (x, y) => x.total.CompareTo(y.total));
         foreach (var node in expectedNodes)
         {
             Assert.That(queue.Top(), Is.SameAs(node));
@@ -97,19 +97,19 @@ public class DtNodeQueueTest
         foreach (var node in expectedNodes)
         {
             node.total = r.Next() % (count / (count / 10)); // duplication for test
-            queue.Modify(node); 
+            queue.Modify(node);
             // TODO 先改了 total，再modify，会导致优先级不太对
             // 但粗略测试起来，顶多路径不是最优的，但可以接受
         }
 
-        Assert.That(queue.Count, Is.EqualTo(expectedNodes.Count));
+        Assert.That(queue.Count, Is.EqualTo(expectedNodes.Length));
 
         // check
-        expectedNodes.Sort((x, y) => x.total.CompareTo(y.total));
-        for (int i = 0; i < expectedNodes.Count; i++)
+        Array.Sort(expectedNodes, (x, y) => x.total.CompareTo(y.total));
+        for (int i = 0; i < expectedNodes.Length; i++)
         {
             DtNode node = expectedNodes[i];
-            Assert.That(queue.Pop().total, Is.EqualTo(node.total).Within(0.00001f), $"{i}/{expectedNodes.Count}");
+            Assert.That(queue.Pop().total, Is.EqualTo(node.total).Within(0.00001f), $"{i}/{expectedNodes.Length}");
         }
     }
 }

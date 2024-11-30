@@ -30,7 +30,6 @@ namespace DotRecast.Detour.Crowd
     {
         public const int DT_MAX_PATTERN_DIVS = 32; // < Max numver of adaptive divs.
         public const int DT_MAX_PATTERN_RINGS = 4;
-        //public const float DT_PI = 3.14159265f; // 3.14159274
 
         private DtObstacleAvoidanceParams m_params;
         private float m_invHorizTime;
@@ -62,7 +61,7 @@ namespace DotRecast.Detour.Crowd
             m_nsegments = 0;
         }
 
-        public void AddCircle(Vector3 pos, float rad, Vector3 vel, Vector3 dvel)
+        public void AddCircle(in Vector3 pos, float rad, in Vector3 vel, in Vector3 dvel)
         {
             if (m_ncircles >= m_maxCircles)
                 return;
@@ -74,7 +73,7 @@ namespace DotRecast.Detour.Crowd
             cir.dvel = dvel;
         }
 
-        public void AddSegment(Vector3 p, Vector3 q)
+        public void AddSegment(in Vector3 p, in Vector3 q)
         {
             if (m_nsegments >= m_maxSegments)
                 return;
@@ -92,7 +91,7 @@ namespace DotRecast.Detour.Crowd
 
         public DtObstacleSegment GetObstacleSegment(int i) => m_segments[i];
 
-        private void Prepare(Vector3 pos, Vector3 dvel)
+        private void Prepare(in Vector3 pos, in Vector3 dvel)
         {
             // Prepare obstacles
             for (int i = 0; i < m_ncircles; ++i)
@@ -103,11 +102,10 @@ namespace DotRecast.Detour.Crowd
                 Vector3 pa = pos;
                 Vector3 pb = cir.p;
 
-                Vector3 orig = new Vector3();
-                Vector3 dv = new Vector3();
+                Vector3 orig = Vector3.Zero;
                 cir.dp = Vector3.Subtract(pb, pa);
                 cir.dp = Vector3.Normalize(cir.dp);
-                dv = Vector3.Subtract(cir.dvel, dvel);
+                var dv = Vector3.Subtract(cir.dvel, dvel);
 
                 float a = DtUtils.TriArea2D(orig, cir.dp, dv);
                 if (a < 0.01f)
@@ -255,9 +253,10 @@ namespace DotRecast.Detour.Crowd
                 {
                     // Special case when the agent is very close to the segment.
                     Vector3 sdir = Vector3.Subtract(seg.q, seg.p);
-                    Vector3 snorm = new Vector3();
+                    Vector3 snorm;
                     snorm.X = -sdir.Z;
                     snorm.Z = sdir.X;
+                    snorm.Y = 0;
                     // If the velocity is pointing towards the segment, no collision.
                     if (RcVec.Dot2(snorm, vcand) < 0.0f)
                         continue;
@@ -291,8 +290,7 @@ namespace DotRecast.Detour.Crowd
 
             float penalty = vpen + vcpen + spen + tpen;
             // Store different penalties for debug viewing
-            if (debug != null)
-                debug.AddSample(vcand, cs, penalty, vpen, vcpen, spen, tpen);
+            debug?.AddSample(vcand, cs, penalty, vpen, vcpen, spen, tpen);
 
             return penalty;
         }
@@ -308,8 +306,7 @@ namespace DotRecast.Detour.Crowd
 
             nvel = Vector3.Zero;
 
-            if (debug != null)
-                debug.Reset();
+            debug?.Reset();
 
             float cvx = dvel.X * m_params.velBias;
             float cvz = dvel.Z * m_params.velBias;
@@ -355,8 +352,7 @@ namespace DotRecast.Detour.Crowd
         static Vector3 DtRotate2D(ReadOnlySpan<float> v, float ang)
         {
             Vector3 dest;
-            float c = MathF.Cos(ang);
-            float s = MathF.Sin(ang);
+            var (s, c) = MathF.SinCos(ang);
             dest.X = v[0] * c - v[2] * s;
             dest.Z = v[0] * s + v[2] * c;
             dest.Y = v[1];
@@ -392,8 +388,8 @@ namespace DotRecast.Detour.Crowd
             int nd = Math.Clamp(ndivs, 1, DT_MAX_PATTERN_DIVS);
             int nr = Math.Clamp(nrings, 1, DT_MAX_PATTERN_RINGS);
             float da = (1.0f / nd) * MathF.PI * 2;
-            float ca = MathF.Cos(da);
-            float sa = MathF.Sin(da);
+
+            var (sa, ca) = MathF.SinCos(da);
 
             // desired direction
             Span<float> ddir = stackalloc float[6];
@@ -444,7 +440,7 @@ namespace DotRecast.Detour.Crowd
 
             // Start sampling.
             float cr = vmax * (1.0f - m_params.velBias);
-            Vector3 res = new Vector3(dvel.X * m_params.velBias, 0, dvel.Z * m_params.velBias);
+            Vector3 res = new(dvel.X * m_params.velBias, 0, dvel.Z * m_params.velBias);
             int ns = 0;
             for (int k = 0; k < depth; ++k)
             {
