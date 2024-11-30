@@ -744,7 +744,7 @@ public class RecastDemo : IRecastDemoChannel
         using var bw = new BinaryWriter(fs);
 
         var writer = new DtMeshSetWriter();
-        writer.Write(bw, navMesh, RcByteOrder.LITTLE_ENDIAN, true);
+        writer.Write(bw, navMesh);
         Logger.Information($"saved navmesh - {navmeshFilePath}");
     }
 

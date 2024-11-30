@@ -1052,10 +1052,10 @@ namespace DotRecast.Recast
                         continue;
                     }
 
-                    ref RcCompactCell c = ref chf.cells[(ax + bs) + (az + bs) * chf.width];
+                    ref readonly RcCompactCell c = ref chf.cells[(ax + bs) + (az + bs) * chf.width];
                     for (int i = c.index, ni = c.index + c.count; i < ni && dmin > 0; ++i)
                     {
-                        ref RcCompactSpan s = ref chf.spans[i];
+                        ref readonly RcCompactSpan s = ref chf.spans[i];
                         int d = Math.Abs(ay - s.y);
                         if (d < dmin)
                         {
@@ -1131,12 +1131,12 @@ namespace DotRecast.Recast
                 dirs[3] = dirs[directDir];
                 dirs[directDir] = tmp;
 
-                ref RcCompactSpan cs = ref chf.spans[ci];
+                ref readonly RcCompactSpan cs = ref chf.spans[ci];
 
                 for (int i = 0; i < 4; ++i)
                 {
                     int dir = dirs[i];
-                    if (GetCon(ref cs, dir) == RC_NOT_CONNECTED)
+                    if (GetCon(cs, dir) == RC_NOT_CONNECTED)
                     {
                         continue;
                     }
@@ -1160,7 +1160,7 @@ namespace DotRecast.Recast
 
                     array.Add(newX);
                     array.Add(newY);
-                    array.Add(chf.cells[(newX + bs) + (newY + bs) * chf.width].index + GetCon(ref cs, dir));
+                    array.Add(chf.cells[(newX + bs) + (newY + bs) * chf.width].index + GetCon(cs, dir));
                 }
 
                 tmp = dirs[3];
@@ -1174,7 +1174,7 @@ namespace DotRecast.Recast
             array.Add(cy + bs);
             array.Add(ci);
             Array.Fill(hp.data, RC_UNSET_HEIGHT, 0, (hp.width * hp.height) - (0));
-            ref RcCompactSpan cs2 = ref chf.spans[ci];
+            ref readonly RcCompactSpan cs2 = ref chf.spans[ci];
             hp.data[cx - hp.xmin + (cy - hp.ymin) * hp.width] = cs2.y;
         }
 
@@ -1214,10 +1214,10 @@ namespace DotRecast.Recast
                     for (int hx = 0; hx < hp.width; hx++)
                     {
                         int x = hp.xmin + hx + bs;
-                        ref RcCompactCell c = ref chf.cells[x + y * chf.width];
+                        ref readonly RcCompactCell c = ref chf.cells[x + y * chf.width];
                         for (int i = c.index, ni = c.index + c.count; i < ni; ++i)
                         {
-                            ref RcCompactSpan s = ref chf.spans[i];
+                            ref readonly RcCompactSpan s = ref chf.spans[i];
                             if (s.reg == region)
                             {
                                 // Store height
@@ -1228,12 +1228,12 @@ namespace DotRecast.Recast
                                 bool border = false;
                                 for (int dir = 0; dir < 4; ++dir)
                                 {
-                                    if (GetCon(ref s, dir) != RC_NOT_CONNECTED)
+                                    if (GetCon(s, dir) != RC_NOT_CONNECTED)
                                     {
                                         int ax = x + GetDirOffsetX(dir);
                                         int ay = y + GetDirOffsetY(dir);
-                                        int ai = chf.cells[ax + ay * chf.width].index + GetCon(ref s, dir);
-                                        ref RcCompactSpan @as = ref chf.spans[ai];
+                                        int ai = chf.cells[ax + ay * chf.width].index + GetCon(s, dir);
+                                        ref readonly RcCompactSpan @as = ref chf.spans[ai];
                                         if (@as.reg != region)
                                         {
                                             border = true;
@@ -1280,10 +1280,10 @@ namespace DotRecast.Recast
                     queue = queue.GetRange(RETRACT_SIZE * 3, queue.Count - (RETRACT_SIZE * 3)); // TODO alloc temp
                 }
 
-                ref RcCompactSpan cs = ref chf.spans[ci];
+                ref readonly RcCompactSpan cs = ref chf.spans[ci];
                 for (int dir = 0; dir < 4; ++dir)
                 {
-                    if (GetCon(ref cs, dir) == RC_NOT_CONNECTED)
+                    if (GetCon(cs, dir) == RC_NOT_CONNECTED)
                     {
                         continue;
                     }
@@ -1303,8 +1303,8 @@ namespace DotRecast.Recast
                         continue;
                     }
 
-                    int ai = chf.cells[ax + ay * chf.width].index + GetCon(ref cs, dir);
-                    ref RcCompactSpan @as = ref chf.spans[ai];
+                    int ai = chf.cells[ax + ay * chf.width].index + GetCon(cs, dir);
+                    ref readonly RcCompactSpan @as = ref chf.spans[ai];
 
                     hp.data[hx + hy * hp.width] = @as.y;
                     Push3(queue, ax, ay, ai);

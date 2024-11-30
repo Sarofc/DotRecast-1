@@ -34,67 +34,62 @@ namespace DotRecast.Detour.Dynamic.Io
 
         public void Write(BinaryWriter stream, DtVoxelFile f, bool compression)
         {
-            Write(stream, f, DtVoxelFile.PREFERRED_BYTE_ORDER, compression);
-        }
-
-        public void Write(BinaryWriter stream, DtVoxelFile f, RcByteOrder byteOrder, bool compression)
-        {
-            RcIO.Write(stream, DtVoxelFile.MAGIC, byteOrder);
-            RcIO.Write(stream, DtVoxelFile.VERSION_EXPORTER_RECAST4J | (compression ? DtVoxelFile.VERSION_COMPRESSION_LZ4 : 0), byteOrder);
-            RcIO.Write(stream, f.walkableRadius, byteOrder);
-            RcIO.Write(stream, f.walkableHeight, byteOrder);
-            RcIO.Write(stream, f.walkableClimb, byteOrder);
-            RcIO.Write(stream, f.walkableSlopeAngle, byteOrder);
-            RcIO.Write(stream, f.cellSize, byteOrder);
-            RcIO.Write(stream, f.maxSimplificationError, byteOrder);
-            RcIO.Write(stream, f.maxEdgeLen, byteOrder);
-            RcIO.Write(stream, f.minRegionArea, byteOrder);
-            RcIO.Write(stream, f.regionMergeArea, byteOrder);
-            RcIO.Write(stream, f.vertsPerPoly, byteOrder);
+            RcIO.Write(stream, DtVoxelFile.MAGIC);
+            RcIO.Write(stream, (compression ? DtVoxelFile.VERSION_COMPRESSION_LZ4 : 0));
+            RcIO.Write(stream, f.walkableRadius);
+            RcIO.Write(stream, f.walkableHeight);
+            RcIO.Write(stream, f.walkableClimb);
+            RcIO.Write(stream, f.walkableSlopeAngle);
+            RcIO.Write(stream, f.cellSize);
+            RcIO.Write(stream, f.maxSimplificationError);
+            RcIO.Write(stream, f.maxEdgeLen);
+            RcIO.Write(stream, f.minRegionArea);
+            RcIO.Write(stream, f.regionMergeArea);
+            RcIO.Write(stream, f.vertsPerPoly);
             RcIO.Write(stream, f.buildMeshDetail);
-            RcIO.Write(stream, f.detailSampleDistance, byteOrder);
-            RcIO.Write(stream, f.detailSampleMaxError, byteOrder);
+            RcIO.Write(stream, f.detailSampleDistance);
+            RcIO.Write(stream, f.detailSampleMaxError);
             RcIO.Write(stream, f.useTiles);
-            RcIO.Write(stream, f.tileSizeX, byteOrder);
-            RcIO.Write(stream, f.tileSizeZ, byteOrder);
-            RcIO.Write(stream, f.rotation.X, byteOrder);
-            RcIO.Write(stream, f.rotation.Y, byteOrder);
-            RcIO.Write(stream, f.rotation.Z, byteOrder);
-            RcIO.Write(stream, f.bounds[0], byteOrder);
-            RcIO.Write(stream, f.bounds[1], byteOrder);
-            RcIO.Write(stream, f.bounds[2], byteOrder);
-            RcIO.Write(stream, f.bounds[3], byteOrder);
-            RcIO.Write(stream, f.bounds[4], byteOrder);
-            RcIO.Write(stream, f.bounds[5], byteOrder);
-            RcIO.Write(stream, f.tiles.Count, byteOrder);
+            RcIO.Write(stream, f.tileSizeX);
+            RcIO.Write(stream, f.tileSizeZ);
+            RcIO.Write(stream, f.rotation.X);
+            RcIO.Write(stream, f.rotation.Y);
+            RcIO.Write(stream, f.rotation.Z);
+            RcIO.Write(stream, f.bounds[0]);
+            RcIO.Write(stream, f.bounds[1]);
+            RcIO.Write(stream, f.bounds[2]);
+            RcIO.Write(stream, f.bounds[3]);
+            RcIO.Write(stream, f.bounds[4]);
+            RcIO.Write(stream, f.bounds[5]);
+            RcIO.Write(stream, f.tiles.Count);
             foreach (DtVoxelTile t in f.tiles)
             {
-                WriteTile(stream, t, byteOrder, compression);
+                WriteTile(stream, t, compression);
             }
         }
 
-        public void WriteTile(BinaryWriter stream, DtVoxelTile tile, RcByteOrder byteOrder, bool compression)
+        public void WriteTile(BinaryWriter stream, DtVoxelTile tile, bool compression)
         {
-            RcIO.Write(stream, tile.tileX, byteOrder);
-            RcIO.Write(stream, tile.tileZ, byteOrder);
-            RcIO.Write(stream, tile.width, byteOrder);
-            RcIO.Write(stream, tile.depth, byteOrder);
-            RcIO.Write(stream, tile.borderSize, byteOrder);
-            RcIO.Write(stream, tile.boundsMin.X, byteOrder);
-            RcIO.Write(stream, tile.boundsMin.Y, byteOrder);
-            RcIO.Write(stream, tile.boundsMin.Z, byteOrder);
-            RcIO.Write(stream, tile.boundsMax.X, byteOrder);
-            RcIO.Write(stream, tile.boundsMax.Y, byteOrder);
-            RcIO.Write(stream, tile.boundsMax.Z, byteOrder);
-            RcIO.Write(stream, tile.cellSize, byteOrder);
-            RcIO.Write(stream, tile.cellHeight, byteOrder);
+            RcIO.Write(stream, tile.tileX);
+            RcIO.Write(stream, tile.tileZ);
+            RcIO.Write(stream, tile.width);
+            RcIO.Write(stream, tile.depth);
+            RcIO.Write(stream, tile.borderSize);
+            RcIO.Write(stream, tile.boundsMin.X);
+            RcIO.Write(stream, tile.boundsMin.Y);
+            RcIO.Write(stream, tile.boundsMin.Z);
+            RcIO.Write(stream, tile.boundsMax.X);
+            RcIO.Write(stream, tile.boundsMax.Y);
+            RcIO.Write(stream, tile.boundsMax.Z);
+            RcIO.Write(stream, tile.cellSize);
+            RcIO.Write(stream, tile.cellHeight);
             byte[] bytes = tile.spanData;
             if (compression)
             {
                 bytes = _compressor.Compress(bytes);
             }
 
-            RcIO.Write(stream, bytes.Length, byteOrder);
+            RcIO.Write(stream, bytes.Length);
             stream.Write(bytes);
         }
     }

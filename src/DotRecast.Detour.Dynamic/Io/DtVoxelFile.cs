@@ -27,11 +27,9 @@ namespace DotRecast.Detour.Dynamic.Io
 {
     public class DtVoxelFile
     {
-        public static readonly RcByteOrder PREFERRED_BYTE_ORDER = RcByteOrder.BIG_ENDIAN;
         public const int MAGIC = 'V' << 24 | 'O' << 16 | 'X' << 8 | 'L';
         public const int VERSION_EXPORTER_MASK = 0xF000;
         public const int VERSION_COMPRESSION_MASK = 0x0F00;
-        public const int VERSION_EXPORTER_RECAST4J = 0x1000;
         public const int VERSION_COMPRESSION_LZ4 = 0x0100;
         public int version;
         public int partition = RcPartitionType.WATERSHED.Value;

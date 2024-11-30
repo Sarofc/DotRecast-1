@@ -21,14 +21,6 @@ namespace DotRecast.Core
 {
     public static class RcByteUtils
     {
-        public static int GetIntBE(byte[] data, int position)
-        {
-            return ((data[position] & 0xff) << 24)
-                   | ((data[position + 1] & 0xff) << 16)
-                   | ((data[position + 2] & 0xff) << 8)
-                   | (data[position + 3] & 0xff);
-        }
-
         public static int GetIntLE(byte[] data, int position)
         {
             return ((data[position + 3] & 0xff) << 24)
@@ -37,48 +29,25 @@ namespace DotRecast.Core
                    | (data[position] & 0xff);
         }
 
-        public static int GetShortBE(byte[] data, int position)
-        {
-            return ((data[position] & 0xff) << 8) | (data[position + 1] & 0xff);
-        }
-
         public static int GetShortLE(byte[] data, int position)
         {
             return ((data[position + 1] & 0xff) << 8) | (data[position] & 0xff);
         }
 
-        public static int PutInt(int value, byte[] data, int position, RcByteOrder order)
+        public static int PutInt(int value, byte[] data, int position)
         {
-            if (order == RcByteOrder.BIG_ENDIAN)
-            {
-                data[position] = (byte)((uint)value >> 24);
-                data[position + 1] = (byte)((uint)value >> 16);
-                data[position + 2] = (byte)((uint)value >> 8);
-                data[position + 3] = (byte)(value & 0xFF);
-            }
-            else
-            {
-                data[position] = (byte)(value & 0xFF);
-                data[position + 1] = (byte)((uint)value >> 8);
-                data[position + 2] = (byte)((uint)value >> 16);
-                data[position + 3] = (byte)((uint)value >> 24);
-            }
+            data[position] = (byte)(value & 0xFF);
+            data[position + 1] = (byte)((uint)value >> 8);
+            data[position + 2] = (byte)((uint)value >> 16);
+            data[position + 3] = (byte)((uint)value >> 24);
 
             return position + 4;
         }
 
-        public static int PutShort(int value, byte[] data, int position, RcByteOrder order)
+        public static int PutShort(int value, byte[] data, int position)
         {
-            if (order == RcByteOrder.BIG_ENDIAN)
-            {
-                data[position] = (byte)((uint)value >> 8);
-                data[position + 1] = (byte)(value & 0xFF);
-            }
-            else
-            {
-                data[position] = (byte)(value & 0xFF);
-                data[position + 1] = (byte)((uint)value >> 8);
-            }
+            data[position] = (byte)(value & 0xFF);
+            data[position + 1] = (byte)((uint)value >> 8);
 
             return position + 2;
         }

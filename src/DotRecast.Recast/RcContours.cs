@@ -34,7 +34,7 @@ namespace DotRecast.Recast
         {
             isBorderVertex = false;
 
-            ref RcCompactSpan s = ref chf.spans[i];
+            ref readonly RcCompactSpan s = ref chf.spans[i];
             int ch = s.y;
             int dirp = (dir + 1) & 0x3;
 
@@ -47,39 +47,39 @@ namespace DotRecast.Recast
             // border vertices which are in between two areas to be removed.
             regs[0] = chf.spans[i].reg | (chf.areas[i] << 16);
 
-            if (GetCon(ref s, dir) != RC_NOT_CONNECTED)
+            if (GetCon(s, dir) != RC_NOT_CONNECTED)
             {
                 int ax = x + GetDirOffsetX(dir);
                 int ay = y + GetDirOffsetY(dir);
-                int ai = chf.cells[ax + ay * chf.width].index + GetCon(ref s, dir);
-                ref RcCompactSpan @as = ref chf.spans[ai];
+                int ai = chf.cells[ax + ay * chf.width].index + GetCon(s, dir);
+                ref readonly RcCompactSpan @as = ref chf.spans[ai];
                 ch = Math.Max(ch, @as.y);
                 regs[1] = chf.spans[ai].reg | (chf.areas[ai] << 16);
-                if (GetCon(ref @as, dirp) != RC_NOT_CONNECTED)
+                if (GetCon(@as, dirp) != RC_NOT_CONNECTED)
                 {
                     int ax2 = ax + GetDirOffsetX(dirp);
                     int ay2 = ay + GetDirOffsetY(dirp);
-                    int ai2 = chf.cells[ax2 + ay2 * chf.width].index + GetCon(ref @as, dirp);
+                    int ai2 = chf.cells[ax2 + ay2 * chf.width].index + GetCon(@as, dirp);
                     ref RcCompactSpan as2 = ref chf.spans[ai2];
                     ch = Math.Max(ch, as2.y);
                     regs[2] = chf.spans[ai2].reg | (chf.areas[ai2] << 16);
                 }
             }
 
-            if (GetCon(ref s, dirp) != RC_NOT_CONNECTED)
+            if (GetCon(s, dirp) != RC_NOT_CONNECTED)
             {
                 int ax = x + GetDirOffsetX(dirp);
                 int ay = y + GetDirOffsetY(dirp);
-                int ai = chf.cells[ax + ay * chf.width].index + GetCon(ref s, dirp);
-                ref RcCompactSpan @as = ref chf.spans[ai];
+                int ai = chf.cells[ax + ay * chf.width].index + GetCon(s, dirp);
+                ref readonly RcCompactSpan @as = ref chf.spans[ai];
                 ch = Math.Max(ch, @as.y);
                 regs[3] = chf.spans[ai].reg | (chf.areas[ai] << 16);
-                if (GetCon(ref @as, dir) != RC_NOT_CONNECTED)
+                if (GetCon(@as, dir) != RC_NOT_CONNECTED)
                 {
                     int ax2 = ax + GetDirOffsetX(dir);
                     int ay2 = ay + GetDirOffsetY(dir);
-                    int ai2 = chf.cells[ax2 + ay2 * chf.width].index + GetCon(ref @as, dir);
-                    ref RcCompactSpan as2 = ref chf.spans[ai2];
+                    int ai2 = chf.cells[ax2 + ay2 * chf.width].index + GetCon(@as, dir);
+                    ref readonly RcCompactSpan as2 = ref chf.spans[ai2];
                     ch = Math.Max(ch, as2.y);
                     regs[2] = chf.spans[ai2].reg | (chf.areas[ai2] << 16);
                 }
@@ -147,12 +147,12 @@ namespace DotRecast.Recast
                     }
 
                     int r = 0;
-                    ref RcCompactSpan s = ref chf.spans[i];
-                    if (GetCon(ref s, dir) != RC_NOT_CONNECTED)
+                    ref readonly RcCompactSpan s = ref chf.spans[i];
+                    if (GetCon(s, dir) != RC_NOT_CONNECTED)
                     {
                         int ax = x + GetDirOffsetX(dir);
                         int ay = y + GetDirOffsetY(dir);
-                        int ai = chf.cells[ax + ay * chf.width].index + GetCon(ref s, dir);
+                        int ai = chf.cells[ax + ay * chf.width].index + GetCon(s, dir);
                         r = chf.spans[ai].reg;
                         if (area != chf.areas[ai])
                             isAreaBorder = true;
@@ -176,10 +176,10 @@ namespace DotRecast.Recast
                     int nx = x + GetDirOffsetX(dir);
                     int ny = y + GetDirOffsetY(dir);
                     ref RcCompactSpan s = ref chf.spans[i];
-                    if (GetCon(ref s, dir) != RC_NOT_CONNECTED)
+                    if (GetCon(s, dir) != RC_NOT_CONNECTED)
                     {
-                        ref RcCompactCell nc = ref chf.cells[nx + ny * chf.width];
-                        ni = nc.index + GetCon(ref s, dir);
+                        ref readonly RcCompactCell nc = ref chf.cells[nx + ny * chf.width];
+                        ni = nc.index + GetCon(s, dir);
                     }
 
                     if (ni == -1)
@@ -754,11 +754,11 @@ namespace DotRecast.Recast
             {
                 for (int x = 0; x < w; ++x)
                 {
-                    ref RcCompactCell c = ref chf.cells[x + y * w];
+                    ref readonly RcCompactCell c = ref chf.cells[x + y * w];
                     for (int i = c.index, ni = c.index + c.count; i < ni; ++i)
                     {
                         int res = 0;
-                        ref RcCompactSpan s = ref chf.spans[i];
+                        ref readonly RcCompactSpan s = ref chf.spans[i];
                         if (chf.spans[i].reg == 0 || (chf.spans[i].reg & RC_BORDER_REG) != 0)
                         {
                             flags[i] = 0;
@@ -768,11 +768,11 @@ namespace DotRecast.Recast
                         for (int dir = 0; dir < 4; ++dir)
                         {
                             int r = 0;
-                            if (GetCon(ref s, dir) != RC_NOT_CONNECTED)
+                            if (GetCon(s, dir) != RC_NOT_CONNECTED)
                             {
                                 int ax = x + GetDirOffsetX(dir);
                                 int ay = y + GetDirOffsetY(dir);
-                                int ai = chf.cells[ax + ay * w].index + GetCon(ref s, dir);
+                                int ai = chf.cells[ax + ay * w].index + GetCon(s, dir);
                                 r = chf.spans[ai].reg;
                             }
 

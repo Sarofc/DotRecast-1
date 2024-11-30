@@ -24,16 +24,16 @@ namespace DotRecast.Detour.Io
 {
     public struct DtMeshSetWriter
     {
-        public void Write(BinaryWriter stream, DtNavMesh mesh, RcByteOrder order, bool cCompatibility)
+        public void Write(BinaryWriter stream, DtNavMesh mesh)
         {
-            WriteHeader(stream, mesh, order, cCompatibility);
-            WriteTiles(stream, mesh, order, cCompatibility);
+            WriteHeader(stream, mesh);
+            WriteTiles(stream, mesh);
         }
 
-        private void WriteHeader(BinaryWriter stream, DtNavMesh mesh, RcByteOrder order, bool cCompatibility)
+        private void WriteHeader(BinaryWriter stream, DtNavMesh mesh)
         {
-            RcIO.Write(stream, NavMeshSetHeader.NAVMESHSET_MAGIC, order);
-            RcIO.Write(stream, cCompatibility ? NavMeshSetHeader.NAVMESHSET_VERSION : NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J, order);
+            RcIO.Write(stream, NavMeshSetHeader.NAVMESHSET_MAGIC);
+            RcIO.Write(stream, NavMeshSetHeader.NAVMESHSET_VERSION);
             int numTiles = 0;
             for (int i = 0; i < mesh.GetMaxTiles(); ++i)
             {
@@ -46,16 +46,16 @@ namespace DotRecast.Detour.Io
                 numTiles++;
             }
 
-            RcIO.Write(stream, numTiles, order);
+            RcIO.Write(stream, numTiles);
             DtNavMeshParamWriter paramWriter;
-            paramWriter.Write(stream, mesh.GetParams(), order);
-            if (!cCompatibility)
-            {
-                RcIO.Write(stream, mesh.GetMaxVertsPerPoly(), order);
-            }
+            paramWriter.Write(stream, mesh.GetParams());
+            //if (!cCompatibility)
+            //{
+            //    RcIO.Write(stream, mesh.GetMaxVertsPerPoly());
+            //}
         }
 
-        private void WriteTiles(BinaryWriter stream, DtNavMesh mesh, RcByteOrder order, bool cCompatibility)
+        private void WriteTiles(BinaryWriter stream, DtNavMesh mesh)
         {
             for (int i = 0; i < mesh.GetMaxTiles(); ++i)
             {
@@ -70,18 +70,18 @@ namespace DotRecast.Detour.Io
                 using MemoryStream msw = new MemoryStream();
                 using BinaryWriter bw = new BinaryWriter(msw);
                 DtMeshDataWriter writer;
-                writer.Write(bw, tile.data, order, cCompatibility);
+                writer.Write(bw, tile.data);
                 bw.Flush();
                 bw.Close();
 
                 byte[] ba = msw.ToArray();
                 tileHeader.dataSize = ba.Length;
-                RcIO.Write(stream, tileHeader.tileRef, order);
-                RcIO.Write(stream, tileHeader.dataSize, order);
-                if (cCompatibility)
-                {
-                    RcIO.Write(stream, 0, order); // C struct padding
-                }
+                RcIO.Write(stream, tileHeader.tileRef);
+                RcIO.Write(stream, tileHeader.dataSize);
+                //if (cCompatibility)
+                //{
+                //    RcIO.Write(stream, 0); // C struct padding
+                //}
 
                 stream.Write(ba);
             }

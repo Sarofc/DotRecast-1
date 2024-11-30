@@ -42,7 +42,6 @@ namespace DotRecast.Detour.TileCache
         private readonly DtNavMesh m_navmesh;
 
         private readonly DtTileCacheParams m_params;
-        private readonly DtTileCacheStorageParams m_storageParams;
 
         private readonly IRcCompressor m_tcomp;
         private readonly IDtTileCacheMeshProcess m_tmproc;
@@ -53,10 +52,9 @@ namespace DotRecast.Detour.TileCache
         private readonly List<DtObstacleRequest> m_reqs = new List<DtObstacleRequest>();
         private readonly List<long> m_update = new List<long>();
 
-        public DtTileCache(DtTileCacheParams option, DtTileCacheStorageParams storageParams, DtNavMesh navmesh, IRcCompressor tcomp, IDtTileCacheMeshProcess tmprocs)
+        public DtTileCache(DtTileCacheParams option, DtNavMesh navmesh, IRcCompressor tcomp, IDtTileCacheMeshProcess tmprocs)
         {
             m_params = option;
-            m_storageParams = storageParams;
             m_navmesh = navmesh;
             m_tcomp = tcomp;
             m_tmproc = tmprocs;
@@ -241,9 +239,8 @@ namespace DotRecast.Detour.TileCache
         {
             // Make sure the data is in right format.
             RcByteBuffer buf = new RcByteBuffer(data);
-            buf.Order(m_storageParams.Order);
             var reader = new DtTileCacheLayerHeaderReader();
-            DtTileCacheLayerHeader header = reader.Read(ref buf, m_storageParams.Compatibility);
+            DtTileCacheLayerHeader header = reader.Read(ref buf);
             // Make sure the location is free.
             if (GetTileAt(header.tx, header.ty, header.tlayer) != null)
             {
@@ -675,7 +672,7 @@ namespace DotRecast.Detour.TileCache
 
         public DtTileCacheLayer DecompressTile(DtCompressedTile tile)
         {
-            DtTileCacheLayer layer = DtTileCacheBuilder.DecompressTileCacheLayer(m_tcomp, tile.data, m_storageParams.Order, m_storageParams.Compatibility);
+            DtTileCacheLayer layer = DtTileCacheBuilder.DecompressTileCacheLayer(m_tcomp, tile.data);
             return layer;
         }
 

@@ -47,33 +47,26 @@ namespace DotRecast.Detour.TileCache.Io
             header.magic = bb.ReadInt32();
             if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
             {
-                header.magic = RcIO.SwapEndianness(header.magic);
+                //header.magic = RcIO.SwapEndianness(header.magic);
                 if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
                 {
                     throw new IOException("Invalid magic");
                 }
-
-                bb.Order(bb.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
             }
 
             header.version = bb.ReadInt32();
             if (header.version != DtTileCacheSetHeader.TILECACHESET_VERSION)
             {
-                if (header.version != DtTileCacheSetHeader.TILECACHESET_VERSION_RECAST4J)
-                {
-                    throw new IOException("Invalid version");
-                }
+                throw new IOException("Invalid version");
             }
 
-            bool cCompatibility = header.version == DtTileCacheSetHeader.TILECACHESET_VERSION;
             header.numTiles = bb.ReadInt32();
             header.meshParams = paramReader.Read(ref bb);
-            header.cacheParams = ReadCacheParams(ref bb, cCompatibility);
+            header.cacheParams = ReadCacheParams(ref bb);
             DtNavMesh mesh = new DtNavMesh();
             mesh.Init(header.meshParams, maxVertPerPoly);
-            IRcCompressor comp = _compFactory.Create(cCompatibility ? 0 : 1);
-            DtTileCacheStorageParams storageParams = new DtTileCacheStorageParams(bb.Order(), cCompatibility);
-            DtTileCache tc = new DtTileCache(header.cacheParams, storageParams, mesh, comp, meshProcessor);
+            IRcCompressor comp = _compFactory.Create(0);
+            DtTileCache tc = new DtTileCache(header.cacheParams, mesh, comp, meshProcessor);
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {
@@ -95,7 +88,7 @@ namespace DotRecast.Detour.TileCache.Io
             return tc;
         }
 
-        private DtTileCacheParams ReadCacheParams(ref RcByteBuffer bb, bool cCompatibility)
+        private DtTileCacheParams ReadCacheParams(ref RcByteBuffer bb)
         {
             DtTileCacheParams option = new DtTileCacheParams();
 

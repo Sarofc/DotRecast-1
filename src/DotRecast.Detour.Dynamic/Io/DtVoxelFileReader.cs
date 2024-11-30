@@ -40,13 +40,11 @@ namespace DotRecast.Detour.Dynamic.Io
             int magic = buf.ReadInt32();
             if (magic != DtVoxelFile.MAGIC)
             {
-                magic = RcIO.SwapEndianness(magic);
+                //magic = RcIO.SwapEndianness(magic);
                 if (magic != DtVoxelFile.MAGIC)
                 {
                     throw new IOException("Invalid magic");
                 }
-
-                buf.Order(buf.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
             }
 
             file.version = buf.ReadInt32();
@@ -138,7 +136,6 @@ namespace DotRecast.Detour.Dynamic.Io
                 }
 
                 RcByteBuffer data = new RcByteBuffer(bytes);
-                data.Order(buf.Order());
                 file.AddTile(new DtVoxelTile(tileX, tileZ, width, depth, boundsMin, boundsMax, cellSize, cellHeight, borderSize, ref data));
                 buf.Position(position + voxelSize);
             }

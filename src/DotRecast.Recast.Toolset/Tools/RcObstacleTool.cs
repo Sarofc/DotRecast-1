@@ -31,7 +31,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return "Temp Obstacles";
         }
 
-        public NavMeshBuildResult Build(IInputGeomProvider geom, RcNavMeshBuildSettings setting, RcByteOrder order, bool cCompatibility)
+        public NavMeshBuildResult Build(IInputGeomProvider geom, RcNavMeshBuildSettings setting)
         {
             if (null == geom || null == geom.GetMesh())
             {
@@ -65,13 +65,12 @@ namespace DotRecast.Recast.Toolset.Tools
                 SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
 
             var builder = new DtTileCacheLayerBuilder(DtTileCacheCompressorFactory.Shared);
-            var storageParams = new DtTileCacheStorageParams(order, cCompatibility);
-            var results = builder.Build(geom, cfg, storageParams, 8, tw, th);
+            var results = builder.Build(geom, cfg, 8, tw, th);
             var layers = results
                 .SelectMany(x => x.layers)
                 .ToList();
 
-            _tc = CreateTileCache(geom, setting, tw, th, order, cCompatibility);
+            _tc = CreateTileCache(geom, setting, tw, th);
 
             for (int i = 0; i < layers.Count; ++i)
             {
@@ -122,7 +121,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return _tc;
         }
 
-        public DtTileCache CreateTileCache(IInputGeomProvider geom, RcNavMeshBuildSettings setting, int tw, int th, RcByteOrder order, bool cCompatibility)
+        public DtTileCache CreateTileCache(IInputGeomProvider geom, RcNavMeshBuildSettings setting, int tw, int th)
         {
             DtTileCacheParams option = new DtTileCacheParams();
             option.ch = setting.cellHeight;
@@ -149,9 +148,8 @@ namespace DotRecast.Recast.Toolset.Tools
 
             var navMesh = new DtNavMesh();
             navMesh.Init(navMeshParams, 6);
-            var comp = _comp.Create(cCompatibility ? 0 : 1);
-            var storageParams = new DtTileCacheStorageParams(order, cCompatibility);
-            DtTileCache tc = new DtTileCache(option, storageParams, navMesh, comp, _proc);
+            var comp = _comp.Create(0);
+            DtTileCache tc = new DtTileCache(option, navMesh, comp, _proc);
             return tc;
         }
 

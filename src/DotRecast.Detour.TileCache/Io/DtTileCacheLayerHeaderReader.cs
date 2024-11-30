@@ -25,7 +25,7 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheLayerHeaderReader
     {
-        public DtTileCacheLayerHeader Read(ref RcByteBuffer data, bool cCompatibility)
+        public DtTileCacheLayerHeader Read(ref RcByteBuffer data)
         {
             DtTileCacheLayerHeader header = new DtTileCacheLayerHeader();
             header.magic = data.ReadInt32();
@@ -55,10 +55,6 @@ namespace DotRecast.Detour.TileCache.Io
             header.maxx = data.ReadByte() & 0xFF;
             header.miny = data.ReadByte() & 0xFF;
             header.maxy = data.ReadByte() & 0xFF;
-            if (cCompatibility)
-            {
-                data.ReadInt16(); // C struct padding
-            }
 
             return header;
         }

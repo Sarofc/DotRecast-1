@@ -50,7 +50,7 @@ namespace DotRecast.Detour.Dynamic.Io
             this.cellSize = cellSize;
             this.cellHeight = cellHeight;
             this.borderSize = borderSize;
-            spanData = ToByteArray(ref buffer, width, depth, DtVoxelFile.PREFERRED_BYTE_ORDER);
+            spanData = ToByteArray(ref buffer, width, depth);
         }
 
         public DtVoxelTile(int tileX, int tileZ, RcHeightfield heightfield)
@@ -64,49 +64,12 @@ namespace DotRecast.Detour.Dynamic.Io
             cellSize = heightfield.cs;
             cellHeight = heightfield.ch;
             borderSize = heightfield.borderSize;
-            spanData = SerializeSpans(heightfield, DtVoxelFile.PREFERRED_BYTE_ORDER);
+            spanData = SerializeSpans(heightfield);
         }
 
         public RcHeightfield Heightfield()
         {
-            return DtVoxelFile.PREFERRED_BYTE_ORDER == RcByteOrder.BIG_ENDIAN ? HeightfieldBE() : HeightfieldLE();
-        }
-
-        private RcHeightfield HeightfieldBE()
-        {
-            RcHeightfield hf = new RcHeightfield(width, depth, boundsMin, boundsMax, cellSize, cellHeight, borderSize);
-            int position = 0;
-            for (int z = 0, pz = 0; z < depth; z++, pz += width)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    RcSpan prev = null;
-                    int spanCount = RcByteUtils.GetShortBE(spanData, position);
-                    position += 2;
-                    for (int s = 0; s < spanCount; s++)
-                    {
-                        RcSpan span = new RcSpan();
-                        span.smin = RcByteUtils.GetIntBE(spanData, position);
-                        position += 4;
-                        span.smax = RcByteUtils.GetIntBE(spanData, position);
-                        position += 4;
-                        span.area = RcByteUtils.GetIntBE(spanData, position);
-                        position += 4;
-                        if (prev == null)
-                        {
-                            hf.spans[pz + x] = span;
-                        }
-                        else
-                        {
-                            prev.next = span;
-                        }
-
-                        prev = span;
-                    }
-                }
-            }
-
-            return hf;
+            return HeightfieldLE();
         }
 
         private RcHeightfield HeightfieldLE()
@@ -146,7 +109,7 @@ namespace DotRecast.Detour.Dynamic.Io
             return hf;
         }
 
-        private byte[] SerializeSpans(RcHeightfield heightfield, RcByteOrder order)
+        private byte[] SerializeSpans(RcHeightfield heightfield)
         {
             int[] counts = new int[heightfield.width * heightfield.height];
             int totalCount = 0;
@@ -170,13 +133,13 @@ namespace DotRecast.Detour.Dynamic.Io
             {
                 for (int x = 0; x < heightfield.width; x++)
                 {
-                    position = RcByteUtils.PutShort(counts[pz + x], data, position, order);
+                    position = RcByteUtils.PutShort(counts[pz + x], data, position);
                     RcSpan span = heightfield.spans[pz + x];
                     while (span != null)
                     {
-                        position = RcByteUtils.PutInt(span.smin, data, position, order);
-                        position = RcByteUtils.PutInt(span.smax, data, position, order);
-                        position = RcByteUtils.PutInt(span.area, data, position, order);
+                        position = RcByteUtils.PutInt(span.smin, data, position);
+                        position = RcByteUtils.PutInt(span.smax, data, position);
+                        position = RcByteUtils.PutInt(span.area, data, position);
                         span = span.next;
                     }
                 }
@@ -185,36 +148,9 @@ namespace DotRecast.Detour.Dynamic.Io
             return data;
         }
 
-        private byte[] ToByteArray(ref RcByteBuffer buf, int width, int height, RcByteOrder order)
+        private byte[] ToByteArray(ref RcByteBuffer buf, int width, int height)
         {
-            byte[] data;
-            if (buf.Order() == order)
-            {
-                data = buf.ReadBytes(buf.Limit()).ToArray();
-            }
-            else
-            {
-                data = new byte[buf.Limit()];
-                int l = width * height;
-                int position = 0;
-                for (int i = 0; i < l; i++)
-                {
-                    int count = buf.ReadInt16();
-                    RcByteUtils.PutShort(count, data, position, order);
-                    position += 2;
-                    for (int j = 0; j < count; j++)
-                    {
-                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
-                        position += 4;
-                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
-                        position += 4;
-                        RcByteUtils.PutInt(buf.ReadInt32(), data, position, order);
-                        position += 4;
-                    }
-                }
-            }
-
-            return data;
+            return buf.ReadBytes(buf.Limit()).ToArray();
         }
     }
 }

@@ -36,12 +36,10 @@ namespace DotRecast.Detour.TileCache.Io
         }
 
 
-        public void Write(BinaryWriter stream, DtTileCache cache, RcByteOrder order, bool cCompatibility)
+        public void Write(BinaryWriter stream, DtTileCache cache)
         {
-            RcIO.Write(stream, DtTileCacheSetHeader.TILECACHESET_MAGIC, order);
-            RcIO.Write(stream, cCompatibility
-                ? DtTileCacheSetHeader.TILECACHESET_VERSION
-                : DtTileCacheSetHeader.TILECACHESET_VERSION_RECAST4J, order);
+            RcIO.Write(stream, DtTileCacheSetHeader.TILECACHESET_MAGIC);
+            RcIO.Write(stream, DtTileCacheSetHeader.TILECACHESET_VERSION);
             int numTiles = 0;
             for (int i = 0; i < cache.GetTileCount(); ++i)
             {
@@ -51,40 +49,40 @@ namespace DotRecast.Detour.TileCache.Io
                 numTiles++;
             }
 
-            RcIO.Write(stream, numTiles, order);
-            paramWriter.Write(stream, cache.GetNavMesh().GetParams(), order);
-            WriteCacheParams(stream, cache.GetParams(), order);
+            RcIO.Write(stream, numTiles);
+            paramWriter.Write(stream, cache.GetNavMesh().GetParams());
+            WriteCacheParams(stream, cache.GetParams());
             for (int i = 0; i < cache.GetTileCount(); i++)
             {
                 DtCompressedTile tile = cache.GetTile(i);
                 if (tile == null || tile.data == null)
                     continue;
-                RcIO.Write(stream, (int)cache.GetTileRef(tile), order);
+                RcIO.Write(stream, (int)cache.GetTileRef(tile));
                 byte[] data = tile.data;
                 DtTileCacheLayer layer = cache.DecompressTile(tile);
-                var comp = _compFactory.Create(cCompatibility ? 0 : 1);
-                data = DtTileCacheBuilder.CompressTileCacheLayer(comp, layer, order, cCompatibility);
-                RcIO.Write(stream, data.Length, order);
+                var comp = _compFactory.Create(0);
+                data = DtTileCacheBuilder.CompressTileCacheLayer(comp, layer);
+                RcIO.Write(stream, data.Length);
                 stream.Write(data);
             }
         }
 
-        private void WriteCacheParams(BinaryWriter stream, DtTileCacheParams option, RcByteOrder order)
+        private void WriteCacheParams(BinaryWriter stream, DtTileCacheParams option)
         {
-            RcIO.Write(stream, option.orig.X, order);
-            RcIO.Write(stream, option.orig.Y, order);
-            RcIO.Write(stream, option.orig.Z, order);
+            RcIO.Write(stream, option.orig.X);
+            RcIO.Write(stream, option.orig.Y);
+            RcIO.Write(stream, option.orig.Z);
 
-            RcIO.Write(stream, option.cs, order);
-            RcIO.Write(stream, option.ch, order);
-            RcIO.Write(stream, option.width, order);
-            RcIO.Write(stream, option.height, order);
-            RcIO.Write(stream, option.walkableHeight, order);
-            RcIO.Write(stream, option.walkableRadius, order);
-            RcIO.Write(stream, option.walkableClimb, order);
-            RcIO.Write(stream, option.maxSimplificationError, order);
-            RcIO.Write(stream, option.maxTiles, order);
-            RcIO.Write(stream, option.maxObstacles, order);
+            RcIO.Write(stream, option.cs);
+            RcIO.Write(stream, option.ch);
+            RcIO.Write(stream, option.width);
+            RcIO.Write(stream, option.height);
+            RcIO.Write(stream, option.walkableHeight);
+            RcIO.Write(stream, option.walkableRadius);
+            RcIO.Write(stream, option.walkableClimb);
+            RcIO.Write(stream, option.maxSimplificationError);
+            RcIO.Write(stream, option.maxTiles);
+            RcIO.Write(stream, option.maxObstacles);
         }
     }
 }

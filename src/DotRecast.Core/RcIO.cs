@@ -59,12 +59,6 @@ namespace DotRecast.Core
             return new RcByteBuffer(bytes);
         }
 
-        public static int SwapEndianness(int i)
-        {
-            var s = (((uint)i >> 24) & 0xFF) | (((uint)i >> 8) & 0xFF00) | (((uint)i << 8) & 0xFF0000) | ((i << 24) & 0xFF000000);
-            return (int)s;
-        }
-
         public static byte[] ReadFileIfFound(string filename)
         {
             if (string.IsNullOrEmpty(filename))
@@ -95,57 +89,31 @@ namespace DotRecast.Core
             return buffer;
         }
 
-        public static void Write(BinaryWriter ws, float value, RcByteOrder order)
+        public static void Write(BinaryWriter ws, float value)
         {
             byte[] bytes = BitConverter.GetBytes(value);
             int i = BitConverter.ToInt32(bytes, 0);
-            Write(ws, i, order);
+            Write(ws, i);
         }
 
-        public static void Write(BinaryWriter ws, short value, RcByteOrder order)
+        public static void Write(BinaryWriter ws, short value)
         {
-            if (order == RcByteOrder.BIG_ENDIAN)
-            {
-                ws.Write((byte)((value >> 8) & 0xFF));
-                ws.Write((byte)(value & 0xFF));
-            }
-            else
-            {
-                ws.Write((byte)(value & 0xFF));
-                ws.Write((byte)((value >> 8) & 0xFF));
-            }
+            ws.Write((byte)(value & 0xFF));
+            ws.Write((byte)((value >> 8) & 0xFF));
         }
 
-        public static void Write(BinaryWriter ws, long value, RcByteOrder order)
+        public static void Write(BinaryWriter ws, long value)
         {
-            if (order == RcByteOrder.BIG_ENDIAN)
-            {
-                Write(ws, (int)((ulong)value >> 32), order);
-                Write(ws, (int)(value & 0xFFFFFFFF), order);
-            }
-            else
-            {
-                Write(ws, (int)(value & 0xFFFFFFFF), order);
-                Write(ws, (int)((ulong)value >> 32), order);
-            }
+            Write(ws, (int)(value & 0xFFFFFFFF));
+            Write(ws, (int)((ulong)value >> 32));
         }
 
-        public static void Write(BinaryWriter ws, int value, RcByteOrder order)
+        public static void Write(BinaryWriter ws, int value)
         {
-            if (order == RcByteOrder.BIG_ENDIAN)
-            {
-                ws.Write((byte)((value >> 24) & 0xFF));
-                ws.Write((byte)((value >> 16) & 0xFF));
-                ws.Write((byte)((value >> 8) & 0xFF));
-                ws.Write((byte)(value & 0xFF));
-            }
-            else
-            {
-                ws.Write((byte)(value & 0xFF));
-                ws.Write((byte)((value >> 8) & 0xFF));
-                ws.Write((byte)((value >> 16) & 0xFF));
-                ws.Write((byte)((value >> 24) & 0xFF));
-            }
+            ws.Write((byte)(value & 0xFF));
+            ws.Write((byte)((value >> 8) & 0xFF));
+            ws.Write((byte)((value >> 16) & 0xFF));
+            ws.Write((byte)((value >> 24) & 0xFF));
         }
 
         public static void Write(BinaryWriter ws, bool value)

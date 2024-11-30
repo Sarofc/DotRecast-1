@@ -67,10 +67,10 @@ namespace DotRecast.Detour.Io
                 throw new IOException("Invalid number of verts per poly " + header.maxVertsPerPoly);
             }
 
-            bool cCompatibility = header.version == NavMeshSetHeader.NAVMESHSET_VERSION;
+            //bool cCompatibility = header.version == NavMeshSetHeader.NAVMESHSET_VERSION;
             DtNavMesh mesh = new DtNavMesh();
             mesh.Init(header.option, header.maxVertsPerPoly);
-            ReadTiles(ref bb, is32Bit, ref header, cCompatibility, mesh);
+            ReadTiles(ref bb, is32Bit, ref header, mesh);
             return mesh;
         }
 
@@ -80,18 +80,11 @@ namespace DotRecast.Detour.Io
             header.magic = bb.ReadInt32();
             if (header.magic != NavMeshSetHeader.NAVMESHSET_MAGIC)
             {
-                header.magic = RcIO.SwapEndianness(header.magic);
-                if (header.magic != NavMeshSetHeader.NAVMESHSET_MAGIC)
-                {
-                    throw new IOException("Invalid magic " + header.magic);
-                }
-
-                bb.Order(bb.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
+                throw new IOException("Invalid magic " + header.magic);
             }
 
             header.version = bb.ReadInt32();
-            if (header.version != NavMeshSetHeader.NAVMESHSET_VERSION && header.version != NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J_1
-                                                                      && header.version != NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J)
+            if (header.version != NavMeshSetHeader.NAVMESHSET_VERSION)
             {
                 throw new IOException("Invalid version " + header.version);
             }
@@ -100,15 +93,15 @@ namespace DotRecast.Detour.Io
             DtNavMeshParamsReader paramReader;
             header.option = paramReader.Read(ref bb);
             header.maxVertsPerPoly = maxVertsPerPoly;
-            if (header.version == NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J)
-            {
-                header.maxVertsPerPoly = bb.ReadInt32();
-            }
+            //if (header.version == NavMeshSetHeader.NAVMESHSET_VERSION_RECAST4J)
+            //{
+            //    header.maxVertsPerPoly = bb.ReadInt32();
+            //}
 
             return header;
         }
 
-        private void ReadTiles(ref RcByteBuffer bb, bool is32Bit, ref NavMeshSetHeader header, bool cCompatibility, DtNavMesh mesh)
+        private void ReadTiles(ref RcByteBuffer bb, bool is32Bit, ref NavMeshSetHeader header, DtNavMesh mesh)
         {
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
@@ -129,10 +122,10 @@ namespace DotRecast.Detour.Io
                     break;
                 }
 
-                if (cCompatibility && !is32Bit)
-                {
-                    bb.ReadInt32(); // C struct padding
-                }
+                //if (cCompatibility && !is32Bit)
+                //{
+                //    bb.ReadInt32(); // C struct padding
+                //}
 
                 DtMeshDataReader meshReader;
                 DtMeshData data = meshReader.Read(ref bb, mesh.GetMaxVertsPerPoly(), is32Bit);

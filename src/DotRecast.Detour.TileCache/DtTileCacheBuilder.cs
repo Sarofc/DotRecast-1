@@ -1900,14 +1900,14 @@ namespace DotRecast.Detour.TileCache
             }
         }
 
-        public static byte[] CompressTileCacheLayer(IRcCompressor comp, DtTileCacheLayer layer, RcByteOrder order, bool cCompatibility)
+        public static byte[] CompressTileCacheLayer(IRcCompressor comp, DtTileCacheLayer layer)
         {
             using var ms = new MemoryStream();
             using var bw = new BinaryWriter(ms);
             DtTileCacheLayerHeaderWriter hw = new DtTileCacheLayerHeaderWriter();
             try
             {
-                hw.Write(bw, layer.header, order, cCompatibility);
+                hw.Write(bw, layer.header);
                 int gridSize = layer.header.width * layer.header.height;
                 byte[] buffer = new byte[gridSize * 3];
                 for (int i = 0; i < gridSize; i++)
@@ -1927,14 +1927,14 @@ namespace DotRecast.Detour.TileCache
             }
         }
 
-        public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, int[] areas, int[] cons, RcByteOrder order, bool cCompatibility, IRcCompressor comp)
+        public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, int[] areas, int[] cons, IRcCompressor comp)
         {
             using var ms = new MemoryStream();
             using var bw = new BinaryWriter(ms);
             DtTileCacheLayerHeaderWriter hw = new DtTileCacheLayerHeaderWriter();
             try
             {
-                hw.Write(bw, header, order, cCompatibility);
+                hw.Write(bw, header);
                 int gridSize = header.width * header.height;
                 byte[] buffer = new byte[gridSize * 3];
                 for (int i = 0; i < gridSize; i++)
@@ -1954,15 +1954,14 @@ namespace DotRecast.Detour.TileCache
             }
         }
 
-        public static DtTileCacheLayer DecompressTileCacheLayer(IRcCompressor comp, byte[] compressed, RcByteOrder order, bool cCompatibility)
+        public static DtTileCacheLayer DecompressTileCacheLayer(IRcCompressor comp, byte[] compressed)
         {
             RcByteBuffer buf = new RcByteBuffer(compressed);
-            buf.Order(order);
             DtTileCacheLayer layer = new DtTileCacheLayer();
             try
             {
                 var reader = new DtTileCacheLayerHeaderReader();
-                layer.header = reader.Read(ref buf, cCompatibility);
+                layer.header = reader.Read(ref buf);
             }
             catch (IOException e)
             {

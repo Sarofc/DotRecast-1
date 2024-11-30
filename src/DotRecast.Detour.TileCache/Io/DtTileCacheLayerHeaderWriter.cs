@@ -26,33 +26,29 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheLayerHeaderWriter
     {
-        public void Write(BinaryWriter stream, DtTileCacheLayerHeader header, RcByteOrder order, bool cCompatibility)
+        public void Write(BinaryWriter stream, DtTileCacheLayerHeader header)
         {
-            RcIO.Write(stream, header.magic, order);
-            RcIO.Write(stream, header.version, order);
-            RcIO.Write(stream, header.tx, order);
-            RcIO.Write(stream, header.ty, order);
-            RcIO.Write(stream, header.tlayer, order);
+            RcIO.Write(stream, header.magic);
+            RcIO.Write(stream, header.version);
+            RcIO.Write(stream, header.tx);
+            RcIO.Write(stream, header.ty);
+            RcIO.Write(stream, header.tlayer);
 
-            RcIO.Write(stream, header.bmin.X, order);
-            RcIO.Write(stream, header.bmin.Y, order);
-            RcIO.Write(stream, header.bmin.Z, order);
-            RcIO.Write(stream, header.bmax.X, order);
-            RcIO.Write(stream, header.bmax.Y, order);
-            RcIO.Write(stream, header.bmax.Z, order);
+            RcIO.Write(stream, header.bmin.X);
+            RcIO.Write(stream, header.bmin.Y);
+            RcIO.Write(stream, header.bmin.Z);
+            RcIO.Write(stream, header.bmax.X);
+            RcIO.Write(stream, header.bmax.Y);
+            RcIO.Write(stream, header.bmax.Z);
 
-            RcIO.Write(stream, (short)header.hmin, order);
-            RcIO.Write(stream, (short)header.hmax, order);
+            RcIO.Write(stream, (short)header.hmin);
+            RcIO.Write(stream, (short)header.hmax);
             RcIO.Write(stream, (byte)header.width);
             RcIO.Write(stream, (byte)header.height);
             RcIO.Write(stream, (byte)header.minx);
             RcIO.Write(stream, (byte)header.maxx);
             RcIO.Write(stream, (byte)header.miny);
             RcIO.Write(stream, (byte)header.maxy);
-            if (cCompatibility)
-            {
-                RcIO.Write(stream, (short)0, order); // C struct padding
-            }
         }
     }
 }

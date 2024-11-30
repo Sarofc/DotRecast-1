@@ -59,13 +59,7 @@ namespace DotRecast.Detour.Io
             header.magic = buf.ReadInt32();
             if (header.magic != DT_NAVMESH_MAGIC)
             {
-                header.magic = RcIO.SwapEndianness(header.magic);
-                if (header.magic != DT_NAVMESH_MAGIC)
-                {
-                    throw new IOException("Invalid magic");
-                }
-
-                buf.Order(buf.Order() == RcByteOrder.BIG_ENDIAN ? RcByteOrder.LITTLE_ENDIAN : RcByteOrder.BIG_ENDIAN);
+                throw new IOException("Invalid magic");
             }
 
             header.version = buf.ReadInt32();
@@ -78,7 +72,6 @@ namespace DotRecast.Detour.Io
                 }
             }
 
-            bool cCompatibility = header.version == DT_NAVMESH_VERSION;
             header.x = buf.ReadInt32();
             header.y = buf.ReadInt32();
             header.layer = buf.ReadInt32();
@@ -107,12 +100,10 @@ namespace DotRecast.Detour.Io
             header.bvQuantFactor = buf.ReadSingle();
             data.verts = ReadVerts(ref buf, header.vertCount);
             data.polys = ReadPolys(ref buf, header, maxVertPerPoly);
-            if (cCompatibility)
-            {
-                buf.Position(buf.Position() + header.maxLinkCount * GetSizeofLink(is32Bit));
-            }
 
-            data.detailMeshes = ReadPolyDetails(ref buf, header, cCompatibility);
+            buf.Position(buf.Position() + header.maxLinkCount * GetSizeofLink(is32Bit));
+
+            data.detailMeshes = ReadPolyDetails(ref buf, header);
             data.detailVerts = ReadVerts(ref buf, header.detailVertCount);
             data.detailTris = ReadDTris(ref buf, header);
             data.bvTree = ReadBVTree(ref buf, header);
@@ -166,7 +157,7 @@ namespace DotRecast.Detour.Io
             return polys;
         }
 
-        private DtPolyDetail[] ReadPolyDetails(ref RcByteBuffer buf, DtMeshHeader header, bool cCompatibility)
+        private DtPolyDetail[] ReadPolyDetails(ref RcByteBuffer buf, DtMeshHeader header)
         {
             DtPolyDetail[] polys = new DtPolyDetail[header.detailMeshCount];
             for (int i = 0; i < polys.Length; i++)
@@ -176,10 +167,10 @@ namespace DotRecast.Detour.Io
                 byte vertCount = (byte)(buf.ReadByte() & 0xFF);
                 byte triCount = (byte)(buf.ReadByte() & 0xFF);
                 polys[i] = new DtPolyDetail(vertBase, triBase, vertCount, triCount);
-                if (cCompatibility)
-                {
-                    buf.ReadInt16(); // C struct padding
-                }
+                //if (cCompatibility)
+                //{
+                //    buf.ReadInt16(); // C struct padding
+                //}
             }
 
             return polys;
@@ -238,7 +229,7 @@ namespace DotRecast.Detour.Io
             DtOffMeshConnection[] cons = new DtOffMeshConnection[header.offMeshConCount];
             for (int i = 0; i < cons.Length; i++)
             {
-               ref DtOffMeshConnection con = ref cons[i];
+                ref DtOffMeshConnection con = ref cons[i];
                 for (int j = 0; j < 2; j++)
                 {
                     con.pos[j * 3 + 0] = buf.ReadSingle();

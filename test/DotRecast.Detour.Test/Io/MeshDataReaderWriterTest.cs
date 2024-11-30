@@ -60,7 +60,7 @@ public unsafe class MeshDataReaderWriterTest
         Test(false, RcByteOrder.LITTLE_ENDIAN);
     }
 
-    public void Test(bool cCompatibility, RcByteOrder order)
+    public void Test(bool cCompatibility)
     {
         using var ms = new MemoryStream();
         using var bw = new BinaryWriter(ms);
