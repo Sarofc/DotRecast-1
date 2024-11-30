@@ -37,36 +37,18 @@ public unsafe class MeshDataReaderWriterTest
     }
 
     [Test]
-    public void TestCCompatibility()
-    {
-        Test(true, RcByteOrder.BIG_ENDIAN);
-    }
-
-    [Test]
-    public void TestCompact()
-    {
-        Test(false, RcByteOrder.BIG_ENDIAN);
-    }
-
-    [Test]
-    public void TestCCompatibilityLE()
-    {
-        Test(true, RcByteOrder.LITTLE_ENDIAN);
-    }
-
-    [Test]
     public void TestCompactLE()
     {
-        Test(false, RcByteOrder.LITTLE_ENDIAN);
+        Test();
     }
 
-    public void Test(bool cCompatibility)
+    public void Test()
     {
         using var ms = new MemoryStream();
         using var bw = new BinaryWriter(ms);
 
         DtMeshDataWriter writer = new DtMeshDataWriter();
-        writer.Write(bw, meshData, order, cCompatibility);
+        writer.Write(bw, meshData);
         ms.Seek(0, SeekOrigin.Begin);
 
         using var br = new BinaryReader(ms);

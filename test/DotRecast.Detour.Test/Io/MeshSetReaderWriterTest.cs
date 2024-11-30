@@ -100,7 +100,7 @@ public class MeshSetReaderWriterTest
 
         using var ms = new MemoryStream();
         using var bw = new BinaryWriter(ms);
-        writer.Write(bw, mesh, RcByteOrder.LITTLE_ENDIAN, true);
+        writer.Write(bw, mesh);
         ms.Seek(0, SeekOrigin.Begin);
 
         using var br = new BinaryReader(ms);

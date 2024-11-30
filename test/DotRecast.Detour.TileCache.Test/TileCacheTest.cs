@@ -30,37 +30,12 @@ namespace DotRecast.Detour.TileCache.Test;
 public class TileCacheTest : AbstractTileCacheTest
 {
     [Test]
-    public void TestFastLz()
-    {
-        TestDungeon(RcByteOrder.LITTLE_ENDIAN, false);
-        TestDungeon(RcByteOrder.LITTLE_ENDIAN, true);
-        TestDungeon(RcByteOrder.BIG_ENDIAN, false);
-        TestDungeon(RcByteOrder.BIG_ENDIAN, true);
-        Test(RcByteOrder.LITTLE_ENDIAN, false);
-        Test(RcByteOrder.LITTLE_ENDIAN, true);
-        Test(RcByteOrder.BIG_ENDIAN, false);
-        Test(RcByteOrder.BIG_ENDIAN, true);
-    }
-
-    [Test]
-    public void TestLZ4()
-    {
-        TestDungeon(RcByteOrder.LITTLE_ENDIAN, false);
-        TestDungeon(RcByteOrder.LITTLE_ENDIAN, true);
-        TestDungeon(RcByteOrder.BIG_ENDIAN, false);
-        TestDungeon(RcByteOrder.BIG_ENDIAN, true);
-        Test(RcByteOrder.LITTLE_ENDIAN, false);
-        Test(RcByteOrder.LITTLE_ENDIAN, true);
-        Test(RcByteOrder.BIG_ENDIAN, false);
-        Test(RcByteOrder.BIG_ENDIAN, true);
-    }
-
-    private void TestDungeon(RcByteOrder order, bool cCompatibility)
+    public void TestDungeon()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        DtTileCache tc = GetTileCache(geom, order, cCompatibility);
+        DtTileCache tc = GetTileCache(geom);
         TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
-        List<byte[]> layers = layerBuilder.Build(order, cCompatibility, 1);
+        List<byte[]> layers = layerBuilder.Build(1);
         int cacheLayerCount = 0;
         int cacheCompressedSize = 0;
         int cacheRawSize = 0;
@@ -73,8 +48,7 @@ public class TileCacheTest : AbstractTileCacheTest
             cacheRawSize += 4 * 48 * 48 + 56; // FIXME
         }
 
-        Console.WriteLine("Compressor: " + tc.GetCompressor().GetType().Name + " C Compatibility: " + cCompatibility
-                          + " Layers: " + cacheLayerCount + " Raw Size: " + cacheRawSize + " Compressed: " + cacheCompressedSize);
+        Console.WriteLine("Compressor: " + tc.GetCompressor().GetType().Name + " Layers: " + cacheLayerCount + " Raw Size: " + cacheRawSize + " Compressed: " + cacheCompressedSize);
         Assert.That(tc.GetNavMesh().GetMaxTiles(), Is.EqualTo(256));
         Assert.That(tc.GetNavMesh().GetParams().maxPolys, Is.EqualTo(16384));
         Assert.That(tc.GetNavMesh().GetParams().tileWidth, Is.EqualTo(14.4f).Within(0.001f));
@@ -151,12 +125,12 @@ public class TileCacheTest : AbstractTileCacheTest
         Assert.That(data.detailTris.Length, Is.EqualTo(4 * 3));
     }
 
-    private void Test(RcByteOrder order, bool cCompatibility)
+    private void Test()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("nav_test.obj");
-        DtTileCache tc = GetTileCache(geom, order, cCompatibility);
+        DtTileCache tc = GetTileCache(geom);
         TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
-        List<byte[]> layers = layerBuilder.Build(order, cCompatibility, 1);
+        List<byte[]> layers = layerBuilder.Build(1);
         int cacheLayerCount = 0;
         int cacheCompressedSize = 0;
         int cacheRawSize = 0;
@@ -169,42 +143,39 @@ public class TileCacheTest : AbstractTileCacheTest
             cacheRawSize += 4 * 48 * 48 + 56;
         }
 
-        Console.WriteLine("Compressor: " + tc.GetCompressor().GetType().Name + " C Compatibility: " + cCompatibility
-                          + " Layers: " + cacheLayerCount + " Raw Size: " + cacheRawSize + " Compressed: " + cacheCompressedSize);
+        Console.WriteLine("Compressor: " + tc.GetCompressor().GetType().Name + " Layers: " + cacheLayerCount + " Raw Size: " + cacheRawSize + " Compressed: " + cacheCompressedSize);
     }
 
     [Test]
     public void TestPerformance()
     {
         int threads = Environment.ProcessorCount;
-        RcByteOrder order = RcByteOrder.LITTLE_ENDIAN;
-        bool cCompatibility = false;
 
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
         TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
         for (int i = 0; i < 4; i++)
         {
-            layerBuilder.Build(order, cCompatibility, 1);
-            layerBuilder.Build(order, cCompatibility, threads);
+            layerBuilder.Build(1);
+            layerBuilder.Build(threads);
         }
 
         long t1 = RcFrequency.Ticks;
         List<byte[]> layers = null;
         for (int i = 0; i < 8; i++)
         {
-            layers = layerBuilder.Build(order, cCompatibility, 1);
+            layers = layerBuilder.Build(1);
         }
 
         long t2 = RcFrequency.Ticks;
         for (int i = 0; i < 8; i++)
         {
-            layers = layerBuilder.Build(order, cCompatibility, threads);
+            layers = layerBuilder.Build(threads);
         }
 
         long t3 = RcFrequency.Ticks;
         Console.WriteLine(" Time ST : " + (t2 - t1) / TimeSpan.TicksPerMillisecond);
         Console.WriteLine(" Time MT : " + (t3 - t2) / TimeSpan.TicksPerMillisecond);
-        DtTileCache tc = GetTileCache(geom, order, cCompatibility);
+        DtTileCache tc = GetTileCache(geom);
         foreach (byte[] layer in layers)
         {
             long refs = tc.AddTile(layer, 0);

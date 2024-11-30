@@ -35,25 +35,12 @@ public class TileCacheReaderWriterTest : AbstractTileCacheTest
     private readonly DtTileCacheWriter writer = new DtTileCacheWriter(DtTileCacheCompressorFactory.Shared);
 
     [Test]
-    public void TestFastLz()
-    {
-        TestDungeon(false);
-        TestDungeon(true);
-    }
-
-    [Test]
-    public void TestLZ4()
-    {
-        TestDungeon(true);
-        TestDungeon(false);
-    }
-
-    private void TestDungeon(bool cCompatibility)
+    public void TestDungeon()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
         TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
-        List<byte[]> layers = layerBuilder.Build(RcByteOrder.LITTLE_ENDIAN, cCompatibility, 1);
-        DtTileCache tc = GetTileCache(geom, RcByteOrder.LITTLE_ENDIAN, cCompatibility);
+        List<byte[]> layers = layerBuilder.Build(1);
+        DtTileCache tc = GetTileCache(geom);
         foreach (byte[] layer in layers)
         {
             long refs = tc.AddTile(layer, 0);
@@ -62,7 +49,9 @@ public class TileCacheReaderWriterTest : AbstractTileCacheTest
 
         using var msw = new MemoryStream();
         using var bw = new BinaryWriter(msw);
-        writer.Write(bw, tc, RcByteOrder.LITTLE_ENDIAN, cCompatibility);
+        writer.Write(bw, tc);
+
+        //File.WriteAllBytes(@"..\resources\dungeon_all_tiles_tilecache.bin", msw.ToArray());
 
         using var msr = new MemoryStream(msw.ToArray());
         using var br = new BinaryReader(msr);

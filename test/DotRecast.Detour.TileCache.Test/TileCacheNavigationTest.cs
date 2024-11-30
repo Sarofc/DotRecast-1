@@ -53,11 +53,10 @@ public class TileCacheNavigationTest : AbstractTileCacheTest
     [SetUp]
     public void SetUp()
     {
-        bool cCompatibility = true;
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
         TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
-        List<byte[]> layers = layerBuilder.Build(RcByteOrder.LITTLE_ENDIAN, cCompatibility, 1);
-        DtTileCache tc = GetTileCache(geom, RcByteOrder.LITTLE_ENDIAN, cCompatibility);
+        List<byte[]> layers = layerBuilder.Build(1);
+        DtTileCache tc = GetTileCache(geom);
         foreach (byte[] data in layers)
         {
             tc.AddTile(data, 0);

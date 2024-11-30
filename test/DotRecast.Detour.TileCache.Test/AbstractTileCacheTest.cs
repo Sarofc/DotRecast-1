@@ -41,7 +41,7 @@ public class AbstractTileCacheTest
     private readonly int m_tileSize = 48;
 
 
-    public DtTileCache GetTileCache(IInputGeomProvider geom, bool cCompatibility)
+    public DtTileCache GetTileCache(IInputGeomProvider geom)
     {
         DtTileCacheParams option = new DtTileCacheParams();
         RcRecast.CalcTileCount(geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), m_cellSize, m_tileSize, m_tileSize, out var tw, out var th);
@@ -66,7 +66,7 @@ public class AbstractTileCacheTest
 
         var navMesh = new DtNavMesh();
         navMesh.Init(navMeshParams, 6);
-        var comp = DtTileCacheCompressorFactory.Shared.Create(cCompatibility ? 0 : 1);
+        var comp = DtTileCacheCompressorFactory.Shared.Create(0);
         //var storageParams = new DtTileCacheStorageParams(order, cCompatibility);
         var process = new TestTileCacheMeshProcess();
         DtTileCache tc = new DtTileCache(option, navMesh, comp, process);

@@ -23,7 +23,7 @@ using DotRecast.Detour.Io;
 
 namespace DotRecast.Detour.Dynamic.Io
 {
-    public class DtVoxelFileWriter
+    public struct DtVoxelFileWriter
     {
         private readonly IRcCompressor _compressor;
 

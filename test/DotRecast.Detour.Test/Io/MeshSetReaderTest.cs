@@ -1,3 +1,5 @@
+#if false // 全部改为小端，且不支持recast4j的格式了
+
 /*
 recast4j Copyright (c) 2015-2019 Piotr Piastucki piotr@jtilia.org
 DotRecast Copyright (c) 2023-2024 Choi Ikpil ikpil@naver.com
@@ -102,7 +104,7 @@ public class MeshSetReaderTest
         Assert.That(tiles[0].data.verts.Length, Is.EqualTo(17 * 3));
     }
 
-    [Test]
+    //[Test] // TODO 不再支持32位
     public void TestDungeon32Bit()
     {
         byte[] @is = RcIO.ReadFileIfFound("dungeon_all_tiles_navmesh_32bit.bin");
@@ -140,3 +142,5 @@ public class MeshSetReaderTest
         Assert.That(tiles[0].data.verts.Length, Is.EqualTo(17 * 3));
     }
 }
+
+#endif
