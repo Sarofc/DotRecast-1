@@ -19,20 +19,18 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Collections.Generic;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
-
-using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Toolset;
+using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Tools;
 using ImGuiNET;
 using Serilog;
 using static DotRecast.Recast.Demo.Draw.DebugDraw;
 using static DotRecast.Recast.Demo.Draw.DebugDrawPrimitives;
-using DotRecast.Core;
 
 namespace DotRecast.Recast.Demo.Tools;
 

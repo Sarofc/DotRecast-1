@@ -18,8 +18,6 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
-using System.Threading;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.Crowd.Test;
@@ -310,7 +308,7 @@ public class Crowd4Test : AbstractCrowdTest
     {
         var updateFlags = DtCrowdAgentUpdateFlags.DT_CROWD_ANTICIPATE_TURNS |
                           DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_VIS |
-                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_TOPO | 
+                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_TOPO |
                           DtCrowdAgentUpdateFlags.DT_CROWD_OBSTACLE_AVOIDANCE;
 
         AddAgentGrid(2, 0.3f, updateFlags, 2, startPoss[0]);
@@ -331,10 +329,10 @@ public class Crowd4Test : AbstractCrowdTest
     [Test]
     public void TestAgent1Quality2TVTAS()
     {
-        var updateFlags = DtCrowdAgentUpdateFlags.DT_CROWD_ANTICIPATE_TURNS | 
-                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_VIS | 
-                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_TOPO | 
-                          DtCrowdAgentUpdateFlags.DT_CROWD_OBSTACLE_AVOIDANCE | 
+        var updateFlags = DtCrowdAgentUpdateFlags.DT_CROWD_ANTICIPATE_TURNS |
+                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_VIS |
+                          DtCrowdAgentUpdateFlags.DT_CROWD_OPTIMIZE_TOPO |
+                          DtCrowdAgentUpdateFlags.DT_CROWD_OBSTACLE_AVOIDANCE |
                           DtCrowdAgentUpdateFlags.DT_CROWD_SEPARATION;
 
         AddAgentGrid(2, 0.3f, updateFlags, 2, startPoss[0]);

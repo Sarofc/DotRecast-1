@@ -18,8 +18,6 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Numerics;
-
 namespace DotRecast.Detour
 {
     /// Defines an navigation mesh off-mesh connection within a dtMeshTile object.

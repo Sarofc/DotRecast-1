@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using NUnit.Framework;
 
@@ -11,9 +10,9 @@ public class RcIoTests
     {
         const long tileRef = 281474976710656L;
         const int dataSize = 344;
-        
+
         byte[] actual;
-        
+
         {
             using MemoryStream ms = new MemoryStream();
             using BinaryWriter bw = new BinaryWriter(ms);
@@ -22,7 +21,7 @@ public class RcIoTests
             RcIO.Write(bw, dataSize);
 
             bw.Flush();
-            actual= ms.ToArray();
+            actual = ms.ToArray();
         }
 
         {

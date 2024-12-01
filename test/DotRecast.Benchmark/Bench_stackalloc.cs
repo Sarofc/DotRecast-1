@@ -1,6 +1,6 @@
+using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using System.Runtime.CompilerServices;
 
 namespace CSharpBencchmark
 {

@@ -17,9 +17,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System.Collections.Generic;
 using System.IO;
-using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Detour.Io;
 using DotRecast.Recast;

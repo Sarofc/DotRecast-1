@@ -1,8 +1,5 @@
-using System.Numerics;
-using System.Runtime.Intrinsics;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using System.Numerics;
 
 namespace CSharpBencchmark
 {

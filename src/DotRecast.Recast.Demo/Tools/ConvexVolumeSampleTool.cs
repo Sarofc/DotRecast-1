@@ -20,9 +20,9 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Numerics;
-using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Toolset;
+using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Tools;
 using ImGuiNET;
 using Serilog;

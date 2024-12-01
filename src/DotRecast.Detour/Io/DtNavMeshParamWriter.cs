@@ -1,6 +1,5 @@
 using System.IO;
 using DotRecast.Core;
-using System.Numerics;
 
 namespace DotRecast.Detour.Io
 {

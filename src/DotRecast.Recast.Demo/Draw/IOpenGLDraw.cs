@@ -1,5 +1,4 @@
 using System.Numerics;
-using DotRecast.Core;
 
 namespace DotRecast.Recast.Demo.Draw;
 

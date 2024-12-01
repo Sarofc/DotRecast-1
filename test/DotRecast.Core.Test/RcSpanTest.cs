@@ -130,14 +130,14 @@ public class RcSpanTest
             Span<long> src = stackalloc long[] { 3, 2, 1 };
             RcSpans.Move(src, 0, 0, 4);
         });
-        
+
         // source index over
         Assert.Throws<ArgumentOutOfRangeException>(() =>
         {
             Span<long> src = stackalloc long[] { 3, 2, 1 };
             RcSpans.Move(src, 3, 0, 1);
         });
-        
+
         // destination index over
         Assert.Throws<ArgumentOutOfRangeException>(() =>
         {

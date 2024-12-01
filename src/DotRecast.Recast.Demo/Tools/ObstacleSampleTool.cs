@@ -1,4 +1,3 @@
-using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Detour.TileCache;
 using DotRecast.Recast.Demo.Draw;

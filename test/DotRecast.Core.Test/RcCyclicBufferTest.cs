@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using DotRecast.Core.Buffers;
 
@@ -330,7 +329,7 @@ public class RcCyclicBufferTests
             Assert.That(enumerator.Current, Is.EqualTo(refValues[index++]));
         }
     }
-    
+
     [Test]
     public void RcCyclicBuffers_Sum()
     {
@@ -338,7 +337,7 @@ public class RcCyclicBufferTests
         var buffer = new RcCyclicBuffer<long>(refValues.Length, refValues);
         Assert.That(RcCyclicBuffers.Sum(buffer), Is.EqualTo(refValues.Sum()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_Average()
     {
@@ -362,7 +361,7 @@ public class RcCyclicBufferTests
         var buffer = new RcCyclicBuffer<long>(refValues.Length, refValues);
         Assert.That(RcCyclicBuffers.Max(buffer), Is.EqualTo(refValues.Max()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_SumUnaligned()
     {
@@ -370,7 +369,7 @@ public class RcCyclicBufferTests
         var buffer = new RcCyclicBuffer<long>(refValues.Length, refValues);
         Assert.That(RcCyclicBuffers.Sum(buffer), Is.EqualTo(refValues.Sum()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_AverageUnaligned()
     {
@@ -394,7 +393,7 @@ public class RcCyclicBufferTests
         var buffer = new RcCyclicBuffer<long>(refValues.Length, refValues);
         Assert.That(RcCyclicBuffers.Max(buffer), Is.EqualTo(refValues.Max()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_SumDeleted()
     {
@@ -403,10 +402,10 @@ public class RcCyclicBufferTests
         var buffer = new RcCyclicBuffer<long>(initialValues.Length, initialValues);
         buffer.PopBack();
         buffer.PopFront();
-        
+
         Assert.That(RcCyclicBuffers.Sum(buffer), Is.EqualTo(refValues.Sum()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_SumSplit()
     {
@@ -416,7 +415,7 @@ public class RcCyclicBufferTests
         buffer.PushBack(refValues[0]);
         Assert.That(RcCyclicBuffers.Sum(buffer), Is.EqualTo(refValues.Sum()));
     }
-    
+
     [Test]
     public void RcCyclicBuffers_AverageSplit()
     {

@@ -18,12 +18,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
-using DotRecast.Recast.Geom;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.TileCache.Test.Io;

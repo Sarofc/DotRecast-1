@@ -20,11 +20,10 @@ freely, subject to the following restrictions:
 
 using System.Collections.Generic;
 using System.Linq;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Detour.TileCache.Test.Io;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
-using DotRecast.Detour.TileCache.Test.Io;
 
 namespace DotRecast.Detour.TileCache.Test;
 

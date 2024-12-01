@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Generic;
-using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Recast.Geom;
 using NUnit.Framework;

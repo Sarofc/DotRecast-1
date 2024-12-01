@@ -28,7 +28,7 @@ namespace DotRecast.Detour
 
         public void SetAreaCost(int i, float cost)
         {
-            
+
         }
     }
 }

@@ -19,10 +19,8 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using DotRecast.Detour;
-using DotRecast.Detour.Crowd;
 using DotRecast.Recast.Toolset.Builder;
 using Silk.NET.OpenGL;
 

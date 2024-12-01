@@ -33,7 +33,7 @@ public class RcMenuView : IRcView
                 {
                     RcProcess.OpenUrl("https://github.com/ikpil/DotRecast");
                 }
-                
+
                 if (ImGui.MenuItem("Nuget"))
                 {
                     RcProcess.OpenUrl("https://www.nuget.org/packages/DotRecast.Core/");

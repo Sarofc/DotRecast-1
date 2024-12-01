@@ -1,9 +1,8 @@
 using System;
-
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Toolset.Gizmos;
-using DotRecast.Core;
 
 namespace DotRecast.Recast.Demo.Tools;
 

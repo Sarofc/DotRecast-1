@@ -20,15 +20,15 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 
 
 namespace DotRecast.Recast
 {
+    using static EdgeValues;
     using static RcRecast;
     using static RcVec;
-    using static EdgeValues;
 
     public static class RcMeshDetails
     {

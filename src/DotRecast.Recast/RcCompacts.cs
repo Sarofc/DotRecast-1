@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Buffers;
-using System.Linq;
 using DotRecast.Core;
 
 namespace DotRecast.Recast
@@ -171,7 +170,7 @@ namespace DotRecast.Recast
 
             if (maxLayerIndex > MAX_LAYERS)
             {
-                if(array != null)
+                if (array != null)
                 {
                     ArrayPool<RcCompactSpanBuilder>.Shared.Return(array);
                     array = null;

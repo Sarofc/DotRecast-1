@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Detour.Crowd;
 using DotRecast.Recast.Toolset.Builder;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace DotRecast.Recast.Toolset.Tools
 {

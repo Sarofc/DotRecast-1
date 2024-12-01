@@ -1,4 +1,3 @@
-using System;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
 using DotRecast.Recast.Geom;

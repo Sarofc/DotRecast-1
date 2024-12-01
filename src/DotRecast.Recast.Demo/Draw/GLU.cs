@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Numerics;
-using DotRecast.Core;
 
 namespace DotRecast.Recast.Demo.Draw;
 
@@ -180,7 +179,7 @@ public static class GLU
 
         if (0.0 == r0[0])
             return 0;
-        
+
         /* eliminate first variable */
         m1 = r1[0] / r0[0];
         m2 = r2[0] / r0[0];

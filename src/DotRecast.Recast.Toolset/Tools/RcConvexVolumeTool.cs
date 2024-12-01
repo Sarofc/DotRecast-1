@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Recast.Geom;
 
 namespace DotRecast.Recast.Toolset.Tools

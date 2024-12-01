@@ -31,7 +31,7 @@ namespace DotRecast.Recast.Toolset
 
         public bool tiled = true;
         public int tileSize = 32;
-        
+
         public bool keepInterResults = false;
         public bool buildAll = true;
     }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using DotRecast.Core;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.Test;

@@ -19,9 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using DotRecast.Core;
-using System.Numerics;
 
 
 namespace DotRecast.Detour.Crowd

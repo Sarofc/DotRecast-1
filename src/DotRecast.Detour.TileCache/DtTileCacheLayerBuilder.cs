@@ -18,15 +18,13 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Numerics;
+using System.Threading.Tasks;
+using DotRecast.Core;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
-using DotRecast.Core;
 
 namespace DotRecast.Detour.TileCache
 {

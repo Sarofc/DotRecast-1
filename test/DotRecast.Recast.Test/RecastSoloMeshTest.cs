@@ -19,15 +19,15 @@ freely, subject to the following restrictions:
 
 using System;
 using System.IO;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Recast.Geom;
 using NUnit.Framework;
 
 namespace DotRecast.Recast.Test;
 
-using static RcRecast;
 using static RcAreas;
+using static RcRecast;
 
 public class RecastSoloMeshTest
 {

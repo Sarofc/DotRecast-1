@@ -28,7 +28,7 @@
         public static readonly RcTimerLabel RC_TIMER_BUILD_CONTOURS_TRACE = new RcTimerLabel(nameof(RC_TIMER_BUILD_CONTOURS_TRACE));
 
         public static readonly RcTimerLabel RC_TIMER_BUILD_CONTOURS_WALK = new RcTimerLabel(nameof(RC_TIMER_BUILD_CONTOURS_WALK));
-        
+
         /// The time to simplify the contours. (See: #rcBuildContours)
         public static readonly RcTimerLabel RC_TIMER_BUILD_CONTOURS_SIMPLIFY = new RcTimerLabel(nameof(RC_TIMER_BUILD_CONTOURS_SIMPLIFY));
 

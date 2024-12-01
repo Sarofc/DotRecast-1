@@ -26,25 +26,25 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using DotRecast.Core;
+using DotRecast.Detour;
+using DotRecast.Detour.Io;
+using DotRecast.Recast.Demo.Draw;
+using DotRecast.Recast.Demo.Messages;
+using DotRecast.Recast.Demo.Tools;
+using DotRecast.Recast.Demo.UI;
+using DotRecast.Recast.Toolset.Builder;
+using DotRecast.Recast.Toolset.Geom;
+using ImGuiNET;
 using Serilog;
 using Silk.NET.Input;
+using Silk.NET.Input.Glfw;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using ImGuiNET;
-using DotRecast.Detour;
-using DotRecast.Detour.Io;
-using DotRecast.Recast.Toolset.Builder;
-using DotRecast.Recast.Demo.Draw;
-using DotRecast.Recast.Demo.Messages;
-using DotRecast.Recast.Toolset.Geom;
-using DotRecast.Recast.Demo.Tools;
-using DotRecast.Recast.Demo.UI;
+using Silk.NET.Windowing.Glfw;
 using MouseButton = Silk.NET.Input.MouseButton;
 using Window = Silk.NET.Windowing.Window;
-using Silk.NET.Input.Glfw;
-using Silk.NET.Windowing.Glfw;
 
 namespace DotRecast.Recast.Demo;
 
@@ -265,7 +265,7 @@ public class RecastDemo : IRecastDemoChannel
         viewport = [0, 0, width, height];
 
         var options = WindowOptions.Default;
-        options.Title = title;
+        options.Title = $"{title} - Runtime Version {Environment.Version}";
         options.Size = new Vector2D<int>(width, height);
         options.Position = new Vector2D<int>((_resolution.X - width) / 2, (_resolution.Y - height) / 2);
         options.VSync = true;

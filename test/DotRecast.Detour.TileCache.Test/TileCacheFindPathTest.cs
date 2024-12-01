@@ -19,10 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
 using DotRecast.Detour.TileCache.Test.Io;
 using NUnit.Framework;

@@ -1,8 +1,6 @@
 using System;
-using System.IO;
-using Silk.NET.OpenGL;
 using System.Numerics;
-using DotRecast.Core;
+using Silk.NET.OpenGL;
 
 namespace DotRecast.Recast.Demo.Draw;
 

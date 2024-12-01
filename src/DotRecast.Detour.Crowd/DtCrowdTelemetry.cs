@@ -1,10 +1,6 @@
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using DotRecast.Core;
-using DotRecast.Core.Buffers;
 
 namespace DotRecast.Detour.Crowd
 {

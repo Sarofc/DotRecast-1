@@ -17,7 +17,6 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using System.Runtime.CompilerServices;
 using DotRecast.Core;
 
 namespace DotRecast.Detour.Io

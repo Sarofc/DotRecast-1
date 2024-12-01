@@ -21,10 +21,10 @@ namespace DotRecast.Core.Buffers
                 var remainder = source.Length % Vector<long>.Count;
                 buffer = buffer[^remainder..];
             }
-            
+
             foreach (var val in buffer)
                 result += val;
-            
+
             return result;
         }
 
@@ -35,53 +35,53 @@ namespace DotRecast.Core.Buffers
 
             return source.Sum() / (double)source.Length;
         }
-        
+
         private static long Min(this ReadOnlySpan<long> source)
         {
             var buffer = source;
             var result = long.MaxValue;
-            
+
             if (Vector.IsHardwareAccelerated)
             {
                 var vectors = MemoryMarshal.Cast<long, Vector<long>>(buffer);
                 var vecMin = Vector<long>.One * result;
-                
+
                 foreach (var vec in vectors)
                     vecMin = Vector.Min(vecMin, vec);
 
                 for (int i = 0; i < Vector<long>.Count; i++)
                     result = Math.Min(result, vecMin[i]);
-                
+
                 var remainder = source.Length % Vector<long>.Count;
                 buffer = buffer[^remainder..];
             }
-            
+
             foreach (var val in buffer)
                 result = Math.Min(result, val);
 
             return result;
         }
-        
+
         private static long Max(this ReadOnlySpan<long> source)
         {
             var buffer = source;
             var result = long.MinValue;
-            
+
             if (Vector.IsHardwareAccelerated)
             {
                 var vectors = MemoryMarshal.Cast<long, Vector<long>>(buffer);
                 var vecMax = Vector<long>.One * result;
-                
+
                 foreach (var vec in vectors)
                     vecMax = Vector.Max(vecMax, vec);
 
                 for (int i = 0; i < Vector<long>.Count; i++)
                     result = Math.Max(result, vecMax[i]);
-                
+
                 var remainder = source.Length % Vector<long>.Count;
                 buffer = buffer[^remainder..];
             }
-            
+
             foreach (var val in buffer)
                 result = Math.Max(result, val);
 

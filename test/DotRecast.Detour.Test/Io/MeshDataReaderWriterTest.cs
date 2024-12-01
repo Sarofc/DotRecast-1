@@ -18,7 +18,6 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using DotRecast.Core;
 using DotRecast.Detour.Io;
 using NUnit.Framework;
 
@@ -53,7 +52,7 @@ public unsafe class MeshDataReaderWriterTest
 
         using var br = new BinaryReader(ms);
         DtMeshDataReader reader;
-        DtMeshData readData = reader.Read( br, VERTS_PER_POLYGON);
+        DtMeshData readData = reader.Read(br, VERTS_PER_POLYGON);
 
         Assert.That(readData.header.vertCount, Is.EqualTo(meshData.header.vertCount));
         Assert.That(readData.header.polyCount, Is.EqualTo(meshData.header.polyCount));

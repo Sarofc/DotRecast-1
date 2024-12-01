@@ -25,7 +25,7 @@ namespace DotRecast.Detour
     public class DtPoly
     {
         public readonly int index;
-        
+
         /// Index to first link in linked list. (Or #DT_NULL_LINK if there is no link.)
         public int firstLink;
 

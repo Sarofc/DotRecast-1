@@ -6,7 +6,7 @@
         /// for steering decisions.
         /// @ingroup crowd
         public const int DT_CROWDAGENT_MAX_NEIGHBOURS = 6;
-        
+
         /// The maximum number of corners a crowd agent will look ahead in the path.
         /// This value is used for sizing the crowd agent corner buffers.
         /// Due to the behavior of the crowd manager, the actual number of useful
@@ -26,7 +26,7 @@
         /// @see dtQueryFilter, dtCrowd::GetFilter() dtCrowd::GetEditableFilter(),
         /// dtCrowdAgentParams::queryFilterType
         public const int DT_CROWD_MAX_QUERY_FILTER_TYPE = 16;
-        
+
         public const int MAX_ITERS_PER_UPDATE = 100;
         public const int MAX_PATHQUEUE_NODES = 4096;
         public const int MAX_COMMON_NODES = 512;

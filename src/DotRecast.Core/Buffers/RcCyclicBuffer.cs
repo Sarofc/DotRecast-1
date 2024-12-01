@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Security;
 
 namespace DotRecast.Core.Buffers
 {
@@ -21,7 +20,7 @@ namespace DotRecast.Core.Buffers
                 _index = default;
                 Reset();
             }
-            
+
             public bool MoveNext()
             {
                 return ++_index < _size;
@@ -41,7 +40,7 @@ namespace DotRecast.Core.Buffers
                 // This could be used to unlock write access to collection
             }
         }
-        
+
         private readonly T[] _buffer;
 
         private int _start;
@@ -266,9 +265,9 @@ namespace DotRecast.Core.Buffers
         }
 
         public Enumerator GetEnumerator() => new Enumerator(this);
-        
+
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
-        
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

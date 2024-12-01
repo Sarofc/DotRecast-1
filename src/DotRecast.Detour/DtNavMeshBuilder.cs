@@ -19,10 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using DotRecast.Core;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using DotRecast.Core;
 
 namespace DotRecast.Detour
 {

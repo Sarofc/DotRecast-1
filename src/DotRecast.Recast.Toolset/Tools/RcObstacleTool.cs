@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
-using DotRecast.Core;
 using System.Numerics;
+using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
 using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
-using System.Collections.Immutable;
 
 namespace DotRecast.Recast.Toolset.Tools
 {

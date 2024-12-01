@@ -21,8 +21,12 @@
 
 ---
 
-[![demo](https://user-images.githubusercontent.com/313821/266750582-8cf67832-1206-4b58-8c1f-7205210cbf22.gif)](https://youtu.be/zIFIgziKLhQ)
 
+## 🌴 Showcase
+
+<img src="img/perf-view.jpg">
+
+[![demo](https://user-images.githubusercontent.com/313821/266750582-8cf67832-1206-4b58-8c1f-7205210cbf22.gif)](https://youtu.be/zIFIgziKLhQ)
 
 
 ## 🚀 Features
@@ -40,7 +44,7 @@ Recast Navigation is divided into multiple modules, each contained in its own fo
 - [DotRecast.Detour](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour) : Runtime loading of navmesh data, pathfinding, navmesh queries
 - [DotRecast.Detour.TileCache](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour.TileCache) : Navmesh streaming. Useful for large levels and open-world games
 - [DotRecast.Detour.Crowd](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour.Crowd) : Agent movement, collision avoidance, and crowd simulation
-- [DotRecast.Detour.Dynamic](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour.Dynamic) : robust support for dynamic nav meshes combining pre-built voxels with dynamic objects which can be freely added and removed
+- ~~[DotRecast.Detour.Dynamic](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour.Dynamic) : robust support for dynamic nav meshes combining pre-built voxels with dynamic objects which can be freely added and removed~~
 - ~~[DotRecast.Detour.Extras](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Detour.Extras) : simple tool to import navmeshes created with [A* Pathfinding Project](https://arongranberg.com/astar/)~~
 - [DotRecast.Recast.Toolset](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Recast.Toolset) : all modules
 - [DotRecast.Recast.Demo](https://github.com/ikpil/DotRecast/tree/main/src/DotRecast.Recast.Demo) : Standalone, comprehensive demo app showcasing all aspects of Recast & Detour's functionality
