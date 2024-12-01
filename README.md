@@ -21,10 +21,13 @@
 
 ---
 
+## ⚠️ Warning
+
+- Only supports .NET 8 or greater, currently not supported in Unity!
 
 ## 🌴 Showcase
 
-<img src="img/perf-view.jpg">
+<img src="https://github.com/Sarofc/DotRecast-1/blob/optimize/img/perf-view.jpg">
 
 [![demo](https://user-images.githubusercontent.com/313821/266750582-8cf67832-1206-4b58-8c1f-7205210cbf22.gif)](https://youtu.be/zIFIgziKLhQ)
 
