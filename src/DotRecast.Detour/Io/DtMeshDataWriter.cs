@@ -17,6 +17,7 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using DotRecast.Core;
 
 namespace DotRecast.Detour.Io
@@ -55,11 +56,6 @@ namespace DotRecast.Detour.Io
             RcIO.Write(stream, header.bvQuantFactor);
             WriteVerts(stream, data.verts, header.vertCount);
             WritePolys(stream, data);
-            //if (cCompatibility)
-            {
-                byte[] linkPlaceholder = new byte[header.maxLinkCount * DtMeshDataReader.GetSizeofLink(false)];
-                stream.Write(linkPlaceholder);
-            }
 
             WritePolyDetails(stream, data);
             WriteVerts(stream, data.detailVerts, header.detailVertCount);
@@ -80,11 +76,6 @@ namespace DotRecast.Detour.Io
         {
             for (int i = 0; i < data.header.polyCount; i++)
             {
-                //if (cCompatibility)
-                {
-                    RcIO.Write(stream, 0xFFFF);
-                }
-
                 for (int j = 0; j < data.polys[i].verts.Length; j++)
                 {
                     RcIO.Write(stream, (short)data.polys[i].verts[j]);
@@ -109,10 +100,6 @@ namespace DotRecast.Detour.Io
                 RcIO.Write(stream, data.detailMeshes[i].triBase);
                 RcIO.Write(stream, (byte)data.detailMeshes[i].vertCount);
                 RcIO.Write(stream, (byte)data.detailMeshes[i].triCount);
-                //if (cCompatibility)
-                //{
-                //    RcIO.Write(stream, (short)0);
-                //}
             }
         }
 
@@ -128,30 +115,15 @@ namespace DotRecast.Detour.Io
         {
             for (int i = 0; i < data.header.bvNodeCount; i++)
             {
-                //if (cCompatibility)
+                for (int j = 0; j < 3; j++)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        RcIO.Write(stream, (short)data.bvTree[i].bmin[j]);
-                    }
-
-                    for (int j = 0; j < 3; j++)
-                    {
-                        RcIO.Write(stream, (short)data.bvTree[i].bmax[j]);
-                    }
+                    RcIO.Write(stream, (short)data.bvTree[i].bmin[j]);
                 }
-                //else
-                //{
-                //    for (int j = 0; j < 3; j++)
-                //    {
-                //        RcIO.Write(stream, data.bvTree[i].bmin[j]);
-                //    }
 
-                //    for (int j = 0; j < 3; j++)
-                //    {
-                //        RcIO.Write(stream, data.bvTree[i].bmax[j]);
-                //    }
-                //}
+                for (int j = 0; j < 3; j++)
+                {
+                    RcIO.Write(stream, (short)data.bvTree[i].bmax[j]);
+                }
 
                 RcIO.Write(stream, data.bvTree[i].i);
             }

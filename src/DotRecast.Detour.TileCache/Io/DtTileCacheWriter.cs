@@ -21,20 +21,18 @@ freely, subject to the following restrictions:
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.Io;
-using DotRecast.Detour.TileCache.Io.Compress;
 
 namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheWriter
     {
         private readonly DtNavMeshParamWriter paramWriter = new DtNavMeshParamWriter();
-        private readonly IDtTileCacheCompressorFactory _compFactory;
+        private readonly IRcCompressor _compressor;
 
-        public DtTileCacheWriter(IDtTileCacheCompressorFactory compFactory)
+        public DtTileCacheWriter(IRcCompressor compFactory)
         {
-            _compFactory = compFactory;
+            _compressor = compFactory;
         }
-
 
         public void Write(BinaryWriter stream, DtTileCache cache)
         {
@@ -60,8 +58,7 @@ namespace DotRecast.Detour.TileCache.Io
                 RcIO.Write(stream, (int)cache.GetTileRef(tile));
                 byte[] data = tile.data;
                 DtTileCacheLayer layer = cache.DecompressTile(tile);
-                var comp = _compFactory.Create(0);
-                data = DtTileCacheBuilder.CompressTileCacheLayer(comp, layer);
+                data = DtTileCacheBuilder.CompressTileCacheLayer(_compressor, layer);
                 RcIO.Write(stream, data.Length);
                 stream.Write(data);
             }

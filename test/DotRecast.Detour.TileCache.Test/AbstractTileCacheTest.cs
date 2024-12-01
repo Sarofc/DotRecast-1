@@ -19,10 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using DotRecast.Core;
-using DotRecast.Detour.TileCache.Io.Compress;
+using DotRecast.Detour.TileCache.Test.Io;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
-using NUnit.Framework;
 
 
 namespace DotRecast.Detour.TileCache.Test;
@@ -66,7 +65,7 @@ public class AbstractTileCacheTest
 
         var navMesh = new DtNavMesh();
         navMesh.Init(navMeshParams, 6);
-        var comp = DtTileCacheCompressorFactory.Shared.Create(0);
+        var comp = DtTileCacheLZ4ForTestCompressor.Shared;
         //var storageParams = new DtTileCacheStorageParams(order, cCompatibility);
         var process = new TestTileCacheMeshProcess();
         DtTileCache tc = new DtTileCache(option, navMesh, comp, process);

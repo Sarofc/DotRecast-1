@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast.Geom;
 using NUnit.Framework;
 
@@ -31,8 +30,8 @@ namespace DotRecast.Detour.TileCache.Test.Io;
 
 public class TileCacheReaderWriterTest : AbstractTileCacheTest
 {
-    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheCompressorFactory.Shared);
-    private readonly DtTileCacheWriter writer = new DtTileCacheWriter(DtTileCacheCompressorFactory.Shared);
+    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheLZ4ForTestCompressor.Shared);
+    private readonly DtTileCacheWriter writer = new DtTileCacheWriter(DtTileCacheLZ4ForTestCompressor.Shared);
 
     [Test]
     public void TestDungeon()
@@ -51,7 +50,7 @@ public class TileCacheReaderWriterTest : AbstractTileCacheTest
         using var bw = new BinaryWriter(msw);
         writer.Write(bw, tc);
 
-        //File.WriteAllBytes(@"..\resources\dungeon_all_tiles_tilecache.bin", msw.ToArray());
+        //File.WriteAllBytes("dungeon_all_tiles_tilecache.bin", msw.ToArray());
 
         using var msr = new MemoryStream(msw.ToArray());
         using var br = new BinaryReader(msr);

@@ -47,13 +47,13 @@ public unsafe class MeshDataReaderWriterTest
         using var ms = new MemoryStream();
         using var bw = new BinaryWriter(ms);
 
-        DtMeshDataWriter writer = new DtMeshDataWriter();
+        DtMeshDataWriter writer;
         writer.Write(bw, meshData);
         ms.Seek(0, SeekOrigin.Begin);
 
         using var br = new BinaryReader(ms);
-        DtMeshDataReader reader = new DtMeshDataReader();
-        DtMeshData readData = reader.Read(br, VERTS_PER_POLYGON);
+        DtMeshDataReader reader;
+        DtMeshData readData = reader.Read( br, VERTS_PER_POLYGON);
 
         Assert.That(readData.header.vertCount, Is.EqualTo(meshData.header.vertCount));
         Assert.That(readData.header.polyCount, Is.EqualTo(meshData.header.polyCount));

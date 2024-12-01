@@ -17,6 +17,7 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using DotRecast.Core;
 
 namespace DotRecast.Detour.Io
@@ -25,33 +26,13 @@ namespace DotRecast.Detour.Io
 
     public struct DtMeshDataReader
     {
-        public const int DT_POLY_DETAIL_SIZE = 10;
-        public const int LINK_SIZEOF = 16;
-        public const int LINK_SIZEOF32BIT = 12;
-
         public DtMeshData Read(BinaryReader stream, int maxVertPerPoly)
         {
             RcByteBuffer buf = RcIO.ToByteBuffer(stream);
-            return Read(ref buf, maxVertPerPoly, false);
+            return Read(ref buf, maxVertPerPoly);
         }
 
         public DtMeshData Read(ref RcByteBuffer buf, int maxVertPerPoly)
-        {
-            return Read(ref buf, maxVertPerPoly, false);
-        }
-
-        public DtMeshData Read32Bit(BinaryReader stream, int maxVertPerPoly)
-        {
-            RcByteBuffer buf = RcIO.ToByteBuffer(stream);
-            return Read(ref buf, maxVertPerPoly, true);
-        }
-
-        public DtMeshData Read32Bit(ref RcByteBuffer buf, int maxVertPerPoly)
-        {
-            return Read(ref buf, maxVertPerPoly, true);
-        }
-
-        public DtMeshData Read(ref RcByteBuffer buf, int maxVertPerPoly, bool is32Bit)
         {
             DtMeshData data = new DtMeshData();
             DtMeshHeader header = new DtMeshHeader();
@@ -65,11 +46,7 @@ namespace DotRecast.Detour.Io
             header.version = buf.ReadInt32();
             if (header.version != DT_NAVMESH_VERSION)
             {
-                if (header.version < DT_NAVMESH_VERSION_RECAST4J_FIRST
-                    || header.version > DT_NAVMESH_VERSION_RECAST4J_LAST)
-                {
-                    throw new IOException("Invalid version " + header.version);
-                }
+                throw new IOException("Invalid version " + header.version);
             }
 
             header.x = buf.ReadInt32();
@@ -101,20 +78,12 @@ namespace DotRecast.Detour.Io
             data.verts = ReadVerts(ref buf, header.vertCount);
             data.polys = ReadPolys(ref buf, header, maxVertPerPoly);
 
-            buf.Position(buf.Position() + header.maxLinkCount * GetSizeofLink(is32Bit));
-
             data.detailMeshes = ReadPolyDetails(ref buf, header);
             data.detailVerts = ReadVerts(ref buf, header.detailVertCount);
             data.detailTris = ReadDTris(ref buf, header);
             data.bvTree = ReadBVTree(ref buf, header);
             data.offMeshCons = ReadOffMeshCons(ref buf, header);
             return data;
-        }
-
-
-        public static int GetSizeofLink(bool is32Bit)
-        {
-            return is32Bit ? LINK_SIZEOF32BIT : LINK_SIZEOF;
         }
 
         private float[] ReadVerts(ref RcByteBuffer buf, int count)
@@ -134,10 +103,6 @@ namespace DotRecast.Detour.Io
             for (int i = 0; i < polys.Length; i++)
             {
                 polys[i] = new DtPoly(i, maxVertPerPoly);
-                if (header.version < DT_NAVMESH_VERSION_RECAST4J_NO_POLY_FIRSTLINK)
-                {
-                    buf.ReadInt32(); // polys[i].firstLink
-                }
 
                 for (int j = 0; j < polys[i].verts.Length; j++)
                 {
@@ -167,10 +132,6 @@ namespace DotRecast.Detour.Io
                 byte vertCount = (byte)(buf.ReadByte() & 0xFF);
                 byte triCount = (byte)(buf.ReadByte() & 0xFF);
                 polys[i] = new DtPolyDetail(vertBase, triBase, vertCount, triCount);
-                //if (cCompatibility)
-                //{
-                //    buf.ReadInt16(); // C struct padding
-                //}
             }
 
             return polys;
@@ -193,29 +154,15 @@ namespace DotRecast.Detour.Io
             for (int i = 0; i < nodes.Length; i++)
             {
                 ref var n = ref nodes[i];
-                if (header.version < DT_NAVMESH_VERSION_RECAST4J_32BIT_BVTREE)
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        n.bmin[j] = buf.ReadInt16() & 0xFFFF;
-                    }
 
-                    for (int j = 0; j < 3; j++)
-                    {
-                        n.bmax[j] = buf.ReadInt16() & 0xFFFF;
-                    }
+                for (int j = 0; j < 3; j++)
+                {
+                    n.bmin[j] = buf.ReadInt16() & 0xFFFF;
                 }
-                else
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        n.bmin[j] = buf.ReadInt32();
-                    }
 
-                    for (int j = 0; j < 3; j++)
-                    {
-                        n.bmax[j] = buf.ReadInt32();
-                    }
+                for (int j = 0; j < 3; j++)
+                {
+                    n.bmax[j] = buf.ReadInt16() & 0xFFFF;
                 }
 
                 n.i = buf.ReadInt32();

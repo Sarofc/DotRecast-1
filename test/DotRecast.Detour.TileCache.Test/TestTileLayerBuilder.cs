@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DotRecast.Core;
 using System.Numerics;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
+using DotRecast.Detour.TileCache.Test.Io;
 
 namespace DotRecast.Detour.TileCache.Test;
 
@@ -56,7 +56,7 @@ public class TestTileLayerBuilder : DtTileCacheLayerBuilder
     public readonly int tw;
     public readonly int th;
 
-    public TestTileLayerBuilder(IInputGeomProvider geom) : base(DtTileCacheCompressorFactory.Shared)
+    public TestTileLayerBuilder(IInputGeomProvider geom) : base(DtTileCacheLZ4ForTestCompressor.Shared)
     {
         _geom = geom;
         _cfg = new RcConfig(true, m_tileSize, m_tileSize,

@@ -21,18 +21,17 @@ freely, subject to the following restrictions:
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.Io;
-using DotRecast.Detour.TileCache.Io.Compress;
 
 namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheReader
     {
         private readonly DtNavMeshParamsReader paramReader = new DtNavMeshParamsReader();
-        private readonly IDtTileCacheCompressorFactory _compFactory;
+        private readonly IRcCompressor _compressor;
 
-        public DtTileCacheReader(IDtTileCacheCompressorFactory compFactory)
+        public DtTileCacheReader(IRcCompressor compressor)
         {
-            _compFactory = compFactory;
+            _compressor = compressor;
         }
 
         public DtTileCache Read(BinaryReader @is, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
@@ -47,7 +46,6 @@ namespace DotRecast.Detour.TileCache.Io
             header.magic = bb.ReadInt32();
             if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
             {
-                //header.magic = RcIO.SwapEndianness(header.magic);
                 if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
                 {
                     throw new IOException("Invalid magic");
@@ -65,8 +63,7 @@ namespace DotRecast.Detour.TileCache.Io
             header.cacheParams = ReadCacheParams(ref bb);
             DtNavMesh mesh = new DtNavMesh();
             mesh.Init(header.meshParams, maxVertPerPoly);
-            IRcCompressor comp = _compFactory.Create(0);
-            DtTileCache tc = new DtTileCache(header.cacheParams, mesh, comp, meshProcessor);
+            DtTileCache tc = new DtTileCache(header.cacheParams, mesh, _compressor, meshProcessor);
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {

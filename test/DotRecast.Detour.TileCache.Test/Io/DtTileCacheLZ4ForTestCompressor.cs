@@ -18,32 +18,42 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
+using System.Buffers;
 using DotRecast.Core;
-using K4os.Compression.LZ4;
+using DotRecast.Recast.Toolset;
 
 namespace DotRecast.Detour.TileCache.Test.Io
 {
     public class DtTileCacheLZ4ForTestCompressor : IRcCompressor
     {
-        public static readonly DtTileCacheLZ4ForTestCompressor Shared = new();
+        public static readonly DtTileCacheLZ4ForTestCompressor Shared = new(LZ4Compressor.Shared);
 
-        private DtTileCacheLZ4ForTestCompressor()
+        private readonly IRcCompressor _compressor;
+
+        private DtTileCacheLZ4ForTestCompressor(IRcCompressor compressor)
         {
+            _compressor = compressor;
         }
 
-        public byte[] Decompress(byte[] buf)
+        public byte[] Compress(ReadOnlySpan<byte> input)
         {
-            return LZ4Pickler.Unpickle(buf);
+            return _compressor.Compress(input);
         }
 
-        public byte[] Decompress(byte[] buf, int offset, int len, int outputlen)
+        public void Compress<TBufferWriter>(ReadOnlySpan<byte> input, TBufferWriter outputWriter) where TBufferWriter : IBufferWriter<byte>
         {
-            return LZ4Pickler.Unpickle(buf, offset, len);
+            _compressor.Compress(input, outputWriter);
         }
 
-        public byte[] Compress(byte[] buf)
+        public byte[] Decompress(ReadOnlySpan<byte> input)
         {
-            return LZ4Pickler.Pickle(buf);
+            return _compressor.Decompress(input);
+        }
+
+        public void Decompress(ReadOnlySpan<byte> input, Span<byte> output)
+        {
+            _compressor.Decompress(input, output);
         }
     }
 }

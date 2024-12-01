@@ -18,7 +18,6 @@ freely, subject to the following restrictions:
 
 using System.IO;
 using DotRecast.Core;
-using System.Numerics;
 
 namespace DotRecast.Detour.Io
 {
@@ -49,10 +48,6 @@ namespace DotRecast.Detour.Io
             RcIO.Write(stream, numTiles);
             DtNavMeshParamWriter paramWriter;
             paramWriter.Write(stream, mesh.GetParams());
-            //if (!cCompatibility)
-            //{
-            //    RcIO.Write(stream, mesh.GetMaxVertsPerPoly());
-            //}
         }
 
         private void WriteTiles(BinaryWriter stream, DtNavMesh mesh)
@@ -78,10 +73,6 @@ namespace DotRecast.Detour.Io
                 tileHeader.dataSize = ba.Length;
                 RcIO.Write(stream, tileHeader.tileRef);
                 RcIO.Write(stream, tileHeader.dataSize);
-                //if (cCompatibility)
-                //{
-                //    RcIO.Write(stream, 0); // C struct padding
-                //}
 
                 stream.Write(ba);
             }

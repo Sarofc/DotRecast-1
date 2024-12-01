@@ -1,7 +1,6 @@
 using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Detour.TileCache;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Toolset;
 using DotRecast.Recast.Toolset.Tools;
@@ -19,7 +18,7 @@ public class ObstacleSampleTool : ISampleTool
 
     public ObstacleSampleTool()
     {
-        _tool = new(DtTileCacheCompressorFactory.Shared);
+        _tool = new(LZ4Compressor.Shared);
     }
 
     public void Layout()

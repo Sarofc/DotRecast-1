@@ -24,19 +24,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Numerics;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
+using DotRecast.Core;
 
 namespace DotRecast.Detour.TileCache
 {
     public class DtTileCacheLayerBuilder
     {
-        private readonly IDtTileCacheCompressorFactory _compFactory;
+        private readonly IRcCompressor _compressor;
 
-        public DtTileCacheLayerBuilder(IDtTileCacheCompressorFactory compFactory)
+        public DtTileCacheLayerBuilder(IRcCompressor compressor)
         {
-            _compFactory = compFactory;
+            _compressor = compressor;
         }
 
         public List<DtTileCacheLayerBuildResult> Build(IInputGeomProvider geom, RcConfig cfg, int threads, int tw, int th)
@@ -126,8 +126,7 @@ namespace DotRecast.Detour.TileCache
                     header.hmin = layer.hmin;
                     header.hmax = layer.hmax;
 
-                    var comp = _compFactory.Create(0); // TODO 废弃factory
-                    var bytes = DtTileCacheBuilder.CompressTileCacheLayer(header, layer.heights, layer.areas, layer.cons, comp);
+                    var bytes = DtTileCacheBuilder.CompressTileCacheLayer(header, layer.heights, layer.areas, layer.cons, _compressor);
                     result.Add(bytes);
                 }
             }

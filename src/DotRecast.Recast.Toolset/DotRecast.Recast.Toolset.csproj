@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="K4os.Compression.LZ4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DotRecast.Core\DotRecast.Core.csproj" />
     <ProjectReference Include="..\DotRecast.Recast\DotRecast.Recast.csproj" />
     <ProjectReference Include="..\DotRecast.Detour\DotRecast.Detour.csproj" />

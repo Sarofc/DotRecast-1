@@ -18,13 +18,17 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
+using System.Buffers;
+
 namespace DotRecast.Core
 {
     public interface IRcCompressor
     {
-        byte[] Decompress(byte[] data);
-        byte[] Decompress(byte[] buf, int offset, int len, int outputlen);
+        byte[] Decompress(ReadOnlySpan<byte> input);
+        void Decompress(ReadOnlySpan<byte> input, Span<byte> output);
 
-        byte[] Compress(byte[] buf);
+        byte[] Compress(ReadOnlySpan<byte> input);
+        void Compress<TBufferWriter>(ReadOnlySpan<byte> input, TBufferWriter outputWriter) where TBufferWriter : IBufferWriter<byte>;
     }
 }

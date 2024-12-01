@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast.Geom;
 using NUnit.Framework;
 
@@ -32,7 +31,7 @@ namespace DotRecast.Detour.TileCache.Test.Io;
 
 public class TileCacheReaderTest : AbstractTileCacheTest
 {
-    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheCompressorFactory.Shared);
+    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheLZ4ForTestCompressor.Shared);
 
     [Test]
     public void TestDungeon()

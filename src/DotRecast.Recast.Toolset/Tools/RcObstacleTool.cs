@@ -4,7 +4,6 @@ using DotRecast.Core;
 using System.Numerics;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
-using DotRecast.Detour.TileCache.Io.Compress;
 using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
@@ -16,13 +15,13 @@ namespace DotRecast.Recast.Toolset.Tools
     {
         const int EXPECTED_LAYERS_PER_TILE = 4;
 
-        private readonly IDtTileCacheCompressorFactory _comp;
         private readonly DemoDtTileCacheMeshProcess _proc;
         private DtTileCache _tc;
+        private IRcCompressor _compressor;
 
-        public RcObstacleTool(IDtTileCacheCompressorFactory comp)
+        public RcObstacleTool(IRcCompressor compressor)
         {
-            _comp = comp;
+            _compressor = compressor;
             _proc = new DemoDtTileCacheMeshProcess();
         }
 
@@ -64,7 +63,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 true, true, true,
                 SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
 
-            var builder = new DtTileCacheLayerBuilder(DtTileCacheCompressorFactory.Shared);
+            var builder = new DtTileCacheLayerBuilder(LZ4Compressor.Shared);
             var results = builder.Build(geom, cfg, 8, tw, th);
             var layers = results
                 .SelectMany(x => x.layers)
@@ -148,8 +147,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             var navMesh = new DtNavMesh();
             navMesh.Init(navMeshParams, 6);
-            var comp = _comp.Create(0);
-            DtTileCache tc = new DtTileCache(option, navMesh, comp, _proc);
+            DtTileCache tc = new DtTileCache(option, navMesh, _compressor, _proc);
             return tc;
         }
 

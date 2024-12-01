@@ -6,7 +6,7 @@ namespace DotRecast.Detour.Io
     {
         public DtNavMeshParams Read(ref RcByteBuffer bb)
         {
-            DtNavMeshParams option = new DtNavMeshParams();
+            DtNavMeshParams option;
             option.orig.X = bb.ReadSingle();
             option.orig.Y = bb.ReadSingle();
             option.orig.Z = bb.ReadSingle();

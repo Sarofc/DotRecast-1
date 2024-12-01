@@ -17,10 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\DotRecast.Recast.Toolset\DotRecast.Recast.Toolset.csproj" />
     <ProjectReference Include="..\DotRecast.Core.Test\DotRecast.Core.Test.csproj" />
-    <ProjectReference Include="..\..\src\DotRecast.Detour.TileCache\DotRecast.Detour.TileCache.csproj"/>
-    <ProjectReference Include="..\..\src\DotRecast.Detour\DotRecast.Detour.csproj"/>
-    <ProjectReference Include="..\..\src\DotRecast.Recast\DotRecast.Recast.csproj"/>
+    <ProjectReference Include="..\..\src\DotRecast.Detour.TileCache\DotRecast.Detour.TileCache.csproj" />
+    <ProjectReference Include="..\..\src\DotRecast.Detour\DotRecast.Detour.csproj" />
+    <ProjectReference Include="..\..\src\DotRecast.Recast\DotRecast.Recast.csproj" />
   </ItemGroup>
 
 </Project>

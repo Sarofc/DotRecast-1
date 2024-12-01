@@ -1969,7 +1969,9 @@ namespace DotRecast.Detour.TileCache
             }
 
             int gridSize = layer.header.width * layer.header.height;
-            byte[] grids = comp.Decompress(compressed, buf.Position(), compressed.Length - buf.Position(), gridSize * 3);
+
+            Span<byte> grids = stackalloc byte[gridSize * 3];
+            comp.Decompress(compressed.AsSpan(buf.Position(), compressed.Length - buf.Position()), grids);
             layer.heights = new byte[gridSize];
             layer.areas = new byte[gridSize];
             layer.cons = new byte[gridSize];
