@@ -250,9 +250,7 @@ namespace DotRecast.Detour
         /// mesh.
         ///
         /// @see dtNavMesh, dtNavMesh::addTile()
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public static DtMeshData CreateNavMeshData(DtNavMeshCreateParams option)
         {
             if (option.vertCount >= 0xffff)

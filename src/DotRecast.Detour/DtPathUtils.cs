@@ -28,9 +28,7 @@ namespace DotRecast.Detour
 
     public static class DtPathUtils
     {
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public static bool GetSteerTarget(DtNavMeshQuery navQuery, Vector3 startPos, Vector3 endPos,
             float minTargetDist,
             ReadOnlySpan<long> path, int pathSize,
@@ -93,9 +91,7 @@ namespace DotRecast.Detour
         // +-S-+-T-+
         // |:::|   | <-- the step can end up in here, resulting U-turn path.
         // +---+---+
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public static int FixupShortcuts(Span<long> path, int npath, DtNavMeshQuery navQuery)
         {
             if (npath < 3)

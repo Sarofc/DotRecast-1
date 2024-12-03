@@ -81,9 +81,7 @@ namespace DotRecast.Detour
         ///  @param[out]	randomRef		The reference id of the random location.
         ///  @param[out]	randomPt		The random location. 
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus FindRandomPoint(IDtQueryFilter filter, IRcRand frand, out long randomRef, out Vector3 randomPt)
         {
             randomRef = 0;
@@ -200,9 +198,7 @@ namespace DotRecast.Detour
         ///  @param[out]	randomRef		The reference id of the random location.
         ///  @param[out]	randomPt		The random location. [(x, y, z)]
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus FindRandomPointAroundCircle(long startRef, in Vector3 centerPos, float maxRadius,
             IDtQueryFilter filter, IRcRand frand,
             out long randomRef, out Vector3 randomPt)
@@ -425,9 +421,7 @@ namespace DotRecast.Detour
         ///  @param[in]		pos			The position to check. [(x, y, z)]
         ///  @param[out]	closest		The closest point. [(x, y, z)]
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus ClosestPointOnPolyBoundary(long refs, in Vector3 pos, out Vector3 closest)
         {
             closest = pos;
@@ -563,9 +557,7 @@ namespace DotRecast.Detour
         DtPoly[] polys = new DtPoly[batchSize];  // cache
 
         /// Queries polygons within a tile.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         protected unsafe void QueryPolygonsInTile<TPolyQuery>(DtMeshTile tile, in Vector3 qmin, in Vector3 qmax, IDtQueryFilter filter, ref TPolyQuery query) where TPolyQuery : IDtPolyQuery
         {
             Span<long> polyRefs = stackalloc long[batchSize];
@@ -797,9 +789,7 @@ namespace DotRecast.Detour
         ///  							[(polyRef) * @p pathCount]
         ///  @param[out]	pathCount	The number of polygons returned in the @p path array.
         ///  @param[in]		maxPath		The maximum number of polygons the @p path array can hold. [Limit: >= 1]
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus FindPath(long startRef, long endRef, in Vector3 startPos, in Vector3 endPos, IDtQueryFilter filter, Span<long> path, out int pathCount, DtFindPathOption fpo)
         {
             pathCount = 0;
@@ -1863,9 +1853,7 @@ namespace DotRecast.Detour
         ///  @param[out]	visitedCount	The number of polygons visited during the move.
         ///  @param[in]		maxVisitedSize	The maximum number of polygons the @p visited array can hold.
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus MoveAlongSurface(long startRef, in Vector3 startPos, in Vector3 endPos,
             IDtQueryFilter filter,
             out Vector3 resultPos, Span<long> visited, out int visitedCount, int maxVisitedSize)
@@ -2320,9 +2308,7 @@ namespace DotRecast.Detour
         ///  @param[out]	hit			Pointer to a raycast hit structure which will be filled by the results.
         ///  @param[in]		prevRef		parent of start ref. Used during for cost calculation [opt]
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus Raycast(long startRef, in Vector3 startPos, in Vector3 endPos,
             IDtQueryFilter filter, int options,
             ref DtRaycastHit hit, long prevRef)
@@ -2986,9 +2972,7 @@ namespace DotRecast.Detour
         ///  @param[out]	resultRef		The reference ids of the polygons touched by the circle.
         ///  @param[out]	resultParent	The reference ids of the parent polygons for each result. 
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus FindLocalNeighbourhood(long startRef, in Vector3 centerPos, float radius,
             IDtQueryFilter filter,
             Span<long> resultRef, Span<long> resultParent, out int resultCount, int maxResult)
@@ -3217,9 +3201,7 @@ namespace DotRecast.Detour
         /// @param[out] segmentCount The number of segments returned.
         /// @param[in] maxSegments The maximum number of segments the result arrays can hold.
         /// @returns The status flags for the query.
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public DtStatus GetPolyWallSegments(long refs, IDtQueryFilter filter,
              Span<RcSegmentVert> segmentVerts, Span<long> segmentRefs, out int segmentCount, int maxSegments)
         {

@@ -20,7 +20,6 @@ freely, subject to the following restrictions:
 using System;
 using System.IO;
 using System.Numerics;
-
 using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Demo.Messages;
 using ImGuiNET;

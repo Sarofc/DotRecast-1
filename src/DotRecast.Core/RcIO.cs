@@ -36,9 +36,7 @@ namespace DotRecast.Core
             return new RcByteBuffer(data);
         }
 
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public static byte[] ToByteArray(BinaryReader br)
         {
             using var ms = new MemoryStream();

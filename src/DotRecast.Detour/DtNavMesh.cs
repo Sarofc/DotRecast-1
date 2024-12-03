@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using DotRecast.Core;
 
 namespace DotRecast.Detour
@@ -241,9 +242,10 @@ namespace DotRecast.Detour
         // TODO: These methods are duplicates from dtNavMeshQuery, but are needed
         // for off-mesh connection finding.
 
-        List<long> QueryPolygonsInTile(DtMeshTile tile, Vector3 qmin, Vector3 qmax)
+        int QueryPolygonsInTile(DtMeshTile tile, Vector3 qmin, Vector3 qmax, Span<long> polys)
         {
-            List<long> polys = new List<long>();
+            int npolys = 0;
+
             if (tile.data.bvTree != null)
             {
                 int nodeIndex = 0;
@@ -254,19 +256,15 @@ namespace DotRecast.Detour
                 Int3 bmin;
                 Int3 bmax;
                 // dtClamp query box to world box.
-                float minx = Math.Clamp(qmin.X, tbmin.X, tbmax.X) - tbmin.X;
-                float miny = Math.Clamp(qmin.Y, tbmin.Y, tbmax.Y) - tbmin.Y;
-                float minz = Math.Clamp(qmin.Z, tbmin.Z, tbmax.Z) - tbmin.Z;
-                float maxx = Math.Clamp(qmax.X, tbmin.X, tbmax.X) - tbmin.X;
-                float maxy = Math.Clamp(qmax.Y, tbmin.Y, tbmax.Y) - tbmin.Y;
-                float maxz = Math.Clamp(qmax.Z, tbmin.Z, tbmax.Z) - tbmin.Z;
+                var min = Vector3.Clamp(qmin, tbmin, tbmax) - tbmin;
+                var max = Vector3.Clamp(qmax, tbmin, tbmax) - tbmin;
                 // Quantize
-                bmin.X = (int)(qfac * minx) & 0x7ffffffe;
-                bmin.Y = (int)(qfac * miny) & 0x7ffffffe;
-                bmin.Z = (int)(qfac * minz) & 0x7ffffffe;
-                bmax.X = (int)(qfac * maxx + 1) | 1;
-                bmax.Y = (int)(qfac * maxy + 1) | 1;
-                bmax.Z = (int)(qfac * maxz + 1) | 1;
+                bmin.X = (int)(qfac * min.X) & 0x7ffffffe;
+                bmin.Y = (int)(qfac * min.Y) & 0x7ffffffe;
+                bmin.Z = (int)(qfac * min.Z) & 0x7ffffffe;
+                bmax.X = (int)(qfac * max.X + 1) | 1;
+                bmax.Y = (int)(qfac * max.Y + 1) | 1;
+                bmax.Z = (int)(qfac * max.Z + 1) | 1;
 
                 // Traverse tree
                 long @base = GetPolyRefBase(tile);
@@ -280,7 +278,8 @@ namespace DotRecast.Detour
 
                     if (isLeafNode && overlap)
                     {
-                        polys.Add(@base | (long)node.i);
+                        if (npolys < polys.Length)
+                            polys[npolys++] = @base | (long)node.i;
                     }
 
                     if (overlap || isLeafNode)
@@ -294,7 +293,7 @@ namespace DotRecast.Detour
                     }
                 }
 
-                return polys;
+                return npolys;
             }
             else
             {
@@ -321,11 +320,12 @@ namespace DotRecast.Detour
 
                     if (DtUtils.OverlapBounds(qmin, qmax, bmin, bmax))
                     {
-                        polys.Add(@base | (long)i);
+                        if (npolys < polys.Length)
+                            polys[npolys++] = @base | (long)i;
                     }
                 }
 
-                return polys;
+                return npolys;
             }
         }
 
@@ -1133,9 +1133,7 @@ namespace DotRecast.Detour
             return Vector3.Lerp(pmin, pmax, tmin);
         }
 
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public bool GetPolyHeight(DtMeshTile tile, DtPoly poly, Vector3 pos, out float height)
         {
             height = 0;
@@ -1263,6 +1261,7 @@ namespace DotRecast.Detour
         }
 
         /// Find nearest polygon within a tile.
+        [SkipLocalsInit]
         private long FindNearestPolyInTile(DtMeshTile tile, Vector3 center, Vector3 halfExtents, out Vector3 nearestPt)
         {
             nearestPt = Vector3.Zero;
@@ -1272,12 +1271,13 @@ namespace DotRecast.Detour
             Vector3 bmax = Vector3.Add(center, halfExtents);
 
             // Get nearby polygons from proximity grid.
-            List<long> polys = QueryPolygonsInTile(tile, bmin, bmax);
+            Span<long> polys = stackalloc long[128];
+            var npolys = QueryPolygonsInTile(tile, bmin, bmax, polys);
 
             // Find nearest polygon amongst the nearby polygons.
             long nearest = 0;
             float nearestDistanceSqr = float.MaxValue;
-            for (int i = 0; i < polys.Count; ++i)
+            for (int i = 0; i < npolys; ++i)
             {
                 long refs = polys[i];
                 float d;

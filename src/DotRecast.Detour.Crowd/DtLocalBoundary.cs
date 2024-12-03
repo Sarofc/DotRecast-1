@@ -90,9 +90,7 @@ namespace DotRecast.Detour.Crowd
                 m_nsegs++;
         }
 
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public void Update(long startRef, in Vector3 pos, float collisionQueryRange, DtNavMeshQuery navquery, IDtQueryFilter filter)
         {
             const int MAX_SEGS_PER_POLY = DtDetour.DT_VERTS_PER_POLYGON * 3;

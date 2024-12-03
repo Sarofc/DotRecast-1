@@ -359,9 +359,7 @@ namespace DotRecast.Detour.Crowd
             return dest;
         }
 
-#if NET5_0_OR_GREATER
         [SkipLocalsInit]
-#endif
         public int SampleVelocityAdaptive(in Vector3 pos, float rad, float vmax, in Vector3 vel, in Vector3 dvel, out Vector3 nvel,
             DtObstacleAvoidanceParams option,
             DtObstacleAvoidanceDebugData debug)

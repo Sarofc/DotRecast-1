@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 */
 
 using System.Numerics;
-
 using DotRecast.Recast.Demo.Tools;
 using ImGuiNET;
 
