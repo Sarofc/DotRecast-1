@@ -27,6 +27,9 @@ using DotRecast.Core;
 namespace DotRecast.Detour
 {
     using static DtDetour;
+    using static DtNodeFlags;
+    using static DtFindPathOptions;
+    using static DtRaycastOptions;
 
     /// Provides the ability to perform pathfinding related queries against
     /// a navigation mesh.
@@ -228,7 +231,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
 
             DtStatus status = DtStatus.DT_SUCCESS;
@@ -244,8 +247,8 @@ namespace DotRecast.Detour
             while (!m_openList.IsEmpty())
             {
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Get poly and tile.
                 // The API input has been checked already, skip checking internal data.
@@ -315,7 +318,7 @@ namespace DotRecast.Detour
                         continue;
                     }
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                         continue;
 
                     // Cost
@@ -325,21 +328,21 @@ namespace DotRecast.Detour
                     float total = bestNode.total + Vector3.Distance(bestNode.pos, neighbourNode.pos);
 
                     // The node is already in open list and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
                         continue;
 
                     neighbourNode.id = neighbourRef;
-                    neighbourNode.flags = (neighbourNode.flags & ~DtNodeFlags.DT_NODE_CLOSED);
+                    neighbourNode.flags = (neighbourNode.flags & ~DT_NODE_CLOSED);
                     neighbourNode.pidx = m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.total = total;
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         m_openList.Modify(neighbourNode);
                     }
                     else
                     {
-                        neighbourNode.flags = DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags = DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
                 }
@@ -353,9 +356,9 @@ namespace DotRecast.Detour
             Span<float> areas = stackalloc float[DT_VERTS_PER_POLYGON];
             //ref float v = ref randomTile.data.verts[randomPoly.verts[0] * 3];
             //dtVcopy(&verts[0 * 3], v);
-            //for (int j = 1; j < randomPoly->vertCount; ++j)
+            //for (int j = 1; j < randomPoly.vertCount; ++j)
             //{
-            //    v = &randomTile->verts[randomPoly->verts[j] * 3];
+            //    v = &randomTile.verts[randomPoly.verts[j] * 3];
             //    dtVcopy(&verts[j * 3], v);
             //}
             for (int j = 0; j < randomPoly.vertCount; ++j)
@@ -790,7 +793,7 @@ namespace DotRecast.Detour
         ///  @param[out]	pathCount	The number of polygons returned in the @p path array.
         ///  @param[in]		maxPath		The maximum number of polygons the @p path array can hold. [Limit: >= 1]
         [SkipLocalsInit]
-        public DtStatus FindPath(long startRef, long endRef, in Vector3 startPos, in Vector3 endPos, IDtQueryFilter filter, Span<long> path, out int pathCount, DtFindPathOption fpo)
+        public DtStatus FindPath(long startRef, long endRef, in Vector3 startPos, in Vector3 endPos, IDtQueryFilter filter, Span<long> path, out int pathCount)
         {
             pathCount = 0;
 
@@ -805,21 +808,6 @@ namespace DotRecast.Detour
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
 
-            var raycastLimit = fpo.raycastLimit;
-            var options = fpo.options;
-
-            float raycastLimitSqr = RcMath.Sqr(raycastLimit);
-
-            // trade quality with performance?
-            if ((options & DtFindPathOptions.DT_FINDPATH_ANY_ANGLE) != 0 && raycastLimit < 0f)
-            {
-                // limiting to several times the character radius yields nice results. It is not sensitive
-                // so it is enough to compute it from the first tile.
-                DtMeshTile tile = m_nav.GetTileByRef(startRef);
-                float agentRadius = tile.data.header.walkableRadius;
-                raycastLimitSqr = RcMath.Sqr(agentRadius * DT_RAY_CAST_LIMIT_PROPORTIONS);
-            }
-
             if (startRef == endRef)
             {
                 path[0] = startRef;
@@ -830,16 +818,14 @@ namespace DotRecast.Detour
             m_nodePool.Clear();
             m_openList.Clear();
 
-            DtNode startNode = m_nodePool.GetNode(startRef);
+            var startNode = m_nodePool.GetNode(startRef);
             startNode.pos = startPos;
             startNode.pidx = 0;
             startNode.cost = 0;
             startNode.total = DtDefaultQueryHeuristic.GetCost(startPos, endPos);
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
-
-            int n = 0;
 
             DtNode lastBestNode = startNode;
             float lastBestNodeCost = startNode.total;
@@ -847,12 +833,14 @@ namespace DotRecast.Detour
             const int MAX_PATH = 32;
             var rayHit = new DtRaycastHit(stackalloc long[MAX_PATH]);
 
+            bool outOfNodes = false;
+
             while (!m_openList.IsEmpty())
             {
                 // Remove node from open list and put it in closed list.
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Reached the goal, stop searching.
                 if (bestNode.id == endRef)
@@ -863,7 +851,7 @@ namespace DotRecast.Detour
 
                 // Get current poly and tile.
                 // The API input has been checked already, skip checking internal data.
-                long bestRef = bestNode.id;
+                var bestRef = bestNode.id;
                 m_nav.GetTileAndPolyByRefUnsafe(bestRef, out var bestTile, out var bestPoly);
 
                 // Get parent poly and tile.
@@ -886,128 +874,87 @@ namespace DotRecast.Detour
                     m_nav.GetTileAndPolyByRefUnsafe(parentRef, out parentTile, out parentPoly);
                 }
 
-                // decide whether to test raycast to previous nodes
-                bool tryLOS = false;
-                if ((options & DtFindPathOptions.DT_FINDPATH_ANY_ANGLE) != 0)
-                {
-                    if ((parentRef != 0) &&
-                        (raycastLimitSqr >= float.MaxValue || Vector3.DistanceSquared(parentNode.pos, bestNode.pos) < raycastLimitSqr))
-                    {
-                        tryLOS = true;
-                    }
-                }
-
                 for (int i = bestPoly.firstLink; i != DT_NULL_LINK; i = bestTile.links[i].next)
                 {
                     long neighbourRef = bestTile.links[i].refs;
 
                     // Skip invalid ids and do not expand back to where we came from.
                     if (neighbourRef == 0 || neighbourRef == parentRef)
-                    {
                         continue;
-                    }
 
                     // Get neighbour poly and tile.
                     // The API input has been checked already, skip checking internal data.
                     m_nav.GetTileAndPolyByRefUnsafe(neighbourRef, out var neighbourTile, out var neighbourPoly);
 
                     if (!filter.PassFilter(neighbourRef, neighbourTile, neighbourPoly))
-                    {
                         continue;
-                    }
+
+                    int crossSize = 0;
+                    if (bestTile.links[i].side != 0xff)
+                        crossSize = (bestTile.links[i].side >> 1);
 
                     // get the node
-                    DtNode neighbourNode = m_nodePool.GetNode(neighbourRef, 0);
-
-                    // do not expand to nodes that were already visited from the
-                    // same parent
-                    if (neighbourNode.pidx != 0 && neighbourNode.pidx == bestNode.pidx)
+                    DtNode neighbourNode = m_nodePool.GetNode(neighbourRef, crossSize);
+                    if (neighbourNode == null)
                     {
+                        outOfNodes = true;
                         continue;
                     }
 
                     // If the node is visited the first time, calculate node position.
-                    var neighbourPos = neighbourNode.pos;
-                    var empStatus = neighbourRef == endRef
-                        ? GetEdgeIntersectionPoint(bestNode.pos, bestRef, bestPoly, bestTile,
-                            endPos, neighbourRef, neighbourPoly, neighbourTile,
-                            ref neighbourPos)
-                        : GetEdgeMidPoint(bestRef, bestPoly, bestTile,
-                            neighbourRef, neighbourPoly, neighbourTile,
-                            ref neighbourPos);
+                    if (neighbourNode.flags == 0)
+                    {
+                        GetEdgeMidPoint(bestRef, bestPoly, bestTile, neighbourRef, neighbourPoly, neighbourTile, ref neighbourNode.pos);
+                    }
 
                     // Calculate cost and heuristic.
                     float cost = 0;
-                    float heuristicCost = 0;
-
-                    // raycast parent
-                    bool foundShortCut = false;
-                    scoped Span<long> shortcut = null;
-                    if (tryLOS)
-                    {
-                        var rayStatus = Raycast(parentRef, parentNode.pos, neighbourPos, filter,
-                            DtRaycastOptions.DT_RAYCAST_USE_COSTS, ref rayHit, grandpaRef);
-                        if (rayStatus.Succeeded())
-                        {
-                            foundShortCut = rayHit.t >= 1.0f && rayHit.path[rayHit.pathCount ^ 1] == neighbourRef;
-                            if (foundShortCut)
-                            {
-                                shortcut = rayHit.path.Slice(0, rayHit.pathCount);
-                                // shortcut found using raycast. Using shorter cost
-                                // instead
-                                cost = parentNode.cost + rayHit.pathCost;
-                            }
-                        }
-                    }
-
-                    // update move cost
-                    if (!foundShortCut)
-                    {
-                        float curCost = filter.GetCost(bestNode.pos, neighbourPos, parentRef, parentTile,
-                            parentPoly, bestRef, bestTile, bestPoly, neighbourRef, neighbourTile, neighbourPoly);
-                        cost = bestNode.cost + curCost;
-                    }
+                    float heuristic = 0;
 
                     // Special case for last node.
                     if (neighbourRef == endRef)
                     {
                         // Cost
-                        float endCost = filter.GetCost(neighbourPos, endPos, bestRef, bestTile, bestPoly, neighbourRef,
-                            neighbourTile, neighbourPoly, 0L, null, null);
-                        cost = cost + endCost;
+                        var curCost = filter.GetCost(bestNode.pos, neighbourNode.pos,
+                            parentRef, parentTile, parentPoly,
+                            bestRef, bestTile, bestPoly,
+                            neighbourRef, neighbourTile, neighbourPoly);
+                        var endCost = filter.GetCost(neighbourNode.pos, endPos,
+                            bestRef, bestTile, bestPoly,
+                            neighbourRef, neighbourTile, neighbourPoly,
+                            0, null, null);
+
+                        cost = bestNode.cost + curCost + endCost;
+                        heuristic = 0;
                     }
                     else
                     {
                         // Cost
-                        heuristicCost = DtDefaultQueryHeuristic.GetCost(neighbourPos, endPos);
+                        var curCost = filter.GetCost(bestNode.pos, neighbourNode.pos,
+                            parentRef, parentTile, parentPoly,
+                            bestRef, bestTile, bestPoly,
+                            neighbourRef, neighbourTile, neighbourPoly);
+                        cost = bestNode.cost + curCost;
+                        heuristic = DtDefaultQueryHeuristic.GetCost(neighbourNode.pos, endPos);
                     }
 
-                    float total = cost + heuristicCost;
+                    var total = cost + heuristic;
 
                     // The node is already in open list and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
-                    {
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total > neighbourNode.total)
                         continue;
-                    }
-
                     // The node is already visited and process, and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0 && total >= neighbourNode.total)
-                    {
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0 && total > neighbourNode.total)
                         continue;
-                    }
 
                     // Add or update the node.
-                    neighbourNode.pidx = foundShortCut ? bestNode.pidx : m_nodePool.GetNodeIdx(bestNode);
+                    neighbourNode.pidx = m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.id = neighbourRef;
-                    neighbourNode.flags = (neighbourNode.flags & ~DtNodeFlags.DT_NODE_CLOSED);
+                    neighbourNode.flags = neighbourNode.flags & ~DT_NODE_CLOSED;
                     neighbourNode.cost = cost;
                     neighbourNode.total = total;
-                    neighbourNode.pos = neighbourPos;
-                    //neighbourNode.shortcut = shortcut;
-                    neighbourNode.shortcut ??= new List<long>(shortcut.Length);
-                    shortcut.CopyTo(FCollectionsMarshal.CreateSpan(neighbourNode.shortcut, shortcut.Length));
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         // Already in open, update node location.
                         m_openList.Modify(neighbourNode);
@@ -1015,26 +962,26 @@ namespace DotRecast.Detour
                     else
                     {
                         // Put the node in open list.
-                        neighbourNode.flags |= DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags |= DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
 
                     // Update nearest node to target so far.
-                    if (heuristicCost < lastBestNodeCost)
+                    if (heuristic < lastBestNodeCost)
                     {
-                        lastBestNodeCost = heuristicCost;
+                        lastBestNodeCost = heuristic;
                         lastBestNode = neighbourNode;
                     }
                 }
             }
 
-            var status = GetPathToNode(lastBestNode, path, ref n); // TODO test
-            if (lastBestNode.id != endRef)
-            {
-                status |= DtStatus.DT_PARTIAL_RESULT;
-            }
+            var status = GetPathToNode(lastBestNode, path, ref pathCount); // TODO test
 
-            pathCount = n;
+            if (lastBestNode.id != endRef)
+                status |= DtStatus.DT_PARTIAL_RESULT;
+
+            if (outOfNodes)
+                status |= DtStatus.DT_OUT_OF_NODES;
 
             return status;
         }
@@ -1054,7 +1001,7 @@ namespace DotRecast.Detour
         ///  @param[in]		filter		The polygon filter to apply to the query.
         ///  @param[in]		options		query options (see: #dtFindPathOptions)
         /// @returns The status flags for the query.
-        public DtStatus InitSlicedFindPath(long startRef, long endRef, in Vector3 startPos, in Vector3 endPos, IDtQueryFilter filter, int options, float raycastLimit = float.MaxValue)
+        public DtStatus InitSlicedFindPath(long startRef, long endRef, in Vector3 startPos, in Vector3 endPos, IDtQueryFilter filter, int options)
         {
             // Init path state.
             m_query = new DtQueryData
@@ -1066,7 +1013,7 @@ namespace DotRecast.Detour
                 endPos = endPos,
                 filter = filter,
                 options = options,
-                raycastLimitSqr = RcMath.Sqr(raycastLimit)
+                raycastLimitSqr = float.MaxValue
             };
 
             // Validate input
@@ -1076,7 +1023,7 @@ namespace DotRecast.Detour
             }
 
             // trade quality with performance?
-            if ((options & DtFindPathOptions.DT_FINDPATH_ANY_ANGLE) != 0 && raycastLimit < 0f)
+            if ((options & DT_FINDPATH_ANY_ANGLE) != 0)
             {
                 // limiting to several times the character radius yields nice results. It is not sensitive
                 // so it is enough to compute it from the first tile.
@@ -1100,7 +1047,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = DtDefaultQueryHeuristic.GetCost(startPos, endPos);
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
 
             m_query.status = DtStatus.DT_IN_PROGRESS;
@@ -1118,9 +1065,7 @@ namespace DotRecast.Detour
         {
             doneIters = 0;
             if (!m_query.status.InProgress())
-            {
                 return m_query.status;
-            }
 
             // Make sure the request is still valid.
             if (!m_nav.IsValidPolyRef(m_query.startRef) || !m_nav.IsValidPolyRef(m_query.endRef))
@@ -1139,8 +1084,8 @@ namespace DotRecast.Detour
 
                 // Remove node from open list and put it in closed list.
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Reached the goal, stop searching.
                 if (bestNode.id == m_query.endRef)
@@ -1182,9 +1127,8 @@ namespace DotRecast.Detour
 
                 if (parentRef != 0)
                 {
-                    bool invalidParent = false;
                     status = m_nav.GetTileAndPolyByRef(parentRef, out parentTile, out parentPoly);
-                    invalidParent = status.Failed();
+                    var invalidParent = status.Failed();
                     if (invalidParent || (grandpaRef != 0 && !m_nav.IsValidPolyRef(grandpaRef)))
                     {
                         // The polygon has disappeared during the sliced query fail.
@@ -1196,7 +1140,7 @@ namespace DotRecast.Detour
 
                 // decide whether to test raycast to previous nodes
                 bool tryLOS = false;
-                if ((m_query.options & DtFindPathOptions.DT_FINDPATH_ANY_ANGLE) != 0)
+                if ((m_query.options & DT_FINDPATH_ANY_ANGLE) != 0)
                 {
                     if ((parentRef != 0) &&
                         (m_query.raycastLimitSqr >= float.MaxValue || Vector3.DistanceSquared(parentNode.pos, bestNode.pos) < m_query.raycastLimitSqr))
@@ -1212,9 +1156,7 @@ namespace DotRecast.Detour
                     // Skip invalid ids and do not expand back to where we came
                     // from.
                     if (neighbourRef == 0 || neighbourRef == parentRef)
-                    {
                         continue;
-                    }
 
                     // Get neighbour poly and tile.
                     // The API input has been checked already, skip checking internal
@@ -1222,30 +1164,29 @@ namespace DotRecast.Detour
                     m_nav.GetTileAndPolyByRefUnsafe(neighbourRef, out var neighbourTile, out var neighbourPoly);
 
                     if (!m_query.filter.PassFilter(neighbourRef, neighbourTile, neighbourPoly))
-                    {
                         continue;
-                    }
 
                     // get the neighbor node
                     DtNode neighbourNode = m_nodePool.GetNode(neighbourRef, 0);
+                    if (neighbourNode == null)
+                    {
+                        m_query.status |= DtStatus.DT_OUT_OF_NODES;
+                        continue;
+                    }
 
                     // do not expand to nodes that were already visited from the
                     // same parent
                     if (neighbourNode.pidx != 0 && neighbourNode.pidx == bestNode.pidx)
-                    {
                         continue;
-                    }
 
                     // If the node is visited the first time, calculate node
                     // position.
-                    var neighbourPos = neighbourNode.pos;
-                    var empStatus = neighbourRef == m_query.endRef
-                        ? GetEdgeIntersectionPoint(bestNode.pos, bestRef, bestPoly, bestTile,
-                            m_query.endPos, neighbourRef, neighbourPoly, neighbourTile,
-                            ref neighbourPos)
-                        : GetEdgeMidPoint(bestRef, bestPoly, bestTile,
+                    if (neighbourNode.flags == 0)
+                    {
+                        GetEdgeMidPoint(bestRef, bestPoly, bestTile,
                             neighbourRef, neighbourPoly, neighbourTile,
-                            ref neighbourPos);
+                            ref neighbourNode.pos);
+                    }
 
                     // Calculate cost and heuristic.
                     float cost = 0;
@@ -1253,77 +1194,64 @@ namespace DotRecast.Detour
 
                     // raycast parent
                     bool foundShortCut = false;
-                    scoped ReadOnlySpan<long> shortcut = null;
+                    rayHit.pathCost = rayHit.t = 0;
                     if (tryLOS)
                     {
-                        status = Raycast(parentRef, parentNode.pos, neighbourPos, m_query.filter,
-                            DtRaycastOptions.DT_RAYCAST_USE_COSTS, ref rayHit, grandpaRef);
-                        if (status.Succeeded())
-                        {
-                            foundShortCut = rayHit.t >= 1.0f && rayHit.path[rayHit.pathCount ^ 1] == neighbourRef;
-                            if (foundShortCut)
-                            {
-                                //shortcut = new List<long>(rayHit.path);
-                                shortcut = rayHit.path.Slice(0, rayHit.pathCount);
-                                // shortcut found using raycast. Using shorter cost
-                                // instead
-                                cost = parentNode.cost + rayHit.pathCost;
-                            }
-                        }
+                        Raycast(parentRef, parentNode.pos, neighbourNode.pos, m_query.filter, DT_RAYCAST_USE_COSTS, ref rayHit, grandpaRef);
+                        foundShortCut = rayHit.t >= 1.0f;
                     }
 
-
                     // update move cost
-                    if (!foundShortCut)
+                    if (foundShortCut)
+                    {
+                        // shortcut found using raycast. Using shorter cost instead
+                        cost = parentNode.cost + rayHit.pathCost;
+                    }
+                    else
                     {
                         // No shortcut found.
-                        float curCost = m_query.filter.GetCost(bestNode.pos, neighbourPos, parentRef, parentTile,
-                            parentPoly, bestRef, bestTile, bestPoly, neighbourRef, neighbourTile, neighbourPoly);
+                        float curCost = m_query.filter.GetCost(bestNode.pos, neighbourNode.pos,
+                            parentRef, parentTile, parentPoly,
+                            bestRef, bestTile, bestPoly,
+                            neighbourRef, neighbourTile, neighbourPoly);
                         cost = bestNode.cost + curCost;
                     }
 
                     // Special case for last node.
                     if (neighbourRef == m_query.endRef)
                     {
-                        float endCost = m_query.filter.GetCost(neighbourPos, m_query.endPos, bestRef, bestTile,
-                            bestPoly, neighbourRef, neighbourTile, neighbourPoly, 0, null, null);
+                        float endCost = m_query.filter.GetCost(neighbourNode.pos, m_query.endPos,
+                            bestRef, bestTile, bestPoly,
+                            neighbourRef, neighbourTile, neighbourPoly,
+                            0, null, null);
 
                         cost = cost + endCost;
                         heuristic = 0;
                     }
                     else
                     {
-                        heuristic = DtDefaultQueryHeuristic.GetCost(neighbourPos, m_query.endPos);
+                        heuristic = DtDefaultQueryHeuristic.GetCost(neighbourNode.pos, m_query.endPos);
                     }
 
                     float total = cost + heuristic;
 
-                    // The node is already in open list and the new result is worse,
-                    // skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
-                    {
+                    // The node is already in open list and the new result is worse, skip.
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
                         continue;
-                    }
-
-                    // The node is already visited and process, and the new result
-                    // is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0 && total >= neighbourNode.total)
-                    {
+                    // The node is already visited and process, and the new result is worse, skip.
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0 && total >= neighbourNode.total)
                         continue;
-                    }
 
                     // Add or update the node.
                     neighbourNode.pidx = foundShortCut ? bestNode.pidx : m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.id = neighbourRef;
-                    neighbourNode.flags &= ~DtNodeFlags.DT_NODE_CLOSED;
+                    neighbourNode.flags = (neighbourNode.flags & ~(DT_NODE_CLOSED | DT_NODE_PARENT_DETACHED));
                     neighbourNode.cost = cost;
                     neighbourNode.total = total;
-                    neighbourNode.pos = neighbourPos;
-                    //neighbourNode.shortcut = shortcut;
-                    neighbourNode.shortcut ??= new List<long>(shortcut.Length);
-                    shortcut.CopyTo(FCollectionsMarshal.CreateSpan(neighbourNode.shortcut, shortcut.Length));
+                    if (foundShortCut)
+                        neighbourNode.flags = (neighbourNode.flags | DT_NODE_PARENT_DETACHED);
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         // Already in open, update node location.
                         m_openList.Modify(neighbourNode);
@@ -1331,7 +1259,7 @@ namespace DotRecast.Detour
                     else
                     {
                         // Put the node in open list.
-                        neighbourNode.flags |= DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags |= DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
 
@@ -1344,6 +1272,7 @@ namespace DotRecast.Detour
                 }
             }
 
+
             // Exhausted all nodes, but could not find path.
             if (m_openList.IsEmpty())
             {
@@ -1352,6 +1281,7 @@ namespace DotRecast.Detour
             }
 
             doneIters = iter;
+
             return m_query.status;
         }
 
@@ -1367,8 +1297,6 @@ namespace DotRecast.Detour
 
             if (path.IsEmpty)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
-
-            //path.Clear();
 
             if (m_query.status.Failed())
             {
@@ -1421,8 +1349,6 @@ namespace DotRecast.Detour
 
             if (path.IsEmpty)
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
-
-            //path.Clear();
 
             if (existing.IsEmpty || existingSize <= 0)
             {
@@ -1878,7 +1804,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_CLOSED;
+            startNode.flags = DT_NODE_CLOSED;
 
             var stack = _stack;
             stack.Clear();
@@ -1982,7 +1908,7 @@ namespace DotRecast.Detour
                         {
                             DtNode neighbourNode = m_tinyNodePool.GetNode(neis[k]);
                             // Skip if already visited.
-                            if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                            if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                             {
                                 continue;
                             }
@@ -1999,7 +1925,7 @@ namespace DotRecast.Detour
 
                             // Mark as the node as visited and push to queue.
                             neighbourNode.pidx = m_tinyNodePool.GetNodeIdx(curNode);
-                            neighbourNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                            neighbourNode.flags |= DT_NODE_CLOSED;
                             stack.Enqueue(neighbourNode);
                         }
                     }
@@ -2613,7 +2539,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
 
             float radiusSqr = RcMath.Sqr(radius);
@@ -2624,8 +2550,8 @@ namespace DotRecast.Detour
             while (!m_openList.IsEmpty())
             {
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Get poly and tile.
                 // The API input has been checked already, skip checking internal data.
@@ -2697,7 +2623,7 @@ namespace DotRecast.Detour
 
                     DtNode neighbourNode = m_nodePool.GetNode(neighbourRef);
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                     {
                         continue;
                     }
@@ -2713,7 +2639,7 @@ namespace DotRecast.Detour
 
                     float total = bestNode.total + cost;
                     // The node is already in open list and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
                     {
                         continue;
                     }
@@ -2722,13 +2648,13 @@ namespace DotRecast.Detour
                     neighbourNode.pidx = m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.total = total;
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         m_openList.Modify(neighbourNode);
                     }
                     else
                     {
-                        neighbourNode.flags = DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags = DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
                 }
@@ -2810,7 +2736,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
 
             DtStatus status = DtStatus.DT_SUCCESS;
@@ -2820,8 +2746,8 @@ namespace DotRecast.Detour
             while (!m_openList.IsEmpty())
             {
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Get poly and tile.
                 // The API input has been checked already, skip checking internal data.
@@ -2899,7 +2825,7 @@ namespace DotRecast.Detour
 
                     DtNode neighbourNode = m_nodePool.GetNode(neighbourRef);
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                     {
                         continue;
                     }
@@ -2916,7 +2842,7 @@ namespace DotRecast.Detour
                     float total = bestNode.total + cost;
 
                     // The node is already in open list and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
                     {
                         continue;
                     }
@@ -2925,13 +2851,13 @@ namespace DotRecast.Detour
                     neighbourNode.pidx = m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.total = total;
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         m_openList.Modify(neighbourNode);
                     }
                     else
                     {
-                        neighbourNode.flags = DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags = DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
                 }
@@ -2995,7 +2921,7 @@ namespace DotRecast.Detour
             DtNode startNode = m_tinyNodePool.GetNode(startRef);
             startNode.pidx = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_CLOSED;
+            startNode.flags = DT_NODE_CLOSED;
 
             var stack = _stack;
             stack.Clear();
@@ -3043,7 +2969,7 @@ namespace DotRecast.Detour
 
                     DtNode neighbourNode = m_tinyNodePool.GetNode(neighbourRef);
                     // Skip visited.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                     {
                         continue;
                     }
@@ -3080,7 +3006,7 @@ namespace DotRecast.Detour
 
                     // Mark node visited, this is done before the overlap test so that
                     // we will not visit the poly again if the test fails.
-                    neighbourNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                    neighbourNode.flags |= DT_NODE_CLOSED;
                     neighbourNode.pidx = m_tinyNodePool.GetNodeIdx(curNode);
 
                     // Check that the polygon does not collide with existing polygons.
@@ -3388,7 +3314,7 @@ namespace DotRecast.Detour
             startNode.cost = 0;
             startNode.total = 0;
             startNode.id = startRef;
-            startNode.flags = DtNodeFlags.DT_NODE_OPEN;
+            startNode.flags = DT_NODE_OPEN;
             m_openList.Push(startNode);
 
             float radiusSqr = RcMath.Sqr(maxRadius);
@@ -3401,8 +3327,8 @@ namespace DotRecast.Detour
             while (!m_openList.IsEmpty())
             {
                 DtNode bestNode = m_openList.Pop();
-                bestNode.flags &= ~DtNodeFlags.DT_NODE_OPEN;
-                bestNode.flags |= DtNodeFlags.DT_NODE_CLOSED;
+                bestNode.flags &= ~DT_NODE_OPEN;
+                bestNode.flags |= DT_NODE_CLOSED;
 
                 // Get poly and tile.
                 // The API input has been checked already, skip checking internal data.
@@ -3521,7 +3447,7 @@ namespace DotRecast.Detour
                         continue;
                     }
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                    if ((neighbourNode.flags & DT_NODE_CLOSED) != 0)
                     {
                         continue;
                     }
@@ -3537,23 +3463,23 @@ namespace DotRecast.Detour
                     float total = bestNode.total + Vector3.Distance(bestNode.pos, neighbourNode.pos);
 
                     // The node is already in open list and the new result is worse, skip.
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0 && total >= neighbourNode.total)
                     {
                         continue;
                     }
 
                     neighbourNode.id = neighbourRef;
-                    neighbourNode.flags = (neighbourNode.flags & ~DtNodeFlags.DT_NODE_CLOSED);
+                    neighbourNode.flags = (neighbourNode.flags & ~DT_NODE_CLOSED);
                     neighbourNode.pidx = m_nodePool.GetNodeIdx(bestNode);
                     neighbourNode.total = total;
 
-                    if ((neighbourNode.flags & DtNodeFlags.DT_NODE_OPEN) != 0)
+                    if ((neighbourNode.flags & DT_NODE_OPEN) != 0)
                     {
                         m_openList.Modify(neighbourNode);
                     }
                     else
                     {
-                        neighbourNode.flags |= DtNodeFlags.DT_NODE_OPEN;
+                        neighbourNode.flags |= DT_NODE_OPEN;
                         m_openList.Push(neighbourNode);
                     }
                 }
@@ -3618,7 +3544,7 @@ namespace DotRecast.Detour
 
             var endNodes = m_nodes.AsSpan(0, 1); // only 1
             if (m_nodePool.FindNodes(endRef, endNodes) != 1
-                || (endNodes[0].flags & DtNodeFlags.DT_NODE_CLOSED) == 0)
+                || (endNodes[0].flags & DT_NODE_CLOSED) == 0)
             {
                 return DtStatus.DT_FAILURE | DtStatus.DT_INVALID_PARAM;
             }
@@ -3631,39 +3557,41 @@ namespace DotRecast.Detour
         // Gets the path leading to the specified end node.
         protected DtStatus GetPathToNode(DtNode endNode, Span<long> path, ref int pathCount)
         {
-            // TODO 长度不够时，貌似处理有误
-
-            // Reverse the path.
-            DtNode curNode = endNode;
+            var maxPath = path.Length;
+            // Find the length of the entire path.
+            var curNode = endNode;
+            int length = 0;
             do
             {
-                //path.Add(curNode.id);
-                if (pathCount < path.Length)
-                    path[pathCount++] = curNode.id;
-
-                DtNode nextNode = m_nodePool.GetNodeAtIdx(curNode.pidx);
-                if (curNode.shortcut != null)
-                {
-                    // remove potential duplicates from shortcut path
-                    for (int i = curNode.shortcut.Count - 1; i >= 0; i--)
-                    {
-                        long id = curNode.shortcut[i];
-                        if (id != curNode.id && id != nextNode.id)
-                        {
-                            //path.Add(id);
-                            if (pathCount < path.Length)
-                                path[pathCount++] = id;
-                        }
-                    }
-                }
-
-                curNode = nextNode;
+                length++;
+                curNode = m_nodePool.GetNodeAtIdx(curNode.pidx);
             } while (curNode != null);
 
-            path.Slice(0, pathCount).Reverse();
+            // If the path cannot be fully stored then advance to the last node we will be able to store.
+            curNode = endNode;
+            int writeCount;
+            for (writeCount = length; writeCount > maxPath; writeCount--)
+            {
+                System.Diagnostics.Debug.Assert(curNode != null);
+                curNode = m_nodePool.GetNodeAtIdx(curNode.pidx);
+            }
 
-            if (pathCount > path.Length)
+            // Write path
+            for (int i = writeCount - 1; i >= 0; i--)
+            {
+                System.Diagnostics.Debug.Assert(curNode != null);
+
+                path[i] = curNode.id;
+                curNode = m_nodePool.GetNodeAtIdx(curNode.pidx);
+            }
+
+            System.Diagnostics.Debug.Assert(curNode == null);
+
+            pathCount = Math.Min(length, maxPath);
+
+            if (length > maxPath)
                 return DtStatus.DT_SUCCESS | DtStatus.DT_BUFFER_TOO_SMALL;
+
             return DtStatus.DT_SUCCESS;
         }
 
@@ -3683,7 +3611,7 @@ namespace DotRecast.Detour
             int n = m_nodePool.FindNodes(refs, m_nodes);
             for (int i = 0; i < n; ++i)
             {
-                if ((m_nodes[i].flags & DtNodeFlags.DT_NODE_CLOSED) != 0)
+                if ((m_nodes[i].flags & DT_NODE_CLOSED) != 0)
                 {
                     return true;
                 }

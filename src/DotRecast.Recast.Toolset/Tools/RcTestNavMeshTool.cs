@@ -20,7 +20,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return "Test Navmesh";
         }
 
-        public DtStatus FindFollowPath(DtNavMesh navMesh, DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPt, Vector3 endPt, IDtQueryFilter filter, bool enableRaycast,
+        public DtStatus FindFollowPath(DtNavMesh navMesh, DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPt, Vector3 endPt, IDtQueryFilter filter,
              Span<long> pathIterPolys, int pathIterPolyCount, ref List<Vector3> smoothPath)
         {
             if (startRef == 0 || endRef == 0)
@@ -39,8 +39,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             smoothPath.Clear();
 
-            var opt = new DtFindPathOption(enableRaycast ? DtFindPathOptions.DT_FINDPATH_ANY_ANGLE : 0, float.MaxValue);
-            navQuery.FindPath(startRef, endRef, startPt, endPt, filter, pathIterPolys, out pathIterPolyCount, opt);
+            navQuery.FindPath(startRef, endRef, startPt, endPt, filter, pathIterPolys, out pathIterPolyCount);
             if (0 >= pathIterPolyCount)
                 return DtStatus.DT_FAILURE;
 
@@ -172,7 +171,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return DtStatus.DT_SUCCESS;
         }
 
-        public DtStatus FindStraightPath(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPt, Vector3 endPt, IDtQueryFilter filter, bool enableRaycast,
+        public DtStatus FindStraightPath(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPt, Vector3 endPt, IDtQueryFilter filter,
             Span<long> polys, Span<DtStraightPath> straightPath, out int straightPathCount, int maxStraightPath, int straightPathOptions)
         {
             straightPathCount = 0;
@@ -184,8 +183,7 @@ namespace DotRecast.Recast.Toolset.Tools
             //polys.Clear();
             //straightPath.Clear();
 
-            var opt = new DtFindPathOption(enableRaycast ? DtFindPathOptions.DT_FINDPATH_ANY_ANGLE : 0, float.MaxValue);
-            navQuery.FindPath(startRef, endRef, startPt, endPt, filter, polys, out var polysCount, opt);
+            navQuery.FindPath(startRef, endRef, startPt, endPt, filter, polys, out var polysCount);
 
             if (0 >= polysCount)
                 return DtStatus.DT_FAILURE;
@@ -206,7 +204,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return DtStatus.DT_SUCCESS;
         }
 
-        public DtStatus InitSlicedFindPath(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPos, Vector3 endPos, IDtQueryFilter filter, bool enableRaycast)
+        public DtStatus InitSlicedFindPath(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 startPos, Vector3 endPos, IDtQueryFilter filter)
         {
             if (startRef == 0 || endRef == 0)
             {
@@ -214,9 +212,7 @@ namespace DotRecast.Recast.Toolset.Tools
             }
 
             return navQuery.InitSlicedFindPath(startRef, endRef, startPos, endPos, filter,
-                enableRaycast ? DtFindPathOptions.DT_FINDPATH_ANY_ANGLE : 0,
-                float.MaxValue
-            );
+                DtFindPathOptions.DT_FINDPATH_ANY_ANGLE);
         }
 
         public DtStatus UpdateSlicedFindPath(DtNavMeshQuery navQuery, int maxIter, long endRef, Vector3 startPos, Vector3 endPos,

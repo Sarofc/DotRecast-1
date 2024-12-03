@@ -71,7 +71,7 @@ public class TiledFindPathTest
             long endRef = END_REFS[i];
             Vector3 startPos = START_POS[i];
             Vector3 endPos = END_POS[i];
-            var status = query.FindPath(startRef, endRef, startPos, endPos, filter, path, out var pathCount, DtFindPathOption.NoOption);
+            var status = query.FindPath(startRef, endRef, startPos, endPos, filter, path, out var pathCount);
             Assert.That(status, Is.EqualTo(STATUSES[i]));
             Assert.That(pathCount, Is.EqualTo(RESULTS[i].Length));
             for (int j = 0; j < RESULTS[i].Length; j++)

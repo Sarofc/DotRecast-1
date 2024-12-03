@@ -30,8 +30,6 @@ public class TestNavmeshSampleTool : ISampleTool
     private int _includeFlags = SampleAreaModifications.SAMPLE_POLYFLAGS_ALL;
     private int _excludeFlags = 0;
 
-    private bool _enableRaycast = true;
-
     // for pathfind straight mode
     private int _straightPathOption;
 
@@ -92,8 +90,6 @@ public class TestNavmeshSampleTool : ISampleTool
 
         int prevIncludeFlags = m_filter.GetIncludeFlags();
         int prevExcludeFlags = m_filter.GetExcludeFlags();
-
-        bool prevEnableRaycast = _enableRaycast;
 
         int prevStraightPathOption = _straightPathOption;
 
@@ -161,11 +157,8 @@ public class TestNavmeshSampleTool : ISampleTool
 
         m_filter.SetExcludeFlags(_excludeFlags);
 
-        ImGui.Checkbox("Raycast shortcuts", ref _enableRaycast);
-
         if (prevMode != _mode || prevIncludeFlags != _includeFlags
                               || prevExcludeFlags != _excludeFlags
-                              || prevEnableRaycast != _enableRaycast
                               || prevStraightPathOption != _straightPathOption
                               /*|| prevConstrainByCircle != _constrainByCircle*/)
         {
@@ -666,19 +659,19 @@ public class TestNavmeshSampleTool : ISampleTool
 
         if (_mode == RcTestNavmeshToolMode.PATHFIND_FOLLOW)
         {
-            _tool.FindFollowPath(navMesh, navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter, _enableRaycast,
+            _tool.FindFollowPath(navMesh, navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter,
                  m_polys, m_npolys, ref m_smoothPath);
         }
         else if (_mode == RcTestNavmeshToolMode.PATHFIND_STRAIGHT)
         {
-            _tool.FindStraightPath(navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter, _enableRaycast,
+            _tool.FindStraightPath(navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter,
                  m_polys, m_straightPath, out m_straightPathCount, MAX_POLYS, _straightPathOption);
         }
         else if (_mode == RcTestNavmeshToolMode.PATHFIND_SLICED)
         {
             m_npolys = 0;
             m_straightPathCount = 0;
-            m_pathFindStatus = _tool.InitSlicedFindPath(navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter, _enableRaycast);
+            m_pathFindStatus = _tool.InitSlicedFindPath(navQuery, m_startRef, m_endRef, m_spos, m_epos, m_filter);
         }
         else if (_mode == RcTestNavmeshToolMode.RAYCAST)
         {
