@@ -1,29 +1,24 @@
-﻿using System.Collections.Generic;
+using System;
 
 namespace DotRecast.Detour.TileCache
 {
-    public class DtTempContour
+    public ref struct DtTempContour
     {
-        public List<int> verts;
+        public readonly Span<byte> verts;
+        public readonly Span<ushort> poly;
+        public readonly int cverts;
         public int nverts;
-        public List<int> poly;
+        public int npoly;
 
-        public DtTempContour()
+        public DtTempContour(Span<byte> verts, Span<ushort> poly)
         {
-            verts = new List<int>();
+            System.Diagnostics.Debug.Assert(verts.Length % 4 == 0);
+
+            this.verts = verts;
+            this.poly = poly;
+            cverts = verts.Length / 4;
             nverts = 0;
-            poly = new List<int>();
-        }
-
-        public int Npoly()
-        {
-            return poly.Count;
-        }
-
-        public void Clear()
-        {
-            nverts = 0;
-            verts.Clear();
+            npoly = 0;
         }
     };
 }

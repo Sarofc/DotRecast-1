@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
 using DotRecast.Recast;
@@ -280,7 +281,7 @@ namespace DotRecast.Detour.TileCache
             return count == 1;
         }
 
-        public static void AppendVertex(DtTempContour cont, int x, int y, int z, int r)
+        public static bool AppendVertex(ref DtTempContour cont, int x, int y, int z, int r)
         {
             // Try to merge with existing segments.
             if (cont.nverts > 1)
@@ -292,26 +293,33 @@ namespace DotRecast.Detour.TileCache
                     if (cont.verts[pa] == cont.verts[pb] && cont.verts[pb] == x)
                     {
                         // The verts are aligned aling x-axis, update z.
-                        cont.verts[pb + 1] = y;
-                        cont.verts[pb + 2] = z;
-                        return;
+                        cont.verts[pb + 1] = (byte)y;
+                        cont.verts[pb + 2] = (byte)z;
+                        return true;
                     }
                     else if (cont.verts[pa + 2] == cont.verts[pb + 2]
                              && cont.verts[pb + 2] == z)
                     {
                         // The verts are aligned aling z-axis, update x.
-                        cont.verts[pb] = x;
-                        cont.verts[pb + 1] = y;
-                        return;
+                        cont.verts[pb] = (byte)x;
+                        cont.verts[pb + 1] = (byte)y;
+                        return true;
                     }
                 }
             }
 
-            cont.verts.Add(x);
-            cont.verts.Add(y);
-            cont.verts.Add(z);
-            cont.verts.Add(r);
+            // Add new point.
+            if (cont.nverts + 1 > cont.cverts)
+                return false;
+
+            var v = cont.verts.Slice(cont.nverts * 4, 4);
+            v[0] = (byte)(x);
+            v[1] = (byte)(y);
+            v[2] = (byte)(z);
+            v[3] = (byte)(r);
             cont.nverts++;
+
+            return true;
         }
 
         public static int GetNeighbourReg(DtTileCacheLayer layer, int ax, int ay, int dir)
@@ -347,12 +355,12 @@ namespace DotRecast.Detour.TileCache
             return DirOffsetY[dir & 0x03];
         }
 
-        public static void WalkContour(DtTileCacheLayer layer, int x, int y, DtTempContour cont)
+        public static void WalkContour(DtTileCacheLayer layer, int x, int y, ref DtTempContour cont)
         {
             int w = layer.header.width;
             int h = layer.header.height;
 
-            cont.Clear();
+            cont.nverts = 0;
 
             int startX = x;
             int startY = y;
@@ -403,7 +411,7 @@ namespace DotRecast.Detour.TileCache
                     }
 
                     // Try to merge with previous vertex.
-                    AppendVertex(cont, px, layer.heights[x + y * w], pz, rn);
+                    AppendVertex(ref cont, px, layer.heights[x + y * w], pz, rn);
                     ndir = (dir + 1) & 0x3; // Rotate CW
                 }
                 else
@@ -453,9 +461,9 @@ namespace DotRecast.Detour.TileCache
             return dx * dx + dz * dz;
         }
 
-        public static void SimplifyContour(DtTempContour cont, float maxError)
+        public static void SimplifyContour(ref DtTempContour cont, float maxError)
         {
-            cont.poly.Clear();
+            cont.npoly = 0;
 
             for (int i = 0; i < cont.nverts; ++i)
             {
@@ -464,10 +472,10 @@ namespace DotRecast.Detour.TileCache
                 int ra = j * 4 + 3;
                 int rb = i * 4 + 3;
                 if (cont.verts[ra] != cont.verts[rb])
-                    cont.poly.Add(i);
+                    cont.poly[cont.npoly++] = (ushort)i;
             }
 
-            if (cont.Npoly() < 2)
+            if (cont.npoly < 2)
             {
                 // If there is no transitions at all,
                 // create some initial points for the simplification process.
@@ -497,16 +505,16 @@ namespace DotRecast.Detour.TileCache
                     }
                 }
 
-                cont.poly.Clear();
-                cont.poly.Add(lli);
-                cont.poly.Add(uri);
+                cont.npoly = 2;
+                cont.poly[0] = (ushort)(lli);
+                cont.poly[1] = (ushort)(uri);
             }
 
             // Add points until all raw points are within
             // error tolerance to the simplified shape.
-            for (int i = 0; i < cont.Npoly();)
+            for (int i = 0; i < cont.npoly;)
             {
-                int ii = (i + 1) % cont.Npoly();
+                int ii = (i + 1) % cont.npoly;
 
                 int ai = cont.poly[i];
                 int ax = cont.verts[ai * 4];
@@ -554,7 +562,10 @@ namespace DotRecast.Detour.TileCache
                 // add new point, else continue to next segment.
                 if (maxi != -1 && maxd > (maxError * maxError))
                 {
-                    cont.poly.Insert(i + 1, maxi);
+                    cont.npoly++;
+                    for (int j = cont.npoly - 1; j > i; --j)
+                        cont.poly[j] = cont.poly[j - 1];
+                    cont.poly[i + 1] = (ushort)maxi;
                 }
                 else
                 {
@@ -564,14 +575,14 @@ namespace DotRecast.Detour.TileCache
 
             // Remap vertices
             int start = 0;
-            for (int i = 1; i < cont.Npoly(); ++i)
+            for (int i = 1; i < cont.npoly; ++i)
                 if (cont.poly[i] < cont.poly[start])
                     start = i;
 
             cont.nverts = 0;
-            for (int i = 0; i < cont.Npoly(); ++i)
+            for (int i = 0; i < cont.npoly; ++i)
             {
-                int j = (start + i) % cont.Npoly();
+                int j = (start + i) % cont.npoly;
                 int src = cont.poly[j] * 4;
                 int dst = cont.nverts * 4;
                 cont.verts[dst] = cont.verts[src];
@@ -632,6 +643,7 @@ namespace DotRecast.Detour.TileCache
         }
 
         // TODO: move this somewhere else, once the layer meshing is done.
+        [SkipLocalsInit]
         public static DtTileCacheContourSet BuildTileCacheContours(DtTileCacheLayer layer, int walkableClimb, float maxError)
         {
             int w = layer.header.width;
@@ -646,7 +658,10 @@ namespace DotRecast.Detour.TileCache
             }
 
             // Allocate temp buffer for contour tracing.
-            DtTempContour temp = new DtTempContour(); // TODO
+            int maxTempVerts = (w + h) * 2 * 2; // Twice around the layer.
+            Span<byte> tempVerts = stackalloc byte[maxTempVerts * 4];
+            Span<ushort> tempPoly = stackalloc ushort[maxTempVerts];
+            DtTempContour temp = new(tempVerts, tempPoly);
 
             // Find contours.
             for (int y = 0; y < h; ++y)
@@ -666,9 +681,9 @@ namespace DotRecast.Detour.TileCache
                     cont.reg = ri;
                     cont.area = layer.areas[idx];
 
-                    WalkContour(layer, x, y, temp);
+                    WalkContour(layer, x, y, ref temp);
 
-                    SimplifyContour(temp, maxError);
+                    SimplifyContour(ref temp, maxError);
 
                     // Store contour.
                     cont.nverts = temp.nverts;
