@@ -756,7 +756,7 @@ namespace DotRecast.Detour.TileCache
             return i;
         }
 
-        public unsafe static void BuildMeshAdjacency(int[] polys, int npolys, int[] verts, int nverts, DtTileCacheContourSet lcset,
+        public unsafe static void BuildMeshAdjacency(int[] polys, int npolys, ReadOnlySpan<int> verts, int nverts, DtTileCacheContourSet lcset,
             int maxVertsPerPoly)
         {
             // Based on code by Eric Lengyel from:
@@ -978,7 +978,7 @@ namespace DotRecast.Detour.TileCache
             return i + 1 < n ? i + 1 : 0;
         }
 
-        public static int Area2(int[] verts, int a, int b, int c)
+        public static int Area2(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             return (verts[b] - verts[a]) * (verts[c + 2] - verts[a + 2])
                    - (verts[c] - verts[a]) * (verts[b + 2] - verts[a + 2]);
@@ -986,17 +986,17 @@ namespace DotRecast.Detour.TileCache
 
         // Returns true iff c is strictly to the left of the directed
         // line through a to b.
-        public static bool Left(int[] verts, int a, int b, int c)
+        public static bool Left(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) < 0;
         }
 
-        public static bool LeftOn(int[] verts, int a, int b, int c)
+        public static bool LeftOn(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) <= 0;
         }
 
-        public static bool Collinear(int[] verts, int a, int b, int c)
+        public static bool Collinear(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) == 0;
         }
@@ -1004,7 +1004,7 @@ namespace DotRecast.Detour.TileCache
         // Returns true iff ab properly intersects cd: they share
         // a point interior to both segments. The properness of the
         // intersection is ensured by using strict leftness.
-        public static bool IntersectProp(int[] verts, int a, int b, int c, int d)
+        public static bool IntersectProp(ReadOnlySpan<int> verts, int a, int b, int c, int d)
         {
             // Eliminate improper cases.
             if (Collinear(verts, a, b, c) || Collinear(verts, a, b, d) || Collinear(verts, c, d, a)
@@ -1016,7 +1016,7 @@ namespace DotRecast.Detour.TileCache
 
         // Returns T iff (a,b,c) are collinear and point c lies
         // on the closed segment ab.
-        public static bool Between(int[] verts, int a, int b, int c)
+        public static bool Between(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             if (!Collinear(verts, a, b, c))
                 return false;
@@ -1030,7 +1030,7 @@ namespace DotRecast.Detour.TileCache
         }
 
         // Returns true iff segments ab and cd intersect, properly or improperly.
-        public static bool Intersect(int[] verts, int a, int b, int c, int d)
+        public static bool Intersect(ReadOnlySpan<int> verts, int a, int b, int c, int d)
         {
             if (IntersectProp(verts, a, b, c, d))
                 return true;
@@ -1041,14 +1041,14 @@ namespace DotRecast.Detour.TileCache
                 return false;
         }
 
-        public static bool Vequal(int[] verts, int a, int b)
+        public static bool Vequal(ReadOnlySpan<int> verts, int a, int b)
         {
             return verts[a] == verts[b] && verts[a + 2] == verts[b + 2];
         }
 
         // Returns T iff (v_i, v_j) is a proper internal *or* external
         // diagonal of P, *ignoring edges incident to v_i and v_j*.
-        public static bool Diagonalie(int i, int j, int n, int[] verts, int[] indices)
+        public static bool Diagonalie(int i, int j, int n, ReadOnlySpan<int> verts, ReadOnlySpan<int> indices)
         {
             int d0 = (indices[i] & 0x7fff) * 4;
             int d1 = (indices[j] & 0x7fff) * 4;
@@ -1076,7 +1076,7 @@ namespace DotRecast.Detour.TileCache
 
         // Returns true iff the diagonal (i,j) is strictly internal to the
         // polygon P in the neighborhood of the i endpoint.
-        public static bool InCone(int i, int j, int n, int[] verts, int[] indices)
+        public static bool InCone(int i, int j, int n, ReadOnlySpan<int> verts, ReadOnlySpan<int> indices)
         {
             int pi = (indices[i] & 0x7fff) * 4;
             int pj = (indices[j] & 0x7fff) * 4;
@@ -1093,7 +1093,7 @@ namespace DotRecast.Detour.TileCache
 
         // Returns T iff (v_i, v_j) is a proper internal
         // diagonal of P.
-        public static bool Diagonal(int i, int j, int n, int[] verts, int[] indices)
+        public static bool Diagonal(int i, int j, int n, ReadOnlySpan<int> verts, int[] indices)
         {
             return InCone(i, j, n, verts, indices) && Diagonalie(i, j, n, verts, indices);
         }
@@ -1183,7 +1183,7 @@ namespace DotRecast.Detour.TileCache
             return ntris;
         }
 
-        public static int CountPolyVerts(int[] polys, int p, int maxVertsPerPoly)
+        public static int CountPolyVerts(ReadOnlySpan<int> polys, int p, int maxVertsPerPoly)
         {
             for (int i = 0; i < maxVertsPerPoly; ++i)
                 if (polys[p + i] == DT_TILECACHE_NULL_IDX)
@@ -1191,13 +1191,13 @@ namespace DotRecast.Detour.TileCache
             return maxVertsPerPoly;
         }
 
-        public static bool Uleft(int[] verts, int a, int b, int c)
+        public static bool Uleft(ReadOnlySpan<int> verts, int a, int b, int c)
         {
             return (verts[b] - verts[a]) * (verts[c + 2] - verts[a + 2])
                 - (verts[c] - verts[a]) * (verts[b + 2] - verts[a + 2]) < 0;
         }
 
-        public static int GetPolyMergeValue(int[] polys, int pa, int pb, int[] verts, out int ea, out int eb, int maxVertsPerPoly)
+        public static int GetPolyMergeValue(ReadOnlySpan<int> polys, int pa, int pb, ReadOnlySpan<int> verts, out int ea, out int eb, int maxVertsPerPoly)
         {
             ea = 0;
             eb = 0;
@@ -1268,15 +1268,16 @@ namespace DotRecast.Detour.TileCache
             return (dx * dx) + (dy * dy);
         }
 
-        public static void MergePolys(int[] polys, int pa, int pb, int ea, int eb, int maxVertsPerPoly)
+        [SkipLocalsInit]
+        public static void MergePolys(Span<int> polys, int pa, int pb, int ea, int eb, int maxVertsPerPoly)
         {
-            int[] tmp = new int[maxVertsPerPoly * 2];
+            Span<int> tmp = stackalloc int[maxVertsPerPoly * 2];
 
             int na = CountPolyVerts(polys, pa, maxVertsPerPoly);
             int nb = CountPolyVerts(polys, pb, maxVertsPerPoly);
 
             // Merge polygons.
-            Array.Fill(tmp, DT_TILECACHE_NULL_IDX);
+            tmp.Fill(DT_TILECACHE_NULL_IDX);
             int n = 0;
             // Add pa
             for (int i = 0; i < na - 1; ++i)
@@ -1942,7 +1943,7 @@ namespace DotRecast.Detour.TileCache
             }
         }
 
-        public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, int[] areas, int[] cons, IRcCompressor comp)
+        public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, ReadOnlySpan<int> areas, int[] cons, IRcCompressor comp)
         {
             using var ms = new MemoryStream();
             using var bw = new BinaryWriter(ms);
