@@ -1,6 +1,6 @@
-﻿namespace DotRecast.Detour.TileCache
+namespace DotRecast.Detour.TileCache
 {
-    public enum DtTileCacheObstacleType
+    public enum DtTileCacheObstacleType : byte
     {
         DT_OBSTACLE_CYLINDER,
         DT_OBSTACLE_BOX, // AABB

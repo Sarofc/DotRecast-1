@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
 
@@ -81,11 +82,6 @@ namespace DotRecast.Detour.TileCache
             {
                 throw new Exception("Too few salt bits: " + m_saltBits);
             }
-        }
-
-        private bool Contains(List<long> a, long v)
-        {
-            return a.Contains(v);
         }
 
         /// Encodes a tile id.
@@ -152,9 +148,9 @@ namespace DotRecast.Detour.TileCache
             return tile;
         }
 
-        public List<long> GetTilesAt(int tx, int ty)
+        public int GetTilesAt(int tx, int ty, Span<long> tiles)
         {
-            List<long> tiles = new List<long>();
+            var n = 0;
 
             // Find tile based on hash.
             int h = ComputeTileHash(tx, ty, m_tileLutMask);
@@ -163,13 +159,13 @@ namespace DotRecast.Detour.TileCache
             {
                 if (tile.header != null && tile.header.tx == tx && tile.header.ty == ty)
                 {
-                    tiles.Add(GetTileRef(tile));
+                    if (n < tiles.Length)
+                        tiles[n++] = (GetTileRef(tile));
                 }
-
                 tile = tile.next;
             }
 
-            return tiles;
+            return n;
         }
 
         DtCompressedTile GetTileAt(int tx, int ty, int tlayer)
@@ -413,8 +409,8 @@ namespace DotRecast.Detour.TileCache
             }
 
             o.state = DtObstacleState.DT_OBSTACLE_PROCESSING;
-            o.touched.Clear();
-            o.pending.Clear();
+            o.ntouched = 0;
+            o.npending = 0;
             o.next = null;
             return o;
         }
@@ -434,9 +430,13 @@ namespace DotRecast.Detour.TileCache
             return m_obstacles[i];
         }
 
-        private void QueryTiles(Vector3 bmin, Vector3 bmax, List<long> results)
+        [SkipLocalsInit]
+        private int QueryTiles(Vector3 bmin, Vector3 bmax, Span<long> results)
         {
-            results.Clear();
+            var n = 0;
+
+            const int MAX_TILES = 32;
+            Span<long> tiles = stackalloc long[MAX_TILES];
 
             float tw = m_params.width * m_params.cs;
             float th = m_params.height * m_params.cs;
@@ -448,20 +448,23 @@ namespace DotRecast.Detour.TileCache
             {
                 for (int tx = tx0; tx <= tx1; ++tx)
                 {
-                    List<long> tiles = GetTilesAt(tx, ty);
-                    foreach (long i in tiles)
+                    var ntiles = GetTilesAt(tx, ty, tiles);
+                    for (int i = 0; i < ntiles; i++)
                     {
-                        DtCompressedTile tile = m_tiles[DecodeTileIdTile(i)];
+                        DtCompressedTile tile = m_tiles[DecodeTileIdTile(tiles[i])];
                         Vector3 tbmin = new Vector3();
                         Vector3 tbmax = new Vector3();
                         CalcTightTileBounds(tile.header, ref tbmin, ref tbmax);
                         if (DtUtils.OverlapBounds(bmin, bmax, tbmin, tbmax))
                         {
-                            results.Add(i);
+                            if (n < results.Length)
+                                results[n++] = tiles[i];
                         }
                     }
                 }
             }
+
+            return n;
         }
 
         /**
@@ -497,17 +500,15 @@ namespace DotRecast.Detour.TileCache
                         Vector3 bmin = new Vector3();
                         Vector3 bmax = new Vector3();
                         GetObstacleBounds(ob, ref bmin, ref bmax);
-                        QueryTiles(bmin, bmax, ob.touched);
+                        ob.ntouched = (byte)QueryTiles(bmin, bmax, ob.touched);
                         // Add tiles to update list.
-                        ob.pending.Clear();
-                        foreach (long j in ob.touched)
+                        ob.npending = 0;
+                        for (int i = 0; i < ob.ntouched; i++)
                         {
-                            if (!Contains(m_update, j))
-                            {
-                                m_update.Add(j);
-                            }
-
-                            ob.pending.Add(j);
+                            var refs = ob.touched[i];
+                            if (!m_update.Contains(refs))
+                                m_update.Add(refs);
+                            ob.pending[ob.npending++] = refs;
                         }
                     }
                     else if (req.action == DtObstacleRequestAction.REQUEST_REMOVE)
@@ -515,15 +516,13 @@ namespace DotRecast.Detour.TileCache
                         // Prepare to remove obstacle.
                         ob.state = DtObstacleState.DT_OBSTACLE_REMOVING;
                         // Add tiles to update list.
-                        ob.pending.Clear();
-                        foreach (long j in ob.touched)
+                        ob.npending = 0;
+                        for (int i = 0; i < ob.ntouched; i++)
                         {
-                            if (!Contains(m_update, j))
-                            {
-                                m_update.Add(j);
-                            }
-
-                            ob.pending.Add(j);
+                            var refs = ob.touched[i];
+                            if (!m_update.Contains(refs))
+                                m_update.Add(refs);
+                            ob.pending[ob.npending++] = refs;
                         }
                     }
                 }
@@ -547,10 +546,18 @@ namespace DotRecast.Detour.TileCache
                         || ob.state == DtObstacleState.DT_OBSTACLE_REMOVING)
                     {
                         // Remove handled tile from pending list.
-                        ob.pending.Remove(refs);
+                        for (int j = 0; j < (int)ob.npending; j++)
+                        {
+                            if (ob.pending[j] == refs)
+                            {
+                                ob.pending[j] = ob.pending[(int)ob.npending - 1];
+                                ob.npending--;
+                                break;
+                            }
+                        }
 
                         // If all pending tiles processed, change state.
-                        if (0 == ob.pending.Count)
+                        if (0 == ob.npending)
                         {
                             if (ob.state == DtObstacleState.DT_OBSTACLE_PROCESSING)
                             {
@@ -560,11 +567,9 @@ namespace DotRecast.Detour.TileCache
                             {
                                 ob.state = DtObstacleState.DT_OBSTACLE_EMPTY;
                                 // Update salt, salt should never be zero.
-                                ob.salt = (ob.salt + 1) & ((1 << 16) - 1);
+                                ob.salt = (ushort)((ob.salt + 1) & ((1 << 16) - 1));
                                 if (ob.salt == 0)
-                                {
                                     ob.salt++;
-                                }
 
                                 // Return obstacle to free list.
                                 ob.next = m_nextFreeObstacle;
@@ -607,7 +612,7 @@ namespace DotRecast.Detour.TileCache
                     continue;
                 }
 
-                if (Contains(ob.touched, refs))
+                if (ob.touched.AsSpan(0, ob.ntouched).Contains(refs))
                 {
                     if (ob.type == DtTileCacheObstacleType.DT_OBSTACLE_CYLINDER)
                     {

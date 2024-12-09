@@ -32,11 +32,14 @@ namespace DotRecast.Detour.TileCache
         public ref DtObstacleBox box => ref union.box;
         public ref DtObstacleOrientedBox orientedBox => ref union.orientedBox;
 
-        public List<long> touched = new List<long>();
-        public readonly List<long> pending = new List<long>();
-        public int salt;
+        const int DT_MAX_TOUCHED_TILES = 8;
+        public long[] touched = new long[DT_MAX_TOUCHED_TILES];
+        public long[] pending = new long[DT_MAX_TOUCHED_TILES];
+        public ushort salt;
+        public byte ntouched;
+        public byte npending;
         public DtTileCacheObstacleType type;
-        public DtObstacleState state = DtObstacleState.DT_OBSTACLE_EMPTY;
+        public DtObstacleState state;
         public DtTileCacheObstacle next;
 
         public DtTileCacheObstacle(int index)

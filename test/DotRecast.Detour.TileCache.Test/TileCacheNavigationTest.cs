@@ -18,6 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using DotRecast.Recast.Geom;
@@ -61,13 +62,17 @@ public class TileCacheNavigationTest : AbstractTileCacheTest
             tc.AddTile(data, 0);
         }
 
+        const int MAX_TILES = 32;
+        Span<long> tiles = stackalloc long[MAX_TILES];
+
         for (int y = 0; y < layerBuilder.th; ++y)
         {
             for (int x = 0; x < layerBuilder.tw; ++x)
             {
-                foreach (long refs in tc.GetTilesAt(x, y))
+                var ntiles = tc.GetTilesAt(x, y, tiles);
+                for (int i = 0; i < ntiles; ++i)
                 {
-                    tc.BuildNavMeshTile(refs);
+                    tc.BuildNavMeshTile(tiles[i]);
                 }
             }
         }
