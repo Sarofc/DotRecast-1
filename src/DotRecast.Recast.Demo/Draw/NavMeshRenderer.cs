@@ -66,8 +66,13 @@ public class NavMeshRenderer
             // Draw mesh
             if (geom != null)
             {
-                _debugDraw.DebugDrawTriMeshSlope(geom.vertices, geom.faces, geom.normals, agentMaxSlope, texScale);
-                DrawOffMeshConnections(geom, false);
+                List<Geom.RcTriMesh> meshes = geom.Meshes();
+                for (int i = 0; i < meshes.Count; i++)
+                {
+                    Geom.RcTriMesh mesh = meshes[i];
+                    _debugDraw.DebugDrawTriMeshSlope(mesh.GetVerts(), mesh.GetTris(), geom.GetNormals(i), agentMaxSlope, texScale);
+                    DrawOffMeshConnections(geom, false);
+                }
             }
         }
 

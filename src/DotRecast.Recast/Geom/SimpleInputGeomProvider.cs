@@ -27,9 +27,9 @@ namespace DotRecast.Recast.Geom
 {
     public class SimpleInputGeomProvider : IInputGeomProvider
     {
-        public readonly float[] vertices;
-        public readonly int[] faces;
-        public readonly float[] normals;
+        private readonly List<float> vertices;
+        private readonly List<int> faces;
+        private readonly float[] normals;
         private Vector3 bmin;
         private Vector3 bmax;
 
@@ -43,42 +43,15 @@ namespace DotRecast.Recast.Geom
             return new SimpleInputGeomProvider(context.vertexPositions, context.meshFaces);
         }
 
-        public SimpleInputGeomProvider(List<float> vertexPositions, List<int> meshFaces)
-            : this(MapVertices(vertexPositions), MapFaces(meshFaces))
-        {
-        }
-
-        private static int[] MapFaces(List<int> meshFaces)
-        {
-            int[] faces = new int[meshFaces.Count];
-            for (int i = 0; i < faces.Length; i++)
-            {
-                faces[i] = meshFaces[i];
-            }
-
-            return faces;
-        }
-
-        private static float[] MapVertices(List<float> vertexPositions)
-        {
-            float[] vertices = new float[vertexPositions.Count];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                vertices[i] = vertexPositions[i];
-            }
-
-            return vertices;
-        }
-
-        public SimpleInputGeomProvider(float[] vertices, int[] faces)
+        public SimpleInputGeomProvider(List<float> vertices, List<int> faces)
         {
             this.vertices = vertices;
             this.faces = faces;
-            normals = new float[faces.Length];
+            normals = new float[faces.Count];
             CalculateNormals();
-            bmin = new Vector3(vertices);
-            bmax = new Vector3(vertices);
-            for (int i = 1; i < vertices.Length / 3; i++)
+            bmin = RcVec.Create(vertices, 0);
+            bmax = RcVec.Create(vertices, 0);
+            for (int i = 1; i < vertices.Count / 3; i++)
             {
                 bmin = Vector3.Min(bmin, RcVec.Create(vertices, i * 3));
                 bmax = Vector3.Max(bmax, RcVec.Create(vertices, i * 3));
@@ -102,7 +75,7 @@ namespace DotRecast.Recast.Geom
             return bmax;
         }
 
-        public IList<RcConvexVolume> ConvexVolumes()
+        public List<RcConvexVolume> ConvexVolumes()
         {
             return volumes;
         }
@@ -121,7 +94,7 @@ namespace DotRecast.Recast.Geom
             volumes.Add(convexVolume);
         }
 
-        public IEnumerable<RcTriMesh> Meshes()
+        public List<RcTriMesh> Meshes()
         {
             return [_mesh];
         }
@@ -147,7 +120,7 @@ namespace DotRecast.Recast.Geom
 
         public void CalculateNormals()
         {
-            for (int i = 0; i < faces.Length; i += 3)
+            for (int i = 0; i < faces.Count; i += 3)
             {
                 int v0 = faces[i] * 3;
                 int v1 = faces[i + 1] * 3;
@@ -178,6 +151,16 @@ namespace DotRecast.Recast.Geom
         }
 
         public void RemoveOffMeshConnection(int idx)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RcTriMesh GetMesh(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float[] GetNormals(int index)
         {
             throw new NotImplementedException();
         }

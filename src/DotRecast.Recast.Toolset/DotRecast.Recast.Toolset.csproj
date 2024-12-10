@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
+    <LangVersion>13</LangVersion>
     <PackageId>DotRecast.Recast.Toolset</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>ikpil</Authors>

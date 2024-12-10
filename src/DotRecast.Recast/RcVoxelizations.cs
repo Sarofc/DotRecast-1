@@ -42,7 +42,7 @@ namespace DotRecast.Recast
             // the are type for each of the meshes and rasterize them.
             foreach (RcTriMesh geom in geomProvider.Meshes())
             {
-                float[] verts = geom.GetVerts();
+                var verts = geom.GetVerts();
                 if (cfg.UseTiles)
                 {
                     Vector2 tbmin = default;
@@ -54,16 +54,18 @@ namespace DotRecast.Recast
                     List<RcChunkyTriMeshNode> nodes = geom.GetChunksOverlappingRect(tbmin, tbmax);
                     foreach (RcChunkyTriMeshNode node in nodes)
                     {
-                        int[] tris = node.tris;
+                        var tris = node.tris;
                         int ntris = tris.Length / 3;
+                        // TODO alloc
                         int[] m_triareas = RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod);
                         RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                     }
                 }
                 else
                 {
-                    int[] tris = geom.GetTris();
+                    var tris = geom.GetTris();
                     int ntris = tris.Length / 3;
+                    // TODO alloc
                     int[] m_triareas = RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod);
                     RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                 }

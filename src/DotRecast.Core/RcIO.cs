@@ -89,34 +89,27 @@ namespace DotRecast.Core
 
         public static void Write(BinaryWriter ws, float value)
         {
-            byte[] bytes = BitConverter.GetBytes(value);
-            int i = BitConverter.ToInt32(bytes, 0);
-            Write(ws, i);
+            ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, short value)
         {
-            ws.Write((byte)(value & 0xFF));
-            ws.Write((byte)((value >> 8) & 0xFF));
+            ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, long value)
         {
-            Write(ws, (int)(value & 0xFFFFFFFF));
-            Write(ws, (int)((ulong)value >> 32));
+            ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, int value)
         {
-            ws.Write((byte)(value & 0xFF));
-            ws.Write((byte)((value >> 8) & 0xFF));
-            ws.Write((byte)((value >> 16) & 0xFF));
-            ws.Write((byte)((value >> 24) & 0xFF));
+            ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, bool value)
         {
-            Write(ws, (byte)(value ? 1 : 0));
+            ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, byte value)
@@ -124,12 +117,12 @@ namespace DotRecast.Core
             ws.Write(value);
         }
 
-        public static void Write(BinaryWriter ws, MemoryStream ms)
-        {
-            ms.Position = 0;
-            byte[] buffer = new byte[ms.Length];
-            ms.Read(buffer, 0, buffer.Length);
-            ws.Write(buffer);
-        }
+        //public static void Write(BinaryWriter ws, MemoryStream ms)
+        //{
+        //    ms.Position = 0;
+        //    byte[] buffer = new byte[ms.Length];
+        //    ms.Read(buffer, 0, buffer.Length);
+        //    ws.Write(buffer);
+        //}
     }
 }

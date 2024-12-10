@@ -32,7 +32,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
         public NavMeshBuildResult Build(IInputGeomProvider geom, RcNavMeshBuildSettings setting)
         {
-            if (null == geom || null == geom.GetMesh())
+            if (null == geom || 0 == geom.Meshes().Count)
             {
                 //m_ctx->log(RC_LOG_ERROR, "buildTiledNavigation: No vertices and triangles.");
                 return new NavMeshBuildResult();

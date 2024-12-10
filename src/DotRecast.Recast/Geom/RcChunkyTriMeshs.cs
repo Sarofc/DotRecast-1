@@ -28,7 +28,7 @@ namespace DotRecast.Recast.Geom
     {
         /// Creates partitioned triangle mesh (AABB tree),
         /// where each node contains at max trisPerChunk triangles.
-        public static bool CreateChunkyTriMesh(float[] verts, int[] tris, int ntris, int trisPerChunk, RcChunkyTriMesh cm)
+        public static bool CreateChunkyTriMesh(ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int ntris, int trisPerChunk, RcChunkyTriMesh cm)
         {
             int nchunks = (ntris + trisPerChunk - 1) / trisPerChunk;
 
@@ -194,7 +194,7 @@ namespace DotRecast.Recast.Geom
             return y > x ? 1 : 0;
         }
 
-        private static void Subdivide(Span<BoundsItem> items, int imin, int imax, int trisPerChunk, List<RcChunkyTriMeshNode> nodes, int[] inTris)
+        private static void Subdivide(Span<BoundsItem> items, int imin, int imax, int trisPerChunk, List<RcChunkyTriMeshNode> nodes, ReadOnlySpan<int> inTris)
         {
             int inum = imax - imin;
 

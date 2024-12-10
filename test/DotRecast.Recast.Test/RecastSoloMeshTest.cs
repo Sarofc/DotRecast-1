@@ -128,8 +128,8 @@ public class RecastSoloMeshTest
 
         foreach (RcTriMesh geom in geomProvider.Meshes())
         {
-            float[] verts = geom.GetVerts();
-            int[] tris = geom.GetTris();
+            var verts = geom.GetVerts();
+            var tris = geom.GetTris();
             int ntris = tris.Length / 3;
 
             // Allocate array that can hold triangle area types.

@@ -32,6 +32,7 @@ using DotRecast.Recast.Demo.Draw;
 using DotRecast.Recast.Demo.Messages;
 using DotRecast.Recast.Demo.Tools;
 using DotRecast.Recast.Demo.UI;
+using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
 using ImGuiNET;
@@ -300,7 +301,10 @@ public class RecastDemo : IRecastDemoChannel
 
     private DemoInputGeomProvider LoadInputMesh(string filename)
     {
-        DemoInputGeomProvider geom = DemoInputGeomProvider.Load(filename);
+        var mesh = RcTriMesh.Load(filename);
+        //var mesh1 = RcTriMesh.Load("dungeon.obj");
+        //var geom = new DemoInputGeomProvider([mesh, mesh1]); // 测试多个mesh
+        var geom = new DemoInputGeomProvider([mesh]);
         _lastGeomFileName = filename;
         return geom;
     }

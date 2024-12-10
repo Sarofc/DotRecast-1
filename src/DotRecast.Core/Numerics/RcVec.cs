@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace DotRecast.Core
 {
@@ -11,6 +13,11 @@ namespace DotRecast.Core
         public unsafe static Vector3 Create(float* values, int n)
         {
             return *(Vector3*)(values + n);
+        }
+
+        public unsafe static Vector3 Create(List<float> values, int n)
+        {
+            return Create(CollectionsMarshal.AsSpan(values), n);
         }
 
         public static Vector3 Create(ReadOnlySpan<float> values, int n)

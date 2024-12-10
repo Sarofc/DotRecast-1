@@ -1,4 +1,4 @@
-#if true
+#if false
 /*
 Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
 recast4j copyright (c) 2015-2019 Piotr Piastucki piotr@jtilia.org
@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using DotRecast.Core;
 using DotRecast.Recast.Geom;
@@ -29,6 +30,12 @@ namespace DotRecast.Recast.Toolset.Geom
 {
     public class DemoInputGeomProvider : IInputGeomProvider
     {
+        public readonly float[] vertices;
+        public readonly int[] faces;
+        public readonly float[] normals;
+        private readonly Vector3 bmin;
+        private readonly Vector3 bmax;
+
         const int MAX_OFFMESH_CONNECTIONS = 256;
         public int OffMeshConCount => m_offMeshConCount;
         public float[] OffMeshConVerts { get; } = new float[MAX_OFFMESH_CONNECTIONS * 3 * 2];
@@ -39,63 +46,97 @@ namespace DotRecast.Recast.Toolset.Geom
         public int[] OffMeshConId { get; } = new int[MAX_OFFMESH_CONNECTIONS];
         int m_offMeshConCount;
 
-        private Vector3 _bmin;
-        private Vector3 _bmax;
+        private readonly List<RcConvexVolume> _convexVolumes = new List<RcConvexVolume>();
+        private readonly RcTriMesh _mesh;
 
-        private readonly List<RcConvexVolume> _convexVolumes = new();
-
-        private readonly List<RcTriMesh> _meshes = new();
-        private readonly Dictionary<int, float[]> _normals = new();
-
-        public DemoInputGeomProvider()
-        { }
-
-        public DemoInputGeomProvider(params ReadOnlySpan<RcTriMesh> meshes)
+        [Obsolete("use 'Load()' instead")]
+        public static DemoInputGeomProvider LoadFile(string objFilePath)
         {
-            foreach (var mesh in meshes)
+            byte[] chunk = RcIO.ReadFileIfFound(objFilePath);
+            var context = RcObjImporter.LoadContext(chunk);
+            return new DemoInputGeomProvider(context.vertexPositions, context.meshFaces);
+        }
+
+        public static DemoInputGeomProvider Load(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return null;
+
+            if (!File.Exists(filename))
             {
-                AddTriMesh(mesh);
+                var searchFilePath = RcDirectory.SearchFile($"{filename}");
+                if (!File.Exists(searchFilePath))
+                {
+                    searchFilePath = RcDirectory.SearchFile($"resources/{filename}");
+                }
+
+                if (File.Exists(searchFilePath))
+                {
+                    filename = searchFilePath;
+                }
+            }
+
+            using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var context = RcObjImporter.LoadContext(fs);
+            //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
+            return new DemoInputGeomProvider(context.vertexPositions, context.meshFaces);
+        }
+
+        public DemoInputGeomProvider(List<float> vertexPositions, List<int> meshFaces) :
+            this(MapVertices(vertexPositions), MapFaces(meshFaces))
+        {
+        }
+
+        public DemoInputGeomProvider(float[] vertices, int[] faces)
+        {
+            this.vertices = vertices;
+            this.faces = faces;
+            normals = new float[faces.Length];
+            CalculateNormals();
+            bmin = new Vector3(vertices);
+            bmax = new Vector3(vertices);
+            for (int i = 1; i < vertices.Length / 3; i++)
+            {
+                bmin = Vector3.Min(bmin, RcVec.Create(vertices, i * 3));
+                bmax = Vector3.Max(bmax, RcVec.Create(vertices, i * 3));
+            }
+
+            _mesh = new RcTriMesh(vertices, faces);
+        }
+
+        public RcTriMesh GetMesh() => _mesh;
+
+        public Vector3 GetMeshBoundsMin() => bmin;
+
+        public Vector3 GetMeshBoundsMax() => bmax;
+
+        public void CalculateNormals()
+        {
+            for (int i = 0; i < faces.Length; i += 3)
+            {
+                Vector3 v0 = RcVec.Create(vertices, faces[i] * 3);
+                Vector3 v1 = RcVec.Create(vertices, faces[i + 1] * 3);
+                Vector3 v2 = RcVec.Create(vertices, faces[i + 2] * 3);
+                Vector3 e0 = v1 - v0;
+                Vector3 e1 = v2 - v0;
+
+                normals[i] = e0.Y * e1.Z - e0.Z * e1.Y;
+                normals[i + 1] = e0.Z * e1.X - e0.X * e1.Z;
+                normals[i + 2] = e0.X * e1.Y - e0.Y * e1.X;
+                float d = MathF.Sqrt(normals[i] * normals[i] + normals[i + 1] * normals[i + 1] + normals[i + 2] * normals[i + 2]);
+                if (d > 0)
+                {
+                    d = 1.0f / d;
+                    normals[i] *= d;
+                    normals[i + 1] *= d;
+                    normals[i + 2] *= d;
+                }
             }
         }
 
-        public void AddTriMesh(RcTriMesh mesh)
-        {
-            var vertices = mesh.GetVerts();
+        public IList<RcConvexVolume> ConvexVolumes() => _convexVolumes;
 
-            for (int i = 0; i < vertices.Length / 3; i++)
-            {
-                _bmin = Vector3.Min(_bmin, RcVec.Create(vertices, i * 3));
-                _bmax = Vector3.Max(_bmax, RcVec.Create(vertices, i * 3));
-            }
-
-            _meshes.Add(mesh);
-        }
-
-        public RcTriMesh GetMesh(int index) => _meshes[index];
-
-        public List<RcTriMesh> Meshes() => _meshes;
-
-        public float[] GetNormals(int index)
-        {
-            // 懒加载，normal只有绘制时才有用
-            if (!_normals.TryGetValue(index, out var normals))
-            {
-                var mesh = GetMesh(index);
-
-                var vertices = mesh.GetVerts();
-                var faces = mesh.GetTris();
-
-                normals = new float[faces.Length];
-                _normals.Add(index, normals);
-                CalculateNormals(normals, vertices, faces);
-            }
-            return normals;
-        }
-
-        public Vector3 GetMeshBoundsMin() => _bmin;
-        public Vector3 GetMeshBoundsMax() => _bmax;
-
-        public List<RcConvexVolume> ConvexVolumes() => _convexVolumes;
+        public IEnumerable<RcTriMesh> Meshes() => [_mesh];
 
         public void AddOffMeshConnection(Vector3 spos, Vector3 epos, float radius, bool bidir, int area, int flags)
         {
@@ -125,34 +166,7 @@ namespace DotRecast.Recast.Toolset.Geom
             OffMeshConFlags[i] = OffMeshConFlags[m_offMeshConCount];
         }
 
-        public void AddConvexVolume(float[] verts, float minh, float maxh, RcAreaModification areaMod)
-        {
-            RcConvexVolume volume = new RcConvexVolume();
-            volume.verts = verts;
-            volume.hmin = minh;
-            volume.hmax = maxh;
-            volume.areaMod = areaMod;
-            AddConvexVolume(volume);
-        }
-
-        public void AddConvexVolume(RcConvexVolume volume) => _convexVolumes.Add(volume);
-
-        public void ClearConvexVolumes() => _convexVolumes.Clear();
-
         public bool RaycastMesh(Vector3 src, Vector3 dst, out float tmin)
-        {
-            foreach (var mesh in _meshes)
-            {
-                bool hit = RaycastMesh(mesh, _bmin, _bmax, src, dst, out tmin);
-                if (hit)
-                    return true;
-            }
-
-            tmin = 1.0f;
-            return false;
-        }
-
-        public static bool RaycastMesh(RcTriMesh mesh, Vector3 bmin, Vector3 bmax, Vector3 src, Vector3 dst, out float tmin)
         {
             tmin = 1.0f;
 
@@ -169,13 +183,11 @@ namespace DotRecast.Recast.Toolset.Geom
             q.X = src.X + (dst.X - src.X) * btmax;
             q.Y = src.Z + (dst.Z - src.Z) * btmax;
 
-            List<RcChunkyTriMeshNode> chunks = RcChunkyTriMeshs.GetChunksOverlappingSegment(mesh.chunkyTriMesh, p, q);
+            List<RcChunkyTriMeshNode> chunks = RcChunkyTriMeshs.GetChunksOverlappingSegment(_mesh.chunkyTriMesh, p, q);
             if (0 == chunks.Count)
             {
                 return false;
             }
-
-            var vertices = mesh.GetVerts();
 
             tmin = 1.0f;
             bool hit = false;
@@ -215,28 +227,34 @@ namespace DotRecast.Recast.Toolset.Geom
         }
 
 
-        static void CalculateNormals(Span<float> normals, ReadOnlySpan<float> vertices, ReadOnlySpan<int> faces)
+        public void AddConvexVolume(float[] verts, float minh, float maxh, RcAreaModification areaMod)
         {
-            for (int i = 0; i < faces.Length; i += 3)
-            {
-                Vector3 v0 = RcVec.Create(vertices, faces[i] * 3);
-                Vector3 v1 = RcVec.Create(vertices, faces[i + 1] * 3);
-                Vector3 v2 = RcVec.Create(vertices, faces[i + 2] * 3);
-                Vector3 e0 = v1 - v0;
-                Vector3 e1 = v2 - v0;
+            RcConvexVolume volume = new RcConvexVolume();
+            volume.verts = verts;
+            volume.hmin = minh;
+            volume.hmax = maxh;
+            volume.areaMod = areaMod;
+            AddConvexVolume(volume);
+        }
 
-                normals[i] = e0.Y * e1.Z - e0.Z * e1.Y;
-                normals[i + 1] = e0.Z * e1.X - e0.X * e1.Z;
-                normals[i + 2] = e0.X * e1.Y - e0.Y * e1.X;
-                float d = MathF.Sqrt(normals[i] * normals[i] + normals[i + 1] * normals[i + 1] + normals[i + 2] * normals[i + 2]);
-                if (d > 0)
-                {
-                    d = 1.0f / d;
-                    normals[i] *= d;
-                    normals[i + 1] *= d;
-                    normals[i + 2] *= d;
-                }
-            }
+        public void AddConvexVolume(RcConvexVolume volume) => _convexVolumes.Add(volume);
+
+        public void ClearConvexVolumes() => _convexVolumes.Clear();
+
+        private static int[] MapFaces(List<int> meshFaces)
+        {
+            int[] faces = new int[meshFaces.Count];
+            for (int i = 0; i < faces.Length; i++)
+                faces[i] = meshFaces[i];
+            return faces;
+        }
+
+        private static float[] MapVertices(List<float> vertexPositions)
+        {
+            float[] vertices = new float[vertexPositions.Count];
+            for (int i = 0; i < vertices.Length; i++)
+                vertices[i] = vertexPositions[i];
+            return vertices;
         }
     }
 }

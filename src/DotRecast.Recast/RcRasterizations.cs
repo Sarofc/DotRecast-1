@@ -286,7 +286,7 @@ namespace DotRecast.Recast
         /// @param[in] 	inverseCellHeight	1 / cellHeight
         /// @param[in] 	flagMergeThreshold	The threshold in which area flags will be merged 
         /// @returns true if the operation completes successfully.  false if there was an error adding spans to the heightfield.
-        private static bool RasterizeTri(float[] verts, int v0, int v1, int v2,
+        private static bool RasterizeTri(ReadOnlySpan<float> verts, int v0, int v1, int v2,
             int areaID, RcHeightfield heightfield,
             Vector3 heightfieldBBMin, Vector3 heightfieldBBMax,
             float cellSize, float inverseCellSize, float inverseCellHeight,
@@ -450,7 +450,7 @@ namespace DotRecast.Recast
         /// @param[in]		flagMergeThreshold	The distance where the walkable flag is favored over the non-walkable flag.
         /// 									[Limit: >= 0] [Units: vx]
         /// @returns True if the operation completed successfully.
-        public static void RasterizeTriangle(RcContext context, float[] verts, int v0, int v1, int v2, int areaID,
+        public static void RasterizeTriangle(RcContext context, ReadOnlySpan<float> verts, int v0, int v1, int v2, int areaID,
             RcHeightfield heightfield, int flagMergeThreshold)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_RASTERIZE_TRIANGLES);
@@ -478,7 +478,7 @@ namespace DotRecast.Recast
         /// @param[in]		flagMergeThreshold	The distance where the walkable flag is favored over the non-walkable flag. 
         ///										[Limit: >= 0] [Units: vx]
         /// @returns True if the operation completed successfully.
-        public static void RasterizeTriangles(RcContext context, float[] verts, int[] tris, int[] triAreaIDs, int numTris,
+        public static void RasterizeTriangles(RcContext context, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int[] triAreaIDs, int numTris,
             RcHeightfield heightfield, int flagMergeThreshold)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_RASTERIZE_TRIANGLES);
@@ -511,7 +511,7 @@ namespace DotRecast.Recast
         /// @param[in]		flagMergeThreshold	The distance where the walkable flag is favored over the non-walkable flag. 
         /// 									[Limit: >= 0] [Units: vx]
         /// @returns True if the operation completed successfully.
-        public static void RasterizeTriangles(RcContext context, float[] verts, int[] triAreaIDs, int numTris, RcHeightfield heightfield, int flagMergeThreshold)
+        public static void RasterizeTriangles(RcContext context, ReadOnlySpan<float> verts, int[] triAreaIDs, int numTris, RcHeightfield heightfield, int flagMergeThreshold)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_RASTERIZE_TRIANGLES);
 

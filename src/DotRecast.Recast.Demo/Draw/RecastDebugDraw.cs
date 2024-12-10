@@ -38,7 +38,7 @@ public class RecastDebugDraw : DebugDraw
     {
     }
 
-    public void DebugDrawTriMeshSlope(float[] verts, int[] tris, float[] normals, float walkableSlopeAngle, float texScale)
+    public void DebugDrawTriMeshSlope(ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, ReadOnlySpan<float> normals, float walkableSlopeAngle, float texScale)
     {
         float walkableThr = MathF.Cos(walkableSlopeAngle / 180.0f * MathF.PI);
 

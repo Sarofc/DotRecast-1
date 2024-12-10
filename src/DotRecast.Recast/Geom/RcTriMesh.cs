@@ -18,33 +18,63 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using DotRecast.Core;
 
 namespace DotRecast.Recast.Geom
 {
     public class RcTriMesh
     {
-        private readonly float[] vertices;
-        private readonly int[] faces;
+        private readonly List<float> vertices;
+        private readonly List<int> faces;
         public readonly RcChunkyTriMesh chunkyTriMesh;
 
-        public RcTriMesh(float[] vertices, int[] faces)
+        public static RcTriMesh Load(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                return null;
+
+            if (!File.Exists(filename))
+            {
+                var searchFilePath = RcDirectory.SearchFile($"{filename}");
+                if (!File.Exists(searchFilePath))
+                {
+                    searchFilePath = RcDirectory.SearchFile($"resources/{filename}");
+                }
+
+                if (File.Exists(searchFilePath))
+                {
+                    filename = searchFilePath;
+                }
+            }
+
+            using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var context = RcObjImporter.LoadContext(fs);
+            //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
+            return new RcTriMesh(context.vertexPositions, context.meshFaces);
+        }
+
+
+        public RcTriMesh(List<float> vertices, List<int> faces)
         {
             this.vertices = vertices;
             this.faces = faces;
             chunkyTriMesh = new RcChunkyTriMesh();
-            RcChunkyTriMeshs.CreateChunkyTriMesh(vertices, faces, faces.Length / 3, 32, chunkyTriMesh);
+            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Count / 3, 32, chunkyTriMesh);
         }
 
-        public int[] GetTris()
+        public Span<int> GetTris()
         {
-            return faces;
+            return CollectionsMarshal.AsSpan(faces);
         }
 
-        public float[] GetVerts()
+        public Span<float> GetVerts()
         {
-            return vertices;
+            return CollectionsMarshal.AsSpan(vertices);
         }
 
         public List<RcChunkyTriMeshNode> GetChunksOverlappingRect(Vector2 bmin, Vector2 bmax)
