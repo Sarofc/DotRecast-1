@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using DotRecast.Detour.TileCache;
 using DotRecast.Recast.Demo.Draw;
@@ -37,6 +38,21 @@ public class ObstacleSampleTool : ISampleTool
         if (ImGui.Button("Remove All Temp Obstacles"))
         {
             _tool.ClearAllTempObstacles();
+        }
+
+        if (ImGui.Button("Save Tile Cache"))
+        {
+            var success = _tool.Save("sample.tilecache");
+            if (success)
+            {
+                Logger.Information("Save Tile Cache success");
+            }
+        }
+
+        if (ImGui.Button("Load Tile Cache"))
+        {
+            _tool.Load("sample.tilecache");
+            _sample.Update(_sample.GetInputGeom(), Array.Empty<RcBuilderResult>(), _tool.GetTileCache().GetNavMesh());
         }
 
         ImGui.Separator();
@@ -119,7 +135,7 @@ public class ObstacleSampleTool : ISampleTool
         }
         else
         {
-            _tool.AddTempObstacle(p);
+            _tool.AddObstacle(p, 1.0f, 2.0f);
         }
     }
 
