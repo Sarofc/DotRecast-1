@@ -56,7 +56,7 @@ namespace DotRecast.Recast
             {
                 // Create new page.
                 // Allocate memory for the new pool.
-                RcSpanPool spanPool = new RcSpanPool();
+                RcSpanPool spanPool = new();
 
                 // Add the pool into the list of pools.
                 spanPool.next = heightfield.pools;
@@ -111,7 +111,7 @@ namespace DotRecast.Recast
         public static void AddSpan(RcHeightfield heightfield, int x, int z, int min, int max, int areaID, int flagMergeThreshold)
         {
             // Create the new span.
-            RcSpan newSpan = new RcSpan();
+            RcSpan newSpan = new();
             //RcSpan newSpan = AllocSpan(heightfield); // 效果还没直接new好
             newSpan.smin = min;
             newSpan.smax = max;

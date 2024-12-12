@@ -84,7 +84,7 @@ namespace DotRecast.Core
         {
             const float EPS = 1e-6f;
 
-            Vector3 d = new Vector3();
+            Vector3 d = new();
             d.X = sq.X - sp.X;
             d.Y = sq.Y - sp.Y;
             d.Z = sq.Z - sp.Z;

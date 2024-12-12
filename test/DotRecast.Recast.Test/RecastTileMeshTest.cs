@@ -57,8 +57,8 @@ public class RecastTileMeshTest
     public void TestBuild(string filename)
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile(filename);
-        RcBuilder builder = new RcBuilder();
-        RcConfig cfg = new RcConfig(
+        RcBuilder builder = new();
+        RcConfig cfg = new(
             true, m_tileSize, m_tileSize, RcConfig.CalcBorder(m_agentRadius, m_cellSize),
             m_partitionType,
             m_cellSize, m_cellHeight,
@@ -69,7 +69,7 @@ public class RecastTileMeshTest
             m_detailSampleDist, m_detailSampleMaxError,
             true, true, true,
             SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
-        RcBuilderConfig bcfg = new RcBuilderConfig(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), 7, 8);
+        RcBuilderConfig bcfg = new(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), 7, 8);
         RcBuilderResult rcResult = builder.Build(geom, bcfg, false);
         Assert.That(rcResult.Mesh.npolys, Is.EqualTo(1));
         Assert.That(rcResult.Mesh.nverts, Is.EqualTo(5));
@@ -99,8 +99,8 @@ public class RecastTileMeshTest
     public void TestPerformance()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        RcBuilder builder = new RcBuilder();
-        RcConfig cfg = new RcConfig(
+        RcBuilder builder = new();
+        RcConfig cfg = new(
             true, m_tileSize, m_tileSize,
             RcConfig.CalcBorder(m_agentRadius, m_cellSize),
             m_partitionType,
@@ -137,7 +137,7 @@ public class RecastTileMeshTest
 
     private void Build(IInputGeomProvider geom, RcBuilder builder, RcConfig cfg, int threads, bool validate)
     {
-        CancellationTokenSource cts = new CancellationTokenSource();
+        CancellationTokenSource cts = new();
         List<RcBuilderResult> tiles = builder.BuildTiles(geom, cfg, false, true, threads, Task.Factory, cts.Token);
         if (validate)
         {

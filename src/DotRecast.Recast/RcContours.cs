@@ -722,7 +722,7 @@ namespace DotRecast.Recast
             int w = chf.width;
             int h = chf.height;
             int borderSize = chf.borderSize;
-            RcContourSet cset = new RcContourSet();
+            RcContourSet cset = new();
 
             using var timer = ctx.ScopedTimer(RcTimerLabel.RC_TIMER_BUILD_CONTOURS);
 
@@ -787,8 +787,8 @@ namespace DotRecast.Recast
 
             ctx.StopTimer(RcTimerLabel.RC_TIMER_BUILD_CONTOURS_TRACE);
 
-            List<int> verts = new List<int>(256);
-            List<int> simplified = new List<int>(64);
+            List<int> verts = new(256);
+            List<int> simplified = new(64);
 
             for (int y = 0; y < h; ++y)
             {
@@ -824,7 +824,7 @@ namespace DotRecast.Recast
                         // Create contour.
                         if (simplified.Count / 4 >= 3)
                         {
-                            RcContour cont = new RcContour();
+                            RcContour cont = new();
                             cset.conts.Add(cont);
 
                             cont.nverts = simplified.Count / 4;

@@ -59,7 +59,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
         public void Setup(float agentRadius, DtNavMesh navMesh)
         {
-            DtCrowdConfig config = new DtCrowdConfig(agentRadius);
+            DtCrowdConfig config = new(agentRadius);
             crowd = new DtCrowd(config, navMesh, __ =>
             {
                 var filter = new DtQueryDefaultFilter();
@@ -77,7 +77,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             // Setup local avoidance option to different qualities.
             // Use mostly default settings, copy from dtCrowd.
-            DtObstacleAvoidanceParams option = new DtObstacleAvoidanceParams(crowd.GetObstacleAvoidanceParams(0));
+            DtObstacleAvoidanceParams option = new(crowd.GetObstacleAvoidanceParams(0));
 
             // Low (11)
             option.velBias = 0.5f;
@@ -118,7 +118,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             foreach (DtCrowdAgent ag in crowd.GetActiveAgents())
             {
-                DtCrowdAgentParams agOption = new DtCrowdAgentParams();
+                DtCrowdAgentParams agOption = new();
                 agOption.radius = ag.option.radius;
                 agOption.height = ag.option.height;
                 agOption.maxAcceleration = ag.option.maxAcceleration;
@@ -208,7 +208,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
         private DtCrowdAgentParams CreateAgentParams(float agentRadius, float agentHeight, float agentMaxAcceleration, float agentMaxSpeed)
         {
-            DtCrowdAgentParams ap = new DtCrowdAgentParams();
+            DtCrowdAgentParams ap = new();
             ap.radius = agentRadius;
             ap.height = agentHeight;
             ap.maxAcceleration = agentMaxAcceleration;
@@ -232,8 +232,8 @@ namespace DotRecast.Recast.Toolset.Tools
                 var ag = crowd.GetAgent(i);
                 if (!ag.active)
                     continue;
-                Vector3 bmin = new Vector3();
-                Vector3 bmax = new Vector3();
+                Vector3 bmin = new();
+                Vector3 bmax = new();
                 GetAgentBounds(ag, ref bmin, ref bmax);
                 if (RcIntersections.IsectSegAABB(s, p, bmin, bmax, out var tmin, out var tmax))
                 {

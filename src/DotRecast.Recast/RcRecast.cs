@@ -226,7 +226,7 @@ namespace DotRecast.Recast
         {
             float walkableThr = MathF.Cos(float.DegreesToRadians(walkableSlopeAngle));
 
-            Vector3 norm = new Vector3();
+            Vector3 norm = new();
 
             for (int i = 0; i < nt; ++i)
             {

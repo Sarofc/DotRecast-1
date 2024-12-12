@@ -30,7 +30,7 @@ namespace DotRecast.Core
         public static List<int> Convexhull(List<Vector3> pts)
         {
             int npts = pts.Count;
-            List<int> @out = new List<int>();
+            List<int> @out = new();
             // Find lower-leftmost point.
             int hull = 0;
             for (int i = 1; i < npts; ++i)

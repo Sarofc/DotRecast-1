@@ -46,7 +46,7 @@ public class TestNavmeshSampleTool : ISampleTool
     private Vector3 m_epos;
 
     private readonly DtQueryDefaultFilter m_filter;
-    private readonly Vector3 m_polyPickExt = new Vector3(2, 4, 2);
+    private readonly Vector3 m_polyPickExt = new(2, 4, 2);
 
     // for hit
     private Vector3 m_hitPos;
@@ -508,7 +508,7 @@ public class TestNavmeshSampleTool : ISampleTool
 
                                 Vector3 delta = Vector3.Subtract(s3, s.vmin);
                                 Vector3 p0 = RcVec.Mad(s.vmin, delta, 0.5f);
-                                Vector3 norm = new Vector3(delta.Z, 0, -delta.X);
+                                Vector3 norm = new(delta.Z, 0, -delta.X);
                                 norm = Vector3.Normalize(norm);
                                 Vector3 p1 = RcVec.Mad(p0, norm, agentRadius * 0.5f);
                                 // Skip backfacing segments.

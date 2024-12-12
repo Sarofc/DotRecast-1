@@ -172,7 +172,6 @@ namespace DotRecast.Recast
                         if (regId == 255)
                         {
                             throw new Exception("rcBuildHeightfieldLayers: Region ID overflow.");
-                            return false;
                         }
 
                         sweeps[i].id = regId++;
@@ -202,7 +201,7 @@ namespace DotRecast.Recast
             }
 
             // Find region neighbours and overlapping regions.
-            List<int> lregs = new List<int>();
+            List<int> lregs = new();
             for (int y = 0; y < h; ++y)
             {
                 for (int x = 0; x < w; ++x)

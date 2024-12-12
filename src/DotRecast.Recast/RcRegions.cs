@@ -430,7 +430,7 @@ namespace DotRecast.Recast
                 }
             }
 
-            List<RcDirtyEntry> dirtyEntries = new List<RcDirtyEntry>(); // TODO alloc temp
+            List<RcDirtyEntry> dirtyEntries = new(); // TODO alloc temp
             int iter = 0;
             while (stack.Count > 0)
             {
@@ -664,7 +664,7 @@ namespace DotRecast.Recast
             int bid = regb.id;
 
             // Duplicate current neighbourhood.
-            List<int> acon = new List<int>(rega.connections);
+            List<int> acon = new(rega.connections);
             List<int> bcon = regb.connections;
 
             // Find insertion point on A.
@@ -926,8 +926,8 @@ namespace DotRecast.Recast
             }
 
             // Remove too small regions.
-            List<int> stack = new List<int>(32);
-            List<int> trace = new List<int>(32);
+            List<int> stack = new(32);
+            List<int> trace = new(32);
             for (int i = 0; i < nreg; ++i)
             {
                 RcRegion reg = regions[i];
@@ -1177,7 +1177,7 @@ namespace DotRecast.Recast
                 regions[i] = new RcRegion(i);
 
             // Find region neighbours and overlapping regions.
-            List<int> lregs = new List<int>(32); // TODO alloc
+            List<int> lregs = new(32); // TODO alloc
             for (int y = 0; y < h; ++y)
             {
                 for (int x = 0; x < w; ++x)
@@ -1255,7 +1255,7 @@ namespace DotRecast.Recast
             }
 
             // Merge montone regions to create non-overlapping areas.
-            List<int> stack = new List<int>(32); // TODO alloc
+            List<int> stack = new(32); // TODO alloc
             for (int i = 1; i < nreg; ++i)
             {
                 RcRegion root = regions[i];
@@ -1615,7 +1615,7 @@ namespace DotRecast.Recast
 
             ctx.StartTimer(RcTimerLabel.RC_TIMER_BUILD_REGIONS_FILTER);
             // Merge regions and filter out small regions.
-            List<int> overlaps = new List<int>(); // TODO alloc temp
+            List<int> overlaps = new(); // TODO alloc temp
             chf.maxRegions = MergeAndFilterRegions(ctx, minRegionArea, mergeRegionArea, id, chf, srcReg, overlaps);
 
             // Monotone partitioning does not generate overlapping regions.
@@ -1665,13 +1665,13 @@ namespace DotRecast.Recast
 
             int LOG_NB_STACKS = 3;
             int NB_STACKS = 1 << LOG_NB_STACKS;
-            List<List<RcLevelStackEntry>> lvlStacks = new List<List<RcLevelStackEntry>>(); // TODO alloc
+            List<List<RcLevelStackEntry>> lvlStacks = new(); // TODO alloc
             for (int i = 0; i < NB_STACKS; ++i)
             {
                 lvlStacks.Add(new List<RcLevelStackEntry>(256));
             }
 
-            List<RcLevelStackEntry> stack = new List<RcLevelStackEntry>(256);
+            List<RcLevelStackEntry> stack = new(256);
 
             int[] srcReg = ArrayPool<int>.Shared.Rent(chf.spanCount);
             srcReg.AsSpan(0, chf.spanCount).Fill(0);
@@ -1760,7 +1760,7 @@ namespace DotRecast.Recast
             ctx.StartTimer(RcTimerLabel.RC_TIMER_BUILD_REGIONS_FILTER);
 
             // Merge regions and filter out small regions.
-            List<int> overlaps = new List<int>(); // TODO alloc
+            List<int> overlaps = new(); // TODO alloc
             chf.maxRegions = MergeAndFilterRegions(ctx, minRegionArea, mergeRegionArea, regionId, chf, srcReg, overlaps);
 
             // If overlapping regions were found during merging, split those regions.

@@ -29,7 +29,7 @@ public struct TestDetourBuilder
     public DtMeshData Build(IInputGeomProvider geom, RcBuilderConfig rcConfig, float agentHeight, float agentRadius,
         float agentMaxClimb, int x, int y, bool applyRecastDemoFlags)
     {
-        RcBuilder rcBuilder = new RcBuilder();
+        RcBuilder rcBuilder = new();
         RcBuilderResult rcResult = rcBuilder.Build(geom, rcConfig, false);
         RcPolyMesh pmesh = rcResult.Mesh;
 
@@ -70,7 +70,7 @@ public struct TestDetourBuilder
     public DtNavMeshCreateParams GetNavMeshCreateParams(RcConfig rcConfig, RcPolyMesh pmesh, RcPolyMeshDetail dmesh,
         float agentHeight, float agentRadius, float agentMaxClimb)
     {
-        DtNavMeshCreateParams option = new DtNavMeshCreateParams();
+        DtNavMeshCreateParams option = new();
         option.verts = pmesh.verts;
         option.vertCount = pmesh.nverts;
         option.polys = pmesh.polys;

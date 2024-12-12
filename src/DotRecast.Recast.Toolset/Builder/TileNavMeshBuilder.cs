@@ -92,7 +92,7 @@ namespace DotRecast.Recast.Toolset.Builder
             bool keepInterResults, bool buildAll)
 
         {
-            RcConfig cfg = new RcConfig(true, tileSize, tileSize,
+            RcConfig cfg = new(true, tileSize, tileSize,
                 RcConfig.CalcBorder(agentRadius, cellSize),
                 partitionType,
                 cellSize, cellHeight,
@@ -103,13 +103,13 @@ namespace DotRecast.Recast.Toolset.Builder
                 detailSampleDist, detailSampleMaxError,
                 filterLowHangingObstacles, filterLedgeSpans, filterWalkableLowHeightSpans,
                 SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
-            RcBuilder rcBuilder = new RcBuilder();
+            RcBuilder rcBuilder = new();
             return rcBuilder.BuildTiles(geom, cfg, keepInterResults, buildAll, Environment.ProcessorCount + 1, Task.Factory);
         }
 
         public DtNavMesh BuildNavMesh(IInputGeomProvider geom, List<DtMeshData> meshData, float cellSize, int tileSize, int vertsPerPoly)
         {
-            DtNavMeshParams navMeshParams = new DtNavMeshParams();
+            DtNavMeshParams navMeshParams = new();
             navMeshParams.orig = geom.GetMeshBoundsMin();
             navMeshParams.tileWidth = tileSize * cellSize;
             navMeshParams.tileHeight = tileSize * cellSize;
@@ -118,7 +118,7 @@ namespace DotRecast.Recast.Toolset.Builder
 
             navMeshParams.maxTiles = GetMaxTiles(geom, cellSize, tileSize, EXPECTED_LAYERS_PER_TILE); // TODO tests
             navMeshParams.maxPolys = GetMaxPolysPerTile(geom, cellSize, tileSize, EXPECTED_LAYERS_PER_TILE);
-            DtNavMesh navMesh = new DtNavMesh();
+            DtNavMesh navMesh = new();
             navMesh.Init(navMeshParams, vertsPerPoly);
             meshData.ForEach(md => navMesh.AddTile(md, 0, 0, out _));
             return navMesh;
@@ -128,7 +128,7 @@ namespace DotRecast.Recast.Toolset.Builder
             float agentRadius, float agentMaxClimb, IList<RcBuilderResult> results)
         {
             // Add tiles to nav mesh
-            List<DtMeshData> meshData = new List<DtMeshData>();
+            List<DtMeshData> meshData = new();
             foreach (RcBuilderResult result in results)
             {
                 int x = result.TileX;

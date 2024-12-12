@@ -31,7 +31,7 @@ public class TempObstaclesTest : AbstractTileCacheTest
     public void TestDungeon()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
+        TestTileLayerBuilder layerBuilder = new(geom);
         List<byte[]> layers = layerBuilder.Build(1);
         DtTileCache tc = GetTileCache(geom);
         foreach (byte[] data in layers)
@@ -72,7 +72,7 @@ public class TempObstaclesTest : AbstractTileCacheTest
     public void TestDungeonBox()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
+        TestTileLayerBuilder layerBuilder = new(geom);
         List<byte[]> layers = layerBuilder.Build(1);
         DtTileCache tc = GetTileCache(geom);
         foreach (byte[] data in layers)

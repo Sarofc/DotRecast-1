@@ -578,13 +578,13 @@ namespace DotRecast.Recast
             int zStride = xSize; // For readability
 
             // Compute the bounding box of the cylinder
-            Vector3 cylinderBBMin = new Vector3(
+            Vector3 cylinderBBMin = new(
                 position[0] - radius,
                 position[1],
                 position[2] - radius
             );
 
-            Vector3 cylinderBBMax = new Vector3(
+            Vector3 cylinderBBMax = new(
                 position[0] + radius,
                 position[1] + height,
                 position[2] + radius
@@ -709,8 +709,8 @@ namespace DotRecast.Recast
             bool inPoly = false;
             for (int i = 0, j = verts.Length / 3 - 1; i < verts.Length / 3; j = i++)
             {
-                Vector3 vi = new Vector3(verts[i * 3], verts[i * 3 + 1], verts[i * 3 + 2]);
-                Vector3 vj = new Vector3(verts[j * 3], verts[j * 3 + 1], verts[j * 3 + 2]);
+                Vector3 vi = new(verts[i * 3], verts[i * 3 + 1], verts[i * 3 + 2]);
+                Vector3 vj = new(verts[j * 3], verts[j * 3 + 1], verts[j * 3 + 2]);
                 if (vi.Z > point.Z == vj.Z > point.Z)
                 {
                     continue;

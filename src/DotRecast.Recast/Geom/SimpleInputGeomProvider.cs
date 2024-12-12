@@ -33,7 +33,7 @@ namespace DotRecast.Recast.Geom
         private Vector3 bmin;
         private Vector3 bmax;
 
-        private readonly List<RcConvexVolume> volumes = new List<RcConvexVolume>();
+        private readonly List<RcConvexVolume> volumes = new();
         private readonly RcTriMesh _mesh;
 
         public static SimpleInputGeomProvider LoadFile(string objFilePath)
@@ -82,7 +82,7 @@ namespace DotRecast.Recast.Geom
 
         public void AddConvexVolume(float[] verts, float minh, float maxh, RcAreaModification areaMod)
         {
-            RcConvexVolume vol = new RcConvexVolume();
+            RcConvexVolume vol = new();
             vol.hmin = minh;
             vol.hmax = maxh;
             vol.verts = verts;

@@ -18,8 +18,11 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 
 namespace DotRecast.Core
 {
@@ -51,26 +54,26 @@ namespace DotRecast.Core
 #endif
         }
 
-        public RcScopedTimer ScopedTimer(RcTimerLabel label)
+        public RcScopedTimer ScopedTimer(string label)
         {
             return new RcScopedTimer(this, label);
         }
 
         [Conditional("PROFILE")]
-        public void StartTimer(RcTimerLabel label)
+        public void StartTimer(string label)
         {
 #if PROFILE
-            _timerStart.Value[label.Name] = new RcAtomicLong(RcFrequency.Ticks);
+            _timerStart.Value[label] = new RcAtomicLong(RcFrequency.Ticks);
 #endif
         }
 
         [Conditional("PROFILE")]
-        public void StopTimer(RcTimerLabel label)
+        public void StopTimer(string label)
         {
 #if PROFILE
             _timerAccum
-               .GetOrAdd(label.Name, _ => new RcAtomicLong(0))
-               .AddAndGet(RcFrequency.Ticks - _timerStart.Value?[label.Name].Read() ?? 0);
+               .GetOrAdd(label, _ => new RcAtomicLong(0))
+               .AddAndGet(RcFrequency.Ticks - _timerStart.Value?[label].Read() ?? 0);
 #endif
         }
 
@@ -80,14 +83,14 @@ namespace DotRecast.Core
             Console.WriteLine(message);
         }
 
-        public List<RcTelemetryTick> ToList()
+        public RcTelemetryTick[] ToArray()
         {
 #if PROFILE
             return _timerAccum
                 .Select(x => new RcTelemetryTick(x.Key, x.Value.Read()))
-                .ToList();
+                .ToArray();
 #else
-            return new List<RcTelemetryTick>();
+            return Array.Empty<RcTelemetryTick>();
 #endif
         }
     }

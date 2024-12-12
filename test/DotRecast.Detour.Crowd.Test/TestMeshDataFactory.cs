@@ -56,7 +56,7 @@ public class TestMeshDataFactory
         float detailSampleDist = m_detailSampleDist;
         float detailSampleMaxError = m_detailSampleMaxError;
 
-        RcConfig cfg = new RcConfig(
+        RcConfig cfg = new(
             partition,
             cellSize, cellHeight,
             agentMaxSlope, agentHeight, agentRadius, agentMaxClimb,
@@ -66,8 +66,8 @@ public class TestMeshDataFactory
             detailSampleDist, detailSampleMaxError,
             true, true, true,
             SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
-        RcBuilderConfig bcfg = new RcBuilderConfig(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax());
-        RcBuilder rcBuilder = new RcBuilder();
+        RcBuilderConfig bcfg = new(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax());
+        RcBuilder rcBuilder = new();
         RcBuilderResult rcResult = rcBuilder.Build(geom, bcfg, false);
         RcPolyMesh pmesh = rcResult.Mesh;
         for (int i = 0; i < pmesh.npolys; ++i)
@@ -76,7 +76,7 @@ public class TestMeshDataFactory
         }
 
         RcPolyMeshDetail dmesh = rcResult.MeshDetail;
-        DtNavMeshCreateParams option = new DtNavMeshCreateParams();
+        DtNavMeshCreateParams option = new();
         option.verts = pmesh.verts;
         option.vertCount = pmesh.nverts;
         option.polys = pmesh.polys;

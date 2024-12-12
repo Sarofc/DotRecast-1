@@ -138,7 +138,7 @@ namespace DotRecast.Detour.Crowd
 
         public Vector3 CalcSmoothSteerDirection()
         {
-            Vector3 dir = new Vector3();
+            Vector3 dir = new();
             if (0 < ncorners)
             {
                 int ip0 = 0;
@@ -167,7 +167,7 @@ namespace DotRecast.Detour.Crowd
 
         public Vector3 CalcStraightSteerDirection()
         {
-            Vector3 dir = new Vector3();
+            Vector3 dir = new();
             if (0 < ncorners)
             {
                 dir = Vector3.Subtract(corners[0].pos, npos);

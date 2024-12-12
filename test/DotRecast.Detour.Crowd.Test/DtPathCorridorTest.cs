@@ -25,7 +25,7 @@ namespace DotRecast.Detour.Crowd.Test;
 
 public class DtPathCorridorTest
 {
-    private readonly DtPathCorridor corridor = new DtPathCorridor();
+    private readonly DtPathCorridor corridor = new();
     private readonly IDtQueryFilter filter = new DtQueryDefaultFilter();
 
     [SetUp]

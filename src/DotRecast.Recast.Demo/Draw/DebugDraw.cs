@@ -343,12 +343,12 @@ public class DebugDraw
         float dy = y1 - y0;
         float dz = z1 - z0;
         float len = MathF.Sqrt(dx * dx + dy * dy + dz * dz);
-        Vector3 prev = new Vector3();
+        Vector3 prev = new();
         EvalArc(x0, y0, z0, dx, dy, dz, len * h, PAD, ref prev);
         for (int i = 1; i <= NUM_ARC_PTS; ++i)
         {
             float u = PAD + i * ARC_PTS_SCALE;
-            Vector3 pt = new Vector3();
+            Vector3 pt = new();
             EvalArc(x0, y0, z0, dx, dy, dz, len * h, u, ref pt);
             Vertex(prev.X, prev.Y, prev.Z, col);
             Vertex(pt.X, pt.Y, pt.Z, col);
@@ -360,8 +360,8 @@ public class DebugDraw
         // End arrows
         if (as0 > 0.001f)
         {
-            Vector3 p = new Vector3();
-            Vector3 q = new Vector3();
+            Vector3 p = new();
+            Vector3 q = new();
             EvalArc(x0, y0, z0, dx, dy, dz, len * h, PAD, ref p);
             EvalArc(x0, y0, z0, dx, dy, dz, len * h, PAD + 0.05f, ref q);
             AppendArrowHead(p, q, as0, col);
@@ -369,8 +369,8 @@ public class DebugDraw
 
         if (as1 > 0.001f)
         {
-            Vector3 p = new Vector3();
-            Vector3 q = new Vector3();
+            Vector3 p = new();
+            Vector3 q = new();
             EvalArc(x0, y0, z0, dx, dy, dz, len * h, 1 - PAD, ref p);
             EvalArc(x0, y0, z0, dx, dy, dz, len * h, 1 - (PAD + 0.05f), ref q);
             AppendArrowHead(p, q, as1, col);
@@ -475,8 +475,8 @@ public class DebugDraw
         Vertex(x1, y1, z1, col);
 
         // End arrows
-        Vector3 p = new Vector3(x0, y0, z0);
-        Vector3 q = new Vector3(x1, y1, z1);
+        Vector3 p = new(x0, y0, z0);
+        Vector3 q = new(x1, y1, z1);
         if (as0 > 0.001f)
             AppendArrowHead(p, q, as0, col);
         if (as1 > 0.001f)
@@ -491,9 +491,9 @@ public class DebugDraw
             return;
         }
 
-        Vector3 ax = new Vector3();
-        Vector3 ay = new Vector3(0, 1, 0);
-        Vector3 az = new Vector3();
+        Vector3 ax = new();
+        Vector3 ay = new(0, 1, 0);
+        Vector3 az = new();
         Vsub(ref az, q, p);
         Vnormalize(ref az);
         Vcross(ref ax, ay, az);

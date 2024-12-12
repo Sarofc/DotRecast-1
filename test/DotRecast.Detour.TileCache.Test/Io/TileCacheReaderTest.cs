@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System.IO;
 using DotRecast.Core;
 using DotRecast.Detour.TileCache.Io;
+using DotRecast.Recast.Toolset;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.TileCache.Test.Io;
@@ -28,7 +29,7 @@ namespace DotRecast.Detour.TileCache.Test.Io;
 
 public class TileCacheReaderTest : AbstractTileCacheTest
 {
-    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheLZ4ForTestCompressor.Shared);
+    private readonly DtTileCacheReader reader = new(LZ4Compressor.Shared);
 
     [Test]
     public void TestDungeon()

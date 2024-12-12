@@ -1,4 +1,3 @@
-#if true
 /*
 Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
 recast4j copyright (c) 2015-2019 Piotr Piastucki piotr@jtilia.org
@@ -127,7 +126,7 @@ namespace DotRecast.Recast.Toolset.Geom
 
         public void AddConvexVolume(float[] verts, float minh, float maxh, RcAreaModification areaMod)
         {
-            RcConvexVolume volume = new RcConvexVolume();
+            RcConvexVolume volume = new();
             volume.verts = verts;
             volume.hmin = minh;
             volume.hmax = maxh;
@@ -184,17 +183,17 @@ namespace DotRecast.Recast.Toolset.Geom
                 int[] tris = chunk.tris;
                 for (int j = 0; j < chunk.tris.Length; j += 3)
                 {
-                    Vector3 v1 = new Vector3(
+                    Vector3 v1 = new(
                         vertices[tris[j] * 3],
                         vertices[tris[j] * 3 + 1],
                         vertices[tris[j] * 3 + 2]
                     );
-                    Vector3 v2 = new Vector3(
+                    Vector3 v2 = new(
                         vertices[tris[j + 1] * 3],
                         vertices[tris[j + 1] * 3 + 1],
                         vertices[tris[j + 1] * 3 + 2]
                     );
-                    Vector3 v3 = new Vector3(
+                    Vector3 v3 = new(
                         vertices[tris[j + 2] * 3],
                         vertices[tris[j + 2] * 3 + 1],
                         vertices[tris[j + 2] * 3 + 2]
@@ -240,4 +239,3 @@ namespace DotRecast.Recast.Toolset.Geom
         }
     }
 }
-#endif

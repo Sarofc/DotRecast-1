@@ -143,7 +143,7 @@ namespace DotRecast.Detour.Crowd
         private DtNavMeshQuery m_navQuery;
 
         private DtNavMesh m_navMesh;
-        private readonly DtCrowdTelemetry m_telemetry = new DtCrowdTelemetry();
+        private readonly DtCrowdTelemetry m_telemetry = new();
 
         public DtCrowd(DtCrowdConfig config) : this(config, i => new DtQueryDefaultFilter())
         {
@@ -506,7 +506,7 @@ namespace DotRecast.Detour.Crowd
                 bool replan = false;
 
                 // First check that the current location is valid.
-                Vector3 agentPos = new Vector3();
+                Vector3 agentPos = new();
                 long agentRef = ag.corridor.GetFirstPoly();
                 agentPos = ag.npos;
                 if (!m_navQuery.IsValidPolyRef(agentRef, m_filters[ag.option.queryFilterType]))
@@ -656,7 +656,7 @@ namespace DotRecast.Detour.Crowd
                         status = m_navQuery.FinalizeSlicedFindPath(reqPath, out reqPathCount);
                     }
 
-                    Vector3 reqPos = new Vector3();
+                    Vector3 reqPos = new();
                     System.Diagnostics.Debug.Assert(status.Succeeded());
                     if (status.Succeeded() && reqPathCount > 0)
                     {
@@ -1070,7 +1070,9 @@ namespace DotRecast.Detour.Crowd
         {
             int n = 0;
 
-            const int MAX_NEIS = 32; // TODO 当agent很多时，越大，越不容易挤在一起，但是会影响性能
+            // TODO 当agent很多时，值大点，就相对不容易挤在一起，但是会影响性能
+            // https://github.com/recastnavigation/recastnavigation/issues/641
+            const int MAX_NEIS = 32;
             Span<ushort> ids = stackalloc ushort[MAX_NEIS];
 
             int nids = grid.QueryItems(pos.X - range, pos.Z - range, pos.X + range, pos.Z + range,
@@ -1149,7 +1151,7 @@ namespace DotRecast.Detour.Crowd
         {
             using var timer = m_telemetry.ScopedTimer(DtCrowdTimerLabel.FindCorners);
 
-            DtCrowdAgent debugAgent = debug != null ? debug.agent : null;
+            DtCrowdAgent debugAgent = debug?.agent;
             for (var i = 0; i < agents.Length; i++)
             {
                 var ag = agents[i];
@@ -1260,7 +1262,7 @@ namespace DotRecast.Detour.Crowd
                     continue;
                 }
 
-                Vector3 dvel = new Vector3();
+                Vector3 dvel = new();
 
                 if (ag.targetState == DtMoveRequestState.DT_CROWDAGENT_TARGET_VELOCITY)
                 {
@@ -1295,7 +1297,7 @@ namespace DotRecast.Detour.Crowd
                     float separationWeight = ag.option.separationWeight;
 
                     float w = 0;
-                    Vector3 disp = new Vector3();
+                    Vector3 disp = new();
 
                     for (int j = 0; j < ag.nneis; ++j)
                     {
@@ -1345,7 +1347,7 @@ namespace DotRecast.Detour.Crowd
         {
             using var timer = m_telemetry.ScopedTimer(DtCrowdTimerLabel.PlanVelocity);
 
-            DtCrowdAgent debugAgent = debug != null ? debug.agent : null;
+            DtCrowdAgent debugAgent = debug?.agent;
             for (var i = 0; i < agents.Length; i++)
             {
                 var ag = agents[i];

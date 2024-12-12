@@ -101,13 +101,13 @@ public class RecastSoloMeshTest
         long time = RcFrequency.Ticks;
         Vector3 bmin = geomProvider.GetMeshBoundsMin();
         Vector3 bmax = geomProvider.GetMeshBoundsMax();
-        RcContext m_ctx = new RcContext();
+        RcContext m_ctx = new();
         //
         // Step 1. Initialize build config.
         //
 
         // Init build configuration from GUI
-        RcConfig cfg = new RcConfig(
+        RcConfig cfg = new(
             partitionType,
             m_cellSize, m_cellHeight,
             m_agentMaxSlope, m_agentHeight, m_agentRadius, m_agentMaxClimb,
@@ -117,14 +117,14 @@ public class RecastSoloMeshTest
             m_detailSampleDist, m_detailSampleMaxError,
             true, true, true,
             SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
-        RcBuilderConfig bcfg = new RcBuilderConfig(cfg, bmin, bmax);
+        RcBuilderConfig bcfg = new(cfg, bmin, bmax);
 
         //
         // Step 2. Rasterize input polygon soup.
         //
 
         // Allocate voxel heightfield where we rasterize our input data to.
-        RcHeightfield m_solid = new RcHeightfield(bcfg.width, bcfg.height, bcfg.bmin, bcfg.bmax, cfg.Cs, cfg.Ch, cfg.BorderSize);
+        RcHeightfield m_solid = new(bcfg.width, bcfg.height, bcfg.bmin, bcfg.bmax, cfg.Cs, cfg.Ch, cfg.BorderSize);
 
         foreach (RcTriMesh geom in geomProvider.Meshes())
         {
@@ -266,7 +266,7 @@ public class RecastSoloMeshTest
         Console.WriteLine("           " + (time3 - time) / TimeSpan.TicksPerMillisecond + " ms");
         SaveObj(filename.Substring(0, filename.LastIndexOf('.')) + "_" + partitionType + "_detail.obj", m_dmesh);
         SaveObj(filename.Substring(0, filename.LastIndexOf('.')) + "_" + partitionType + ".obj", m_pmesh);
-        foreach (var rtt in m_ctx.ToList())
+        foreach (var rtt in m_ctx.ToArray())
         {
             Console.WriteLine($"{rtt.Key} : {rtt.Millis} ms");
         }
@@ -278,7 +278,7 @@ public class RecastSoloMeshTest
         {
             string path = Path.Combine("test-output", filename);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            using StreamWriter fw = new StreamWriter(path);
+            using StreamWriter fw = new(path);
             for (int v = 0; v < mesh.nverts; v++)
             {
                 fw.Write("v " + (mesh.bmin.X + mesh.verts[v * 3] * mesh.cs) + " "
@@ -318,7 +318,7 @@ public class RecastSoloMeshTest
         {
             string filePath = Path.Combine("test-output", filename);
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            using StreamWriter fw = new StreamWriter(filePath);
+            using StreamWriter fw = new(filePath);
             for (int v = 0; v < dmesh.nverts; v++)
             {
                 fw.Write(

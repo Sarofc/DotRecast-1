@@ -76,7 +76,7 @@ namespace DotRecast.Recast.Toolset.Tools
             Vector3 bmin = geom.GetMeshBoundsMin();
             Vector3 bmax = geom.GetMeshBoundsMax();
 
-            RcConfig cfg = new RcConfig(
+            RcConfig cfg = new(
                 true, settings.tileSize, settings.tileSize,
                 RcConfig.CalcBorder(settings.agentRadius, settings.cellSize),
                 RcPartitionType.OfValue(settings.partitioning),

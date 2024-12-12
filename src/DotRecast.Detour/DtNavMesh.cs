@@ -90,7 +90,7 @@ namespace DotRecast.Detour
 
         private static DtNavMeshParams GetNavMeshParams(DtMeshData data)
         {
-            DtNavMeshParams option = new DtNavMeshParams();
+            DtNavMeshParams option = new();
             option.orig = data.header.bmin;
             option.tileWidth = data.header.bmax.X - data.header.bmin.X;
             option.tileHeight = data.header.bmax.Z - data.header.bmin.Z;
@@ -797,7 +797,7 @@ namespace DotRecast.Detour
                 };
 
                 // Find polygon to connect to.
-                Vector3 p = new Vector3(targetCon.pos[3 + 0], targetCon.pos[3 + 1], targetCon.pos[3 + 2]);
+                Vector3 p = new(targetCon.pos[3 + 0], targetCon.pos[3 + 1], targetCon.pos[3 + 2]);
                 var refs = FindNearestPolyInTile(tile, p, ext, out var nearestPt);
                 if (refs == 0)
                 {
@@ -978,7 +978,7 @@ namespace DotRecast.Detour
                 };
 
                 // Find polygon to connect to.
-                Vector3 p0 = new Vector3(con.pos[0 + 0], con.pos[0 + 1], con.pos[0 + 2]);
+                Vector3 p0 = new(con.pos[0 + 0], con.pos[0 + 1], con.pos[0 + 2]);
                 var refs = FindNearestPolyInTile(tile, p0, ext, out var nearestPt);
                 if (refs == 0)
                 {
@@ -1044,8 +1044,8 @@ namespace DotRecast.Detour
             int ip = poly.index;
             float dmin = float.MaxValue;
             float tmin = 0;
-            Vector3 pmin = new Vector3();
-            Vector3 pmax = new Vector3();
+            Vector3 pmin = new();
+            Vector3 pmax = new();
 
             if (tile.data.detailMeshes != null)
             {

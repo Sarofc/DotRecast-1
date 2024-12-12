@@ -54,7 +54,7 @@ public class TileCacheNavigationTest : AbstractTileCacheTest
     public void SetUp()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
+        TestTileLayerBuilder layerBuilder = new(geom);
         List<byte[]> layers = layerBuilder.Build(1);
         DtTileCache tc = GetTileCache(geom);
         foreach (byte[] data in layers)

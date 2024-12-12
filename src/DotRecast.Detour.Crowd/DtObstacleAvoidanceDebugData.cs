@@ -101,7 +101,7 @@ namespace DotRecast.Detour.Crowd
 
         public Vector3 GetSampleVelocity(int i)
         {
-            Vector3 vel = new Vector3();
+            Vector3 vel = new();
             vel.X = m_vel[i * 3];
             vel.Y = m_vel[i * 3 + 1];
             vel.Z = m_vel[i * 3 + 2];

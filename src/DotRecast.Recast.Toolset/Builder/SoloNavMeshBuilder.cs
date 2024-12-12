@@ -50,7 +50,7 @@ namespace DotRecast.Recast.Toolset.Builder
             bool filterLowHangingObstacles, bool filterLedgeSpans, bool filterWalkableLowHeightSpans,
             bool keepInterResults)
         {
-            RcConfig cfg = new RcConfig(
+            RcConfig cfg = new(
                 partitionType,
                 cellSize, cellHeight,
                 agentMaxSlope, agentHeight, agentRadius, agentMaxClimb,
@@ -86,8 +86,8 @@ namespace DotRecast.Recast.Toolset.Builder
 
         private RcBuilderResult BuildRecastResult(DemoInputGeomProvider geom, RcConfig cfg, bool keepInterResults)
         {
-            RcBuilderConfig bcfg = new RcBuilderConfig(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax());
-            RcBuilder rcBuilder = new RcBuilder();
+            RcBuilderConfig bcfg = new(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax());
+            RcBuilder rcBuilder = new();
             return rcBuilder.Build(geom, bcfg, keepInterResults);
         }
 

@@ -75,7 +75,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
         private DtCrowdAgentParams GetAgentParams(float agentRadius, float agentHeight, float agentMaxAcceleration, float agentMaxSpeed)
         {
-            DtCrowdAgentParams ap = new DtCrowdAgentParams();
+            DtCrowdAgentParams ap = new();
             ap.radius = agentRadius;
             ap.height = agentHeight;
             ap.maxAcceleration = agentMaxAcceleration;
@@ -109,7 +109,7 @@ namespace DotRecast.Recast.Toolset.Tools
         {
             _polyPoints.Clear();
             IDtQueryFilter filter = new DtQueryDefaultFilter();
-            DtNavMeshQuery navquery = new DtNavMeshQuery(_navMesh, 512);
+            DtNavMeshQuery navquery = new(_navMesh, 512);
             for (int i = 0; i < _cfg.numberOfZones; i++)
             {
                 float zoneSeparation = _cfg.zoneRadius * _cfg.zoneRadius * 16;
@@ -146,7 +146,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 [1f, 10f, 1f, 1f, 2f, 1.5f])
             );
 
-            DtObstacleAvoidanceParams option = new DtObstacleAvoidanceParams(_crowd.GetObstacleAvoidanceParams(0));
+            DtObstacleAvoidanceParams option = new(_crowd.GetObstacleAvoidanceParams(0));
             // Low (11)
             option.velBias = 0.5f;
             option.adaptiveDivs = 5;
@@ -189,7 +189,7 @@ namespace DotRecast.Recast.Toolset.Tools
             _rand = new RcRand(_cfg.randomSeed);
             CreateCrowd();
             CreateZones();
-            DtNavMeshQuery navquery = new DtNavMeshQuery(_navMesh, 512);
+            DtNavMeshQuery navquery = new(_navMesh, 512);
             IDtQueryFilter filter = new DtQueryDefaultFilter();
             for (int i = 0; i < _cfg.agents; i++)
             {
@@ -310,7 +310,7 @@ namespace DotRecast.Recast.Toolset.Tools
         private void MoveTraveller(DtNavMeshQuery navquery, IDtQueryFilter filter, DtCrowdAgent ag, RcCrowdAgentData crowAgentData)
         {
             // Move to another zone
-            List<DtPolyPoint> potentialTargets = new List<DtPolyPoint>();
+            List<DtPolyPoint> potentialTargets = new();
             foreach (var zone in _polyPoints)
             {
                 if (Vector3.DistanceSquared(zone.pt, ag.npos) > _cfg.zoneRadius * _cfg.zoneRadius)
@@ -363,7 +363,7 @@ namespace DotRecast.Recast.Toolset.Tools
                     var ag = _crowd.GetAgent(i);
                     if (!ag.active)
                         continue;
-                    DtCrowdAgentParams option = new DtCrowdAgentParams();
+                    DtCrowdAgentParams option = new();
                     option.radius = ag.option.radius;
                     option.height = ag.option.height;
                     option.maxAcceleration = ag.option.maxAcceleration;

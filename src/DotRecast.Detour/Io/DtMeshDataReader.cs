@@ -33,8 +33,8 @@ namespace DotRecast.Detour.Io
 
         public DtMeshData Read(ref RcByteBuffer buf, int maxVertPerPoly)
         {
-            DtMeshData data = new DtMeshData();
-            DtMeshHeader header = new DtMeshHeader();
+            DtMeshData data = new();
+            DtMeshHeader header = new();
             data.header = header;
             header.magic = buf.ReadInt32();
             if (header.magic != DT_NAVMESH_MAGIC)

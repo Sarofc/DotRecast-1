@@ -236,7 +236,7 @@ public class CrowdSampleTool : ISampleTool
             Vector3 pos = ag.npos;
 
             dd.Begin(LINES, 3.0f);
-            Vector3 prev = new Vector3();
+            Vector3 prev = new();
             float preva = 1;
             prev = pos;
             for (int j = 0; j < RcCrowdAgentTrail.AGENT_MAX_TRAIL - 1; ++j)
@@ -323,8 +323,8 @@ public class CrowdSampleTool : ISampleTool
                     var s = ag.boundary.GetSegment(j);
                     //RcVec3f s0 = s[0];
                     //RcVec3f s3 = s[1];
-                    Vector3 s3 = new Vector3(s.s[3 + 0], s.s[3 + 1], s.s[3 + 2]);
-                    Vector3 s0 = new Vector3(s.s[0 + 0], s.s[0 + 1], s.s[0 + 2]);
+                    Vector3 s3 = new(s.s[3 + 0], s.s[3 + 1], s.s[3 + 2]);
+                    Vector3 s0 = new(s.s[0 + 0], s.s[0 + 1], s.s[0 + 2]);
                     if (DtUtils.TriArea2D(pos, s0, s3) < 0.0f)
                         col = DuDarkenCol(col);
 

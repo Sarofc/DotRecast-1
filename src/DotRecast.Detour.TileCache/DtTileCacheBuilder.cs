@@ -649,7 +649,7 @@ namespace DotRecast.Detour.TileCache
             int w = layer.header.width;
             int h = layer.header.height;
 
-            DtTileCacheContourSet lcset = new DtTileCacheContourSet();
+            DtTileCacheContourSet lcset = new();
             lcset.nconts = layer.regCount;
             lcset.conts = new DtTileCacheContour[lcset.nconts];
             for (int i = 0; i < lcset.nconts; i++)
@@ -1335,7 +1335,7 @@ namespace DotRecast.Detour.TileCache
                 return false;
 
             // Find edges which share the removed vertex.
-            List<int> edges = new List<int>();
+            List<int> edges = new();
             int nedges = 0;
 
             for (int i = 0; i < mesh.npolys; ++i)
@@ -1415,10 +1415,10 @@ namespace DotRecast.Detour.TileCache
             }
 
             int nedges = 0;
-            List<int> edges = new List<int>();
+            List<int> edges = new();
             int nhole = 0;
-            List<int> hole = new List<int>();
-            List<int> harea = new List<int>();
+            List<int> hole = new();
+            List<int> harea = new();
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -1654,7 +1654,7 @@ namespace DotRecast.Detour.TileCache
 
             // TODO: warn about too many vertices?
 
-            DtTileCachePolyMesh mesh = new DtTileCachePolyMesh(maxVertsPerPoly);
+            DtTileCachePolyMesh mesh = new(maxVertsPerPoly);
 
             int[] vflags = new int[maxVertices];
 
@@ -1813,8 +1813,8 @@ namespace DotRecast.Detour.TileCache
 
         public static void MarkCylinderArea(DtTileCacheLayer layer, Vector3 orig, float cs, float ch, Vector3 pos, float radius, float height, byte areaId)
         {
-            Vector3 bmin = new Vector3();
-            Vector3 bmax = new Vector3();
+            Vector3 bmin = new();
+            Vector3 bmax = new();
             bmin.X = pos.X - radius;
             bmin.Y = pos.Y;
             bmin.Z = pos.Z - radius;
@@ -1920,7 +1920,7 @@ namespace DotRecast.Detour.TileCache
         {
             using var ms = new MemoryStream();
             using var bw = new BinaryWriter(ms);
-            DtTileCacheLayerHeaderWriter hw = new DtTileCacheLayerHeaderWriter();
+            DtTileCacheLayerHeaderWriter hw = new();
             try
             {
                 hw.Write(bw, layer.header);
@@ -1947,7 +1947,7 @@ namespace DotRecast.Detour.TileCache
         {
             using var ms = new MemoryStream();
             using var bw = new BinaryWriter(ms);
-            DtTileCacheLayerHeaderWriter hw = new DtTileCacheLayerHeaderWriter();
+            DtTileCacheLayerHeaderWriter hw = new();
             try
             {
                 hw.Write(bw, header);
@@ -1972,8 +1972,8 @@ namespace DotRecast.Detour.TileCache
 
         public static DtTileCacheLayer DecompressTileCacheLayer(IRcCompressor comp, byte[] compressed)
         {
-            RcByteBuffer buf = new RcByteBuffer(compressed);
-            DtTileCacheLayer layer = new DtTileCacheLayer();
+            RcByteBuffer buf = new(compressed);
+            DtTileCacheLayer layer = new();
             try
             {
                 var reader = new DtTileCacheLayerHeaderReader();

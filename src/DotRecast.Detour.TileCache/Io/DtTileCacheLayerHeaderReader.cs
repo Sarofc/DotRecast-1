@@ -27,7 +27,7 @@ namespace DotRecast.Detour.TileCache.Io
     {
         public DtTileCacheLayerHeader Read(ref RcByteBuffer data)
         {
-            DtTileCacheLayerHeader header = new DtTileCacheLayerHeader();
+            DtTileCacheLayerHeader header = new();
             header.magic = data.ReadInt32();
             header.version = data.ReadInt32();
 

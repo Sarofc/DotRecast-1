@@ -412,7 +412,7 @@ namespace DotRecast.Recast
 
             // Find best point on left of edge.
             int pt = npts;
-            Vector3 c = new Vector3();
+            Vector3 c = new();
             float r = -1f;
             for (int u = 0; u < npts; ++u)
             {
@@ -511,7 +511,7 @@ namespace DotRecast.Recast
         {
             int nfaces = 0;
             int maxEdges = npts * 10;
-            List<int> edges = new List<int>(64);
+            List<int> edges = new(64);
             for (int i = 0, j = nhull - 1; i < nhull; j = i++)
             {
                 AddEdge(ctx, edges, maxEdges, hull[j], hull[i], EV_HULL, EV_UNDEF);
@@ -886,8 +886,8 @@ namespace DotRecast.Recast
             if (sampleDist > 0)
             {
                 // Create sample locations in a grid.
-                Vector3 bmin = new Vector3(@in);
-                Vector3 bmax = new Vector3(@in);
+                Vector3 bmin = new(@in);
+                Vector3 bmax = new(@in);
                 for (int i = 1; i < nin; ++i)
                 {
                     bmin = Vector3.Min(bmin, RcVec.Create(@in, i * 3));
@@ -903,7 +903,7 @@ namespace DotRecast.Recast
                 {
                     for (int x = x0; x < x1; ++x)
                     {
-                        Vector3 pt = new Vector3();
+                        Vector3 pt = new();
                         pt.X = x * sampleDist;
                         pt.Y = (bmax.Y + bmin.Y) * 0.5f;
                         pt.Z = z * sampleDist;
@@ -932,7 +932,7 @@ namespace DotRecast.Recast
                     }
 
                     // Find sample with most error.
-                    Vector3 bestpt = new Vector3();
+                    Vector3 bestpt = new();
                     float bestd = 0;
                     int besti = -1;
                     for (int i = 0; i < nsamples; ++i)
@@ -943,7 +943,7 @@ namespace DotRecast.Recast
                             continue; // skip added.
                         }
 
-                        Vector3 pt = new Vector3();
+                        Vector3 pt = new();
                         // The sample location is jittered to get rid of some bad triangulations
                         // which are cause by symmetrical data from the grid structure.
                         pt.X = samples[s + 0] * sampleDist + GetJitterX(i) * cs * 0.1f;
@@ -1327,7 +1327,7 @@ namespace DotRecast.Recast
                 return null;
             }
 
-            RcPolyMeshDetail dmesh = new RcPolyMeshDetail();
+            RcPolyMeshDetail dmesh = new();
             int nvp = mesh.nvp;
             float cs = mesh.cs;
             float ch = mesh.ch;
@@ -1335,12 +1335,12 @@ namespace DotRecast.Recast
             int borderSize = mesh.borderSize;
             int heightSearchRadius = (int)Math.Max(1, MathF.Ceiling(mesh.maxEdgeError));
 
-            List<int> edges = new List<int>(64); // TODO alloc
-            List<int> tris = new List<int>(512);
-            List<int> arr = new List<int>(512);
-            List<int> samples = new List<int>(512);
+            List<int> edges = new(64); // TODO alloc
+            List<int> tris = new(512);
+            List<int> arr = new(512);
+            List<int> samples = new(512);
             float[] verts = new float[256 * 3];
-            RcHeightPatch hp = new RcHeightPatch();
+            RcHeightPatch hp = new();
             int nPolyVerts = 0;
             int maxhw = 0, maxhh = 0;
 
@@ -1517,7 +1517,7 @@ namespace DotRecast.Recast
         {
             using var timer = ctx.ScopedTimer(RcTimerLabel.RC_TIMER_MERGE_POLYMESHDETAIL);
 
-            RcPolyMeshDetail mesh = new RcPolyMeshDetail();
+            RcPolyMeshDetail mesh = new();
 
             int maxVerts = 0;
             int maxTris = 0;

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using DotRecast.Detour.TileCache.Io;
 using DotRecast.Recast.Geom;
+using DotRecast.Recast.Toolset;
 using NUnit.Framework;
 
 namespace DotRecast.Detour.TileCache.Test.Io;
@@ -29,14 +30,14 @@ namespace DotRecast.Detour.TileCache.Test.Io;
 
 public class TileCacheReaderWriterTest : AbstractTileCacheTest
 {
-    private readonly DtTileCacheReader reader = new DtTileCacheReader(DtTileCacheLZ4ForTestCompressor.Shared);
-    private readonly DtTileCacheWriter writer = new DtTileCacheWriter(DtTileCacheLZ4ForTestCompressor.Shared);
+    private readonly DtTileCacheReader reader = new(LZ4Compressor.Shared);
+    private readonly DtTileCacheWriter writer = new(LZ4Compressor.Shared);
 
     [Test]
     public void TestDungeon()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        TestTileLayerBuilder layerBuilder = new TestTileLayerBuilder(geom);
+        TestTileLayerBuilder layerBuilder = new(geom);
         List<byte[]> layers = layerBuilder.Build(1);
         DtTileCache tc = GetTileCache(geom);
         foreach (byte[] layer in layers)

@@ -66,7 +66,7 @@ namespace DotRecast.Recast
             bool keepInterResults, bool buildAll)
         {
             var results = new List<RcBuilderResult>(th * tw);
-            RcAtomicInteger counter = new RcAtomicInteger(0);
+            RcAtomicInteger counter = new(0);
 
             for (int y = 0; y < th; ++y)
             {
@@ -85,9 +85,9 @@ namespace DotRecast.Recast
             bool keepInterResults, bool buildAll)
         {
             var results = new ConcurrentQueue<RcBuilderResult>();
-            RcAtomicInteger progress = new RcAtomicInteger(0);
+            RcAtomicInteger progress = new(0);
 
-            List<Task> limits = new List<Task>(threads);
+            List<Task> limits = new(threads);
             for (int x = 0; x < tw; ++x)
             {
                 for (int y = 0; y < th; ++y)
@@ -145,7 +145,7 @@ namespace DotRecast.Recast
         public RcBuilderResult Build(IInputGeomProvider geom, RcBuilderConfig bcfg, bool keepInterResults)
         {
             RcConfig cfg = bcfg.cfg;
-            RcContext ctx = new RcContext();
+            RcContext ctx = new();
             //
             // Step 1. Rasterize input polygon soup.
             //
@@ -287,7 +287,7 @@ namespace DotRecast.Recast
 
         public RcHeightfieldLayerSet BuildLayers(IInputGeomProvider geom, RcBuilderConfig builderCfg)
         {
-            RcContext ctx = new RcContext();
+            RcContext ctx = new();
             RcHeightfield solid = RcVoxelizations.BuildSolidHeightfield(ctx, geom, builderCfg);
             FilterHeightfield(ctx, solid, builderCfg.cfg);
             RcCompactHeightfield chf = BuildCompactHeightfield(ctx, geom, builderCfg.cfg, solid);

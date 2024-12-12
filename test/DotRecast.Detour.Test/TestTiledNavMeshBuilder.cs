@@ -58,7 +58,7 @@ public class TestTiledNavMeshBuilder
         float detailSampleMaxError, int tileSize)
     {
         // Create empty nav mesh
-        DtNavMeshParams navMeshParams = new DtNavMeshParams();
+        DtNavMeshParams navMeshParams = new();
         navMeshParams.orig = geom.GetMeshBoundsMin();
         navMeshParams.tileWidth = tileSize * cellSize;
         navMeshParams.tileHeight = tileSize * cellSize;
@@ -68,7 +68,7 @@ public class TestTiledNavMeshBuilder
         navMesh.Init(navMeshParams, 6);
 
         // Build all tiles
-        RcConfig cfg = new RcConfig(true, tileSize, tileSize, RcConfig.CalcBorder(agentRadius, cellSize),
+        RcConfig cfg = new(true, tileSize, tileSize, RcConfig.CalcBorder(agentRadius, cellSize),
             partitionType,
             cellSize, cellHeight,
             agentMaxSlope, agentHeight, agentRadius, agentMaxClimb,
@@ -78,7 +78,7 @@ public class TestTiledNavMeshBuilder
             detailSampleDist, detailSampleMaxError,
             true, true, true,
             SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
-        RcBuilder rcBuilder = new RcBuilder();
+        RcBuilder rcBuilder = new();
         List<RcBuilderResult> rcResult = rcBuilder.BuildTiles(geom, cfg, false, true);
 
         // Add tiles to nav mesh
@@ -96,7 +96,7 @@ public class TestTiledNavMeshBuilder
                 pmesh.flags[i] = 1;
             }
 
-            DtNavMeshCreateParams option = new DtNavMeshCreateParams();
+            DtNavMeshCreateParams option = new();
             option.verts = pmesh.verts;
             option.vertCount = pmesh.nverts;
             option.polys = pmesh.polys;

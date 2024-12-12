@@ -14,8 +14,8 @@ public class RcIoTests
         byte[] actual;
 
         {
-            using MemoryStream ms = new MemoryStream();
-            using BinaryWriter bw = new BinaryWriter(ms);
+            using MemoryStream ms = new();
+            using BinaryWriter bw = new(ms);
 
             RcIO.Write(bw, tileRef);
             RcIO.Write(bw, dataSize);
@@ -25,8 +25,8 @@ public class RcIoTests
         }
 
         {
-            using MemoryStream ms = new MemoryStream(actual);
-            using BinaryReader br = new BinaryReader(ms);
+            using MemoryStream ms = new(actual);
+            using BinaryReader br = new(ms);
             var byteBuffer = RcIO.ToByteBuffer(br);
 
             Assert.That(byteBuffer.ReadInt64(), Is.EqualTo(tileRef));

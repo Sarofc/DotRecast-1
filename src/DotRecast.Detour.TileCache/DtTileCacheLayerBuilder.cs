@@ -84,10 +84,10 @@ namespace DotRecast.Detour.TileCache
 
         protected virtual RcHeightfieldLayerSet BuildHeightfieldLayerSet(IInputGeomProvider geom, RcConfig cfg, int tx, int ty)
         {
-            RcBuilder rcBuilder = new RcBuilder();
+            RcBuilder rcBuilder = new();
             Vector3 bmin = geom.GetMeshBoundsMin();
             Vector3 bmax = geom.GetMeshBoundsMax();
-            RcBuilderConfig builderCfg = new RcBuilderConfig(cfg, bmin, bmax, tx, ty);
+            RcBuilderConfig builderCfg = new(cfg, bmin, bmax, tx, ty);
             RcHeightfieldLayerSet lset = rcBuilder.BuildLayers(geom, builderCfg);
             return lset;
         }
@@ -95,7 +95,7 @@ namespace DotRecast.Detour.TileCache
         protected virtual DtTileCacheLayerBuildResult BuildTileCacheLayer(IInputGeomProvider geom, RcConfig cfg, int tx, int ty)
         {
             RcHeightfieldLayerSet lset = BuildHeightfieldLayerSet(geom, cfg, tx, ty);
-            List<byte[]> result = new List<byte[]>();
+            List<byte[]> result = new();
             if (lset != null)
             {
                 for (int i = 0; i < lset.layers.Length; ++i)
@@ -103,7 +103,7 @@ namespace DotRecast.Detour.TileCache
                     RcHeightfieldLayer layer = lset.layers[i];
 
                     // Store header
-                    DtTileCacheLayerHeader header = new DtTileCacheLayerHeader();
+                    DtTileCacheLayerHeader header = new();
                     header.magic = DtTileCacheLayerHeader.DT_TILECACHE_MAGIC;
                     header.version = DtTileCacheLayerHeader.DT_TILECACHE_VERSION;
 

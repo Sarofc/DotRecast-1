@@ -300,8 +300,8 @@ namespace DotRecast.Detour
 
                 hmin -= option.walkableClimb;
                 hmax += option.walkableClimb;
-                Vector3 bmin = new Vector3();
-                Vector3 bmax = new Vector3();
+                Vector3 bmin = new();
+                Vector3 bmax = new();
                 bmin = option.bmin;
                 bmax = option.bmax;
                 bmin.Y = hmin;
@@ -407,7 +407,7 @@ namespace DotRecast.Detour
             }
 
             int bvTreeSize = option.buildBvTree ? option.polyCount * 2 : 0;
-            DtMeshHeader header = new DtMeshHeader();
+            DtMeshHeader header = new();
             float[] navVerts = new float[3 * totVertCount];
             DtPoly[] navPolys = new DtPoly[totPolyCount];
             DtPolyDetail[] navDMeshes = new DtPolyDetail[option.polyCount];
@@ -472,7 +472,7 @@ namespace DotRecast.Detour
             int src = 0;
             for (int i = 0; i < option.polyCount; ++i)
             {
-                DtPoly p = new DtPoly(i, nvp);
+                DtPoly p = new(i, nvp);
                 navPolys[i] = p;
                 p.vertCount = 0;
                 p.flags = option.polyFlags[i];
@@ -517,7 +517,7 @@ namespace DotRecast.Detour
                 // Only store connections which start from this tile.
                 if (offMeshConClass[i * 2 + 0] == 0xff)
                 {
-                    DtPoly p = new DtPoly(offMeshPolyBase + n, nvp);
+                    DtPoly p = new(offMeshPolyBase + n, nvp);
                     navPolys[offMeshPolyBase + n] = p;
                     p.vertCount = 2;
                     p.verts[0] = offMeshVertsBase + n * 2 + 0;
@@ -624,7 +624,7 @@ namespace DotRecast.Detour
                 }
             }
 
-            DtMeshData nmd = new DtMeshData();
+            DtMeshData nmd = new();
             nmd.header = header;
             nmd.verts = navVerts;
             nmd.polys = navPolys;

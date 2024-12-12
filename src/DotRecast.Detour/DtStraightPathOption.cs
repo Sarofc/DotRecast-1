@@ -4,9 +4,9 @@ namespace DotRecast.Detour
 {
     public class DtStraightPathOption
     {
-        public static readonly DtStraightPathOption None = new DtStraightPathOption(0, "None");
-        public static readonly DtStraightPathOption AreaCrossings = new DtStraightPathOption(DtStraightPathOptions.DT_STRAIGHTPATH_AREA_CROSSINGS, "Area");
-        public static readonly DtStraightPathOption AllCrossings = new DtStraightPathOption(DtStraightPathOptions.DT_STRAIGHTPATH_ALL_CROSSINGS, "All");
+        public static readonly DtStraightPathOption None = new(0, "None");
+        public static readonly DtStraightPathOption AreaCrossings = new(DtStraightPathOptions.DT_STRAIGHTPATH_AREA_CROSSINGS, "Area");
+        public static readonly DtStraightPathOption AllCrossings = new(DtStraightPathOptions.DT_STRAIGHTPATH_ALL_CROSSINGS, "All");
 
         public static readonly ImmutableArray<DtStraightPathOption> Values = [None, AreaCrossings, AllCrossings];
 

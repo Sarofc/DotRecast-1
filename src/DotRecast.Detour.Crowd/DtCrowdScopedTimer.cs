@@ -3,11 +3,11 @@ namespace DotRecast.Detour.Crowd
     internal readonly ref struct DtCrowdScopedTimer
     {
 #if PROFILE
-        private readonly DtCrowdTimerLabel _label;
+        private readonly string _label;
         private readonly DtCrowdTelemetry _telemetry;
 #endif
 
-        internal DtCrowdScopedTimer(DtCrowdTelemetry telemetry, DtCrowdTimerLabel label)
+        internal DtCrowdScopedTimer(DtCrowdTelemetry telemetry, string label)
         {
 #if PROFILE
             _telemetry = telemetry;

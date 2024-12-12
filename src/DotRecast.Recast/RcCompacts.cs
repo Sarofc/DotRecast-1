@@ -61,7 +61,7 @@ namespace DotRecast.Recast
             int spanCount = GetHeightFieldSpanCount(context, heightfield);
 
             // Fill in header.
-            RcCompactHeightfield compactHeightfield = new RcCompactHeightfield();
+            RcCompactHeightfield compactHeightfield = new();
             compactHeightfield.width = xSize;
             compactHeightfield.height = zSize;
             compactHeightfield.borderSize = heightfield.borderSize;

@@ -15,7 +15,7 @@ public class ImFilePicker
 {
     private static readonly ILogger Logger = Log.ForContext<RecastDemo>();
 
-    private static readonly Dictionary<string, ImFilePicker> _filePickers = new Dictionary<string, ImFilePicker>();
+    private static readonly Dictionary<string, ImFilePicker> _filePickers = new();
 
     public string RootFolder;
     public string CurrentFolder;

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using DotRecast.Core;
+using DotRecast.Core.Buffers;
 
 namespace DotRecast.Detour.Crowd
 {
@@ -11,8 +13,8 @@ namespace DotRecast.Detour.Crowd
         private float _maxTimeToFindPath;
 
 #if PROFILE
-        private readonly Dictionary<DtCrowdTimerLabel, long> _executionTimings = new Dictionary<DtCrowdTimerLabel, long>();
-        private readonly Dictionary<DtCrowdTimerLabel, RcCyclicBuffer<long>> _executionTimingSamples = new Dictionary<DtCrowdTimerLabel, RcCyclicBuffer<long>>();
+        private readonly Dictionary<string, long> _executionTimings = new Dictionary<string, long>();
+        private readonly Dictionary<string, RcCyclicBuffer<long>> _executionTimingSamples = new Dictionary<string, RcCyclicBuffer<long>>();
 #endif
 
         public float MaxTimeToEnqueueRequest()
@@ -30,7 +32,7 @@ namespace DotRecast.Detour.Crowd
 #if PROFILE
             foreach (var e in _executionTimings)
             {
-                yield return new RcTelemetryTick(e.Key.Label, e.Value);
+                yield return new RcTelemetryTick(e.Key, e.Value);
             }
 #else
             yield return default;
@@ -63,13 +65,13 @@ namespace DotRecast.Detour.Crowd
 #endif
         }
 
-        internal DtCrowdScopedTimer ScopedTimer(DtCrowdTimerLabel label)
+        internal DtCrowdScopedTimer ScopedTimer(string label)
         {
             return new DtCrowdScopedTimer(this, label);
         }
 
         [Conditional("PROFILE")]
-        internal void Start(DtCrowdTimerLabel name)
+        internal void Start(string name)
         {
 #if PROFILE
             //_executionTimings.Add(name, RcFrequency.Ticks);
@@ -78,7 +80,7 @@ namespace DotRecast.Detour.Crowd
         }
 
         [Conditional("PROFILE")]
-        internal void Stop(DtCrowdTimerLabel name)
+        internal void Stop(string name)
         {
 #if PROFILE
             long duration = RcFrequency.Ticks - _executionTimings[name];

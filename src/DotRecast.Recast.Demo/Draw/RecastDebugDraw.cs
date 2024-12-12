@@ -52,7 +52,7 @@ public class RecastDebugDraw : DebugDraw
         Begin(DebugDrawPrimitives.TRIS);
         for (int i = 0; i < tris.Length; i += 3)
         {
-            Vector3 norm = new Vector3(normals[i], normals[i + 1], normals[i + 2]);
+            Vector3 norm = new(normals[i], normals[i + 1], normals[i + 2]);
 
             int color;
             char a = (char)(220 * (2 + norm.X + norm.Y) / 4);
@@ -65,9 +65,9 @@ public class RecastDebugDraw : DebugDraw
                 color = DuRGBA(a, a, a, 255);
             }
 
-            Vector3 va = new Vector3(verts[tris[i] * 3], verts[tris[i] * 3 + 1], verts[tris[i] * 3 + 2]);
-            Vector3 vb = new Vector3(verts[tris[i + 1] * 3], verts[tris[i + 1] * 3 + 1], verts[tris[i + 1] * 3 + 2]);
-            Vector3 vc = new Vector3(verts[tris[i + 2] * 3], verts[tris[i + 2] * 3 + 1], verts[tris[i + 2] * 3 + 2]);
+            Vector3 va = new(verts[tris[i] * 3], verts[tris[i] * 3 + 1], verts[tris[i] * 3 + 2]);
+            Vector3 vb = new(verts[tris[i + 1] * 3], verts[tris[i + 1] * 3 + 1], verts[tris[i + 1] * 3 + 2]);
+            Vector3 vc = new(verts[tris[i + 2] * 3], verts[tris[i + 2] * 3 + 1], verts[tris[i + 2] * 3 + 2]);
 
             int ax = 0, ay = 0;
             if (MathF.Abs(norm.Y) > MathF.Abs(norm[ax]))
@@ -187,11 +187,11 @@ public class RecastDebugDraw : DebugDraw
                 }
 
                 DtOffMeshConnection con = tile.data.offMeshCons[i - tile.data.header.offMeshBase];
-                Vector3 va = new Vector3(
+                Vector3 va = new(
                     tile.data.verts[p.verts[0] * 3], tile.data.verts[p.verts[0] * 3 + 1],
                     tile.data.verts[p.verts[0] * 3 + 2]
                 );
-                Vector3 vb = new Vector3(
+                Vector3 vb = new(
                     tile.data.verts[p.verts[1] * 3], tile.data.verts[p.verts[1] * 3 + 1],
                     tile.data.verts[p.verts[1] * 3 + 2]
                 );
@@ -572,7 +572,7 @@ public class RecastDebugDraw : DebugDraw
 
     private Vector3 GetContourCenter(RcContour cont, Vector3 orig, float cs, float ch)
     {
-        Vector3 center = new Vector3();
+        Vector3 center = new();
         center.X = 0;
         center.Y = 0;
         center.Z = 0;

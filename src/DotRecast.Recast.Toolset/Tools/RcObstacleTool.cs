@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
+using DotRecast.Detour.TileCache.Io;
 using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
@@ -50,7 +52,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             // Generation params.
             var walkableRadius = (int)MathF.Ceiling(setting.agentRadius / setting.cellSize); // Reserve enough padding.
-            RcConfig cfg = new RcConfig(
+            RcConfig cfg = new(
                 true, setting.tileSize, setting.tileSize,
                 walkableRadius + 3,
                 RcPartitionType.OfValue(setting.partitioning),
@@ -81,6 +83,33 @@ namespace DotRecast.Recast.Toolset.Tools
             return new NavMeshBuildResult(ImmutableArray<RcBuilderResult>.Empty, _tc.GetNavMesh());
         }
 
+        public bool Save(string file)
+        {
+            if (_tc == null)
+                return false;
+
+            var writer = new DtTileCacheWriter(_compressor);
+
+            using var fs = new FileStream(file, FileMode.Create);
+            using var bw = new BinaryWriter(fs);
+
+            writer.Write(bw, _tc);
+
+            // TODO convex volume 保存了，但是 link 没保存
+
+            return true;
+        }
+
+        public void Load(string file)
+        {
+            var reader = new DtTileCacheReader(_compressor);
+
+            using var fs = new FileStream(file, FileMode.Open);
+            using var br = new BinaryReader(fs);
+
+            _tc = reader.Read(br, 6, _proc);
+        }
+
         public void ClearAllTempObstacles()
         {
             if (null == _tc)
@@ -105,14 +134,37 @@ namespace DotRecast.Recast.Toolset.Tools
             _tc.RemoveObstacle(refs);
         }
 
-        public long AddTempObstacle(Vector3 p)
+        public void RemoveObstacle(long refs)
+        {
+            if (null == _tc)
+                return;
+
+            _tc.RemoveObstacle(refs);
+        }
+
+        public long AddObstacle(Vector3 p, float raidus, float height)
         {
             if (null == _tc)
                 return 0;
 
             p.Y -= 0.5f;
-            return _tc.AddObstacle(p, 1.0f, 2.0f);
-            //return _tc.AddBoxObstacle(p, new Vector3(1, 1, 2), float.DegreesToRadians(35));
+            return _tc.AddObstacle(p, raidus, height);
+        }
+
+        public long AddBoxObstacle(Vector3 bmin, Vector3 bmax)
+        {
+            if (null == _tc)
+                return 0;
+
+            return _tc.AddBoxObstacle(bmin, bmax);
+        }
+
+        public long AddBoxObstacle(Vector3 center, Vector3 extents, float yRadians)
+        {
+            if (null == _tc)
+                return 0;
+
+            return _tc.AddBoxObstacle(center, extents, yRadians);
         }
 
         public DtTileCache GetTileCache()
@@ -122,7 +174,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
         public DtTileCache CreateTileCache(IInputGeomProvider geom, RcNavMeshBuildSettings setting, int tw, int th)
         {
-            DtTileCacheParams option = new DtTileCacheParams();
+            DtTileCacheParams option = new();
             option.ch = setting.cellHeight;
             option.cs = setting.cellSize;
             option.orig = geom.GetMeshBoundsMin();
@@ -135,7 +187,7 @@ namespace DotRecast.Recast.Toolset.Tools
             option.maxTiles = tw * th * EXPECTED_LAYERS_PER_TILE; // for test EXPECTED_LAYERS_PER_TILE;
             option.maxObstacles = 128;
 
-            DtNavMeshParams navMeshParams = new DtNavMeshParams();
+            DtNavMeshParams navMeshParams = new();
             navMeshParams.orig = geom.GetMeshBoundsMin();
             navMeshParams.tileWidth = setting.tileSize * setting.cellSize;
             navMeshParams.tileHeight = setting.tileSize * setting.cellSize;
@@ -147,7 +199,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             var navMesh = new DtNavMesh();
             navMesh.Init(navMeshParams, 6);
-            DtTileCache tc = new DtTileCache(option, navMesh, _compressor, _proc);
+            DtTileCache tc = new(option, navMesh, _compressor, _proc);
             return tc;
         }
 

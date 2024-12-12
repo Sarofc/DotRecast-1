@@ -30,7 +30,7 @@ public class RandomPointTest : AbstractDetourTest
     [Repeat(10)]
     public void TestRandom()
     {
-        RcRand f = new RcRand(1);
+        RcRand f = new(1);
         IDtQueryFilter filter = new DtQueryDefaultFilter();
 
         var begin = RcFrequency.Ticks;
@@ -64,7 +64,7 @@ public class RandomPointTest : AbstractDetourTest
     [Test]
     public void TestRandomAroundCircle()
     {
-        RcRand f = new RcRand(1);
+        RcRand f = new(1);
         IDtQueryFilter filter = new DtQueryDefaultFilter();
         query.FindRandomPoint(filter, f, out var randomRef, out var randomPt);
         for (int i = 0; i < 1000; i++)
@@ -118,7 +118,7 @@ public class RandomPointTest : AbstractDetourTest
     [Test]
     public void TestPerformance()
     {
-        RcRand f = new RcRand(1);
+        RcRand f = new(1);
         IDtQueryFilter filter = new DtQueryDefaultFilter();
         query.FindRandomPoint(filter, f, out var randomRef, out var randomPt);
 

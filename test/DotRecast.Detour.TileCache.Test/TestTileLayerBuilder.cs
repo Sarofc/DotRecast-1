@@ -21,9 +21,9 @@ freely, subject to the following restrictions:
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using DotRecast.Detour.TileCache.Test.Io;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
+using DotRecast.Recast.Toolset;
 
 namespace DotRecast.Detour.TileCache.Test;
 
@@ -55,7 +55,7 @@ public class TestTileLayerBuilder : DtTileCacheLayerBuilder
     public readonly int tw;
     public readonly int th;
 
-    public TestTileLayerBuilder(IInputGeomProvider geom) : base(DtTileCacheLZ4ForTestCompressor.Shared)
+    public TestTileLayerBuilder(IInputGeomProvider geom) : base(LZ4Compressor.Shared)
     {
         _geom = geom;
         _cfg = new RcConfig(true, m_tileSize, m_tileSize,

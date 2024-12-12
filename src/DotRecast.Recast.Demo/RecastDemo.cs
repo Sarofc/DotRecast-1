@@ -70,8 +70,8 @@ public class RecastDemo : IRecastDemoChannel
     private float timeAcc = 0;
     private float camr = 1000;
 
-    private readonly SoloNavMeshBuilder soloNavMeshBuilder = new SoloNavMeshBuilder();
-    private readonly TileNavMeshBuilder tileNavMeshBuilder = new TileNavMeshBuilder();
+    private readonly SoloNavMeshBuilder soloNavMeshBuilder = new();
+    private readonly TileNavMeshBuilder tileNavMeshBuilder = new();
 
     private string _lastGeomFileName;
     private DemoSample _sample;
@@ -80,7 +80,7 @@ public class RecastDemo : IRecastDemoChannel
     private bool processHitTestShift;
     private int _modState;
 
-    private Vector2 mousePos = new Vector2();
+    private Vector2 mousePos = new();
 
     private bool _mouseOverMenu;
     private bool pan;
@@ -88,12 +88,12 @@ public class RecastDemo : IRecastDemoChannel
     private bool rotate;
     private bool movedDuringRotate;
     private float scrollZoom;
-    private Vector2 origMousePos = new Vector2();
-    private Vector2 origCameraEulers = new Vector2();
-    private Vector3 origCameraPos = new Vector3();
+    private Vector2 origMousePos = new();
+    private Vector2 origCameraEulers = new();
+    private Vector3 origCameraPos = new();
 
-    private Vector2 cameraEulers = new Vector2(45, -45);
-    private Vector3 cameraPos = new Vector3(0, 0, 0);
+    private Vector2 cameraEulers = new(45, -45);
+    private Vector3 cameraPos = new(0, 0, 0);
 
 
     private float[] projectionMatrix = new float[16];
@@ -109,7 +109,7 @@ public class RecastDemo : IRecastDemoChannel
 
     private int[] viewport;
     private bool markerPositionSet;
-    private Vector3 markerPosition = new Vector3();
+    private Vector3 markerPosition = new();
 
     private RcMenuView _menuView;
     private RcToolsetView _toolsetView;
@@ -314,7 +314,7 @@ public class RecastDemo : IRecastDemoChannel
         try
         {
             using var br = new BinaryReader(file);
-            DtMeshSetReader reader = new DtMeshSetReader();
+            DtMeshSetReader reader = new();
             var mesh = reader.Read(br, 6);
 
             if (null != mesh)
@@ -519,8 +519,8 @@ public class RecastDemo : IRecastDemoChannel
         {
             processHitTest = false;
 
-            Vector3 rayStart = new Vector3();
-            Vector3 rayEnd = new Vector3();
+            Vector3 rayStart = new();
+            Vector3 rayEnd = new();
 
             GLU.GlhUnProjectf(mousePos.X, viewport[3] - 1 - mousePos.Y, 0.0f, modelviewMatrix, projectionMatrix, viewport, ref rayStart);
             GLU.GlhUnProjectf(mousePos.X, viewport[3] - 1 - mousePos.Y, 1.0f, modelviewMatrix, projectionMatrix, viewport, ref rayEnd);
@@ -719,7 +719,7 @@ public class RecastDemo : IRecastDemoChannel
         Logger.Information($"-----------------------------------------");
         var telemetries = buildResult.RecastBuilderResults
             .Select(x => x.Context)
-            .SelectMany(x => x.ToList())
+            .SelectMany(x => x.ToArray())
             .GroupBy(x => x.Key)
             .ToImmutableSortedDictionary(x => x.Key, x => x.Sum(y => y.Millis));
 
@@ -767,7 +767,7 @@ public class RecastDemo : IRecastDemoChannel
 
         try
         {
-            using FileStream fs = new FileStream(args.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using FileStream fs = new(args.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             LoadNavMesh(fs, args.FilePath);
         }
         catch (Exception e)
@@ -803,7 +803,7 @@ public class RecastDemo : IRecastDemoChannel
             hit = RcPolyMeshRaycast.Raycast(_sample.GetRecastResults(), rayStart, rayEnd, out hitTime);
         }
 
-        Vector3 rayDir = new Vector3(rayEnd.X - rayStart.X, rayEnd.Y - rayStart.Y, rayEnd.Z - rayStart.Z);
+        Vector3 rayDir = new(rayEnd.X - rayStart.X, rayEnd.Y - rayStart.Y, rayEnd.Z - rayStart.Z);
         rayDir = Vector3.Normalize(rayDir);
 
         ISampleTool raySampleTool = _toolsetView.GetTool();
@@ -826,7 +826,7 @@ public class RecastDemo : IRecastDemoChannel
             }
             else
             {
-                Vector3 pos = new Vector3();
+                Vector3 pos = new();
                 pos.X = rayStart.X + (rayEnd.X - rayStart.X) * hitTime;
                 pos.Y = rayStart.Y + (rayEnd.Y - rayStart.Y) * hitTime;
                 pos.Z = rayStart.Z + (rayEnd.Z - rayStart.Z) * hitTime;

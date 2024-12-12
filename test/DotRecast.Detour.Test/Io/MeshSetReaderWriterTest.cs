@@ -29,8 +29,8 @@ namespace DotRecast.Detour.Test.Io;
 
 public class MeshSetReaderWriterTest
 {
-    private readonly DtMeshSetWriter writer = new DtMeshSetWriter();
-    private readonly DtMeshSetReader reader = new DtMeshSetReader();
+    private readonly DtMeshSetWriter writer = new();
+    private readonly DtMeshSetReader reader = new();
     private const float m_cellSize = 0.3f;
     private const float m_cellHeight = 0.2f;
     private const float m_agentHeight = 2.0f;
@@ -55,7 +55,7 @@ public class MeshSetReaderWriterTest
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
 
-        NavMeshSetHeader header = new NavMeshSetHeader();
+        NavMeshSetHeader header = new();
         header.magic = NavMeshSetHeader.NAVMESHSET_MAGIC;
         header.version = NavMeshSetHeader.NAVMESHSET_VERSION;
         header.option.orig = geom.GetMeshBoundsMin();
@@ -64,7 +64,7 @@ public class MeshSetReaderWriterTest
         header.option.maxTiles = m_maxTiles;
         header.option.maxPolys = m_maxPolysPerTile;
         header.numTiles = 0;
-        DtNavMesh mesh = new DtNavMesh();
+        DtNavMesh mesh = new();
         mesh.Init(header.option, 6);
 
         Vector3 bmin = geom.GetMeshBoundsMin();
@@ -74,7 +74,7 @@ public class MeshSetReaderWriterTest
         {
             for (int x = 0; x < tw; ++x)
             {
-                RcConfig cfg = new RcConfig(true, m_tileSize, m_tileSize,
+                RcConfig cfg = new(true, m_tileSize, m_tileSize,
                     RcConfig.CalcBorder(m_agentRadius, m_cellSize),
                     RcPartition.WATERSHED,
                     m_cellSize, m_cellHeight,
@@ -85,8 +85,8 @@ public class MeshSetReaderWriterTest
                     m_detailSampleDist, m_detailSampleMaxError,
                     true, true, true,
                     SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
-                RcBuilderConfig bcfg = new RcBuilderConfig(cfg, bmin, bmax, x, y);
-                TestDetourBuilder db = new TestDetourBuilder();
+                RcBuilderConfig bcfg = new(cfg, bmin, bmax, x, y);
+                TestDetourBuilder db = new();
                 DtMeshData data = db.Build(geom, bcfg, m_agentHeight, m_agentRadius, m_agentMaxClimb, x, y, true);
                 if (data != null)
                 {

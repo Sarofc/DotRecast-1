@@ -26,7 +26,7 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheReader
     {
-        private readonly DtNavMeshParamsReader paramReader = new DtNavMeshParamsReader();
+        private readonly DtNavMeshParamsReader paramReader = new();
         private readonly IRcCompressor _compressor;
 
         public DtTileCacheReader(IRcCompressor compressor)
@@ -42,7 +42,7 @@ namespace DotRecast.Detour.TileCache.Io
 
         public DtTileCache Read(ref RcByteBuffer bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
         {
-            DtTileCacheSetHeader header = new DtTileCacheSetHeader();
+            DtTileCacheSetHeader header = new();
             header.magic = bb.ReadInt32();
             if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
             {
@@ -61,9 +61,9 @@ namespace DotRecast.Detour.TileCache.Io
             header.numTiles = bb.ReadInt32();
             header.meshParams = paramReader.Read(ref bb);
             header.cacheParams = ReadCacheParams(ref bb);
-            DtNavMesh mesh = new DtNavMesh();
+            DtNavMesh mesh = new();
             mesh.Init(header.meshParams, maxVertPerPoly);
-            DtTileCache tc = new DtTileCache(header.cacheParams, mesh, _compressor, meshProcessor);
+            DtTileCache tc = new(header.cacheParams, mesh, _compressor, meshProcessor);
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {
@@ -87,7 +87,7 @@ namespace DotRecast.Detour.TileCache.Io
 
         private DtTileCacheParams ReadCacheParams(ref RcByteBuffer bb)
         {
-            DtTileCacheParams option = new DtTileCacheParams();
+            DtTileCacheParams option = new();
 
             option.orig.X = bb.ReadSingle();
             option.orig.Y = bb.ReadSingle();

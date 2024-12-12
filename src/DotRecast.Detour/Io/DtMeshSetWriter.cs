@@ -60,10 +60,10 @@ namespace DotRecast.Detour.Io
                     continue;
                 }
 
-                NavMeshTileHeader tileHeader = new NavMeshTileHeader();
+                NavMeshTileHeader tileHeader = new();
                 tileHeader.tileRef = mesh.GetTileRef(tile);
-                using MemoryStream msw = new MemoryStream();
-                using BinaryWriter bw = new BinaryWriter(msw);
+                using MemoryStream msw = new();
+                using BinaryWriter bw = new(msw);
                 DtMeshDataWriter writer;
                 writer.Write(bw, tile.data);
                 bw.Flush();

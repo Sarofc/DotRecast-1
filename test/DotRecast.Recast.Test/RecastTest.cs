@@ -36,7 +36,7 @@ public class RecastTest
         int[] unwalkable_tri = [0, 2, 1];
         int nt = 1;
 
-        RcContext ctx = new RcContext();
+        RcContext ctx = new();
         {
             int[] areas = [42];
             RcRecast.ClearUnwalkableTriangles(ctx, walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);

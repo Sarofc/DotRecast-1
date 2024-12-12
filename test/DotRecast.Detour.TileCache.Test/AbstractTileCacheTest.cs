@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using DotRecast.Detour.TileCache.Test.Io;
 using DotRecast.Recast;
 using DotRecast.Recast.Geom;
+using DotRecast.Recast.Toolset;
 
 
 namespace DotRecast.Detour.TileCache.Test;
@@ -41,7 +41,7 @@ public class AbstractTileCacheTest
 
     public DtTileCache GetTileCache(IInputGeomProvider geom)
     {
-        DtTileCacheParams option = new DtTileCacheParams();
+        DtTileCacheParams option = new();
         RcRecast.CalcTileCount(geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), m_cellSize, m_tileSize, m_tileSize, out var tw, out var th);
         option.ch = m_cellHeight;
         option.cs = m_cellSize;
@@ -55,7 +55,7 @@ public class AbstractTileCacheTest
         option.maxTiles = tw * th * EXPECTED_LAYERS_PER_TILE;
         option.maxObstacles = 128;
 
-        DtNavMeshParams navMeshParams = new DtNavMeshParams();
+        DtNavMeshParams navMeshParams = new();
         navMeshParams.orig = geom.GetMeshBoundsMin();
         navMeshParams.tileWidth = m_tileSize * m_cellSize;
         navMeshParams.tileHeight = m_tileSize * m_cellSize;
@@ -64,10 +64,10 @@ public class AbstractTileCacheTest
 
         var navMesh = new DtNavMesh();
         navMesh.Init(navMeshParams, 6);
-        var comp = DtTileCacheLZ4ForTestCompressor.Shared;
+        var comp = LZ4Compressor.Shared;
         //var storageParams = new DtTileCacheStorageParams(order, cCompatibility);
         var process = new TestTileCacheMeshProcess();
-        DtTileCache tc = new DtTileCache(option, navMesh, comp, process);
+        DtTileCache tc = new(option, navMesh, comp, process);
         return tc;
     }
 }

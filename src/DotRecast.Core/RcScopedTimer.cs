@@ -4,10 +4,10 @@ namespace DotRecast.Core
     {
 #if PROFILE
         private readonly RcContext _context;
-        private readonly RcTimerLabel _label;
+        private readonly string _label;
 #endif        
 
-        internal RcScopedTimer(RcContext context, RcTimerLabel label)
+        internal RcScopedTimer(RcContext context, string label)
         {
 #if PROFILE
             _context = context;

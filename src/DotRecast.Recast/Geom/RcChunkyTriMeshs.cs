@@ -101,7 +101,7 @@ namespace DotRecast.Recast.Geom
         public static List<RcChunkyTriMeshNode> GetChunksOverlappingRect(RcChunkyTriMesh cm, Vector2 bmin, Vector2 bmax)
         {
             // Traverse tree
-            List<RcChunkyTriMeshNode> ids = new List<RcChunkyTriMeshNode>();
+            List<RcChunkyTriMeshNode> ids = new();
             int i = 0;
             while (i < cm.nodes.Count)
             {
@@ -131,7 +131,7 @@ namespace DotRecast.Recast.Geom
         public static List<RcChunkyTriMeshNode> GetChunksOverlappingSegment(RcChunkyTriMesh cm, Vector2 p, Vector2 q)
         {
             // Traverse tree
-            List<RcChunkyTriMeshNode> ids = new List<RcChunkyTriMeshNode>();
+            List<RcChunkyTriMeshNode> ids = new();
             int i = 0;
             while (i < cm.nodes.Count)
             {
@@ -200,7 +200,7 @@ namespace DotRecast.Recast.Geom
         {
             int inum = imax - imin;
 
-            RcChunkyTriMeshNode node = new RcChunkyTriMeshNode();
+            RcChunkyTriMeshNode node = new();
             nodes.Add(node);
 
             if (inum <= trisPerChunk)

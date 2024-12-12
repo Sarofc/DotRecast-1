@@ -26,7 +26,7 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheWriter
     {
-        private readonly DtNavMeshParamWriter paramWriter = new DtNavMeshParamWriter();
+        private readonly DtNavMeshParamWriter paramWriter = new();
         private readonly IRcCompressor _compressor;
 
         public DtTileCacheWriter(IRcCompressor compFactory)

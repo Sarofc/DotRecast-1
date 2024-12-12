@@ -633,8 +633,8 @@ namespace DotRecast.Detour
             }
             else
             {
-                Vector3 bmin = new Vector3();
-                Vector3 bmax = new Vector3();
+                Vector3 bmin = new();
+                Vector3 bmax = new();
                 long @base = m_nav.GetPolyRefBase(tile);
                 for (int i = 0; i < tile.data.header.polyCount; ++i)
                 {
@@ -1747,7 +1747,7 @@ namespace DotRecast.Detour
 
 
         const int MAX_STACK = 48;
-        Queue<DtNode> _stack = new Queue<DtNode>(MAX_STACK);
+        Queue<DtNode> _stack = new(MAX_STACK);
 
         /// @par
         ///
@@ -1810,7 +1810,7 @@ namespace DotRecast.Detour
             stack.Clear();
             stack.Enqueue(startNode);
 
-            Vector3 bestPos = new Vector3();
+            Vector3 bestPos = new();
             float bestDist = float.MaxValue;
             DtNode bestNode = null;
             bestPos = startPos;

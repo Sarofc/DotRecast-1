@@ -48,7 +48,7 @@ namespace DotRecast.Detour.Io
                 throw new IOException("Invalid number of verts per poly " + header.maxVertsPerPoly);
             }
 
-            DtNavMesh mesh = new DtNavMesh();
+            DtNavMesh mesh = new();
             mesh.Init(header.option, header.maxVertsPerPoly);
             ReadTiles(ref bb, ref header, mesh);
             return mesh;
@@ -56,7 +56,7 @@ namespace DotRecast.Detour.Io
 
         private NavMeshSetHeader ReadHeader(ref RcByteBuffer bb, int maxVertsPerPoly)
         {
-            NavMeshSetHeader header = new NavMeshSetHeader();
+            NavMeshSetHeader header = new();
             header.magic = bb.ReadInt32();
             if (header.magic != NavMeshSetHeader.NAVMESHSET_MAGIC)
             {
@@ -82,7 +82,7 @@ namespace DotRecast.Detour.Io
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {
-                NavMeshTileHeader tileHeader = new NavMeshTileHeader();
+                NavMeshTileHeader tileHeader = new();
 
                 tileHeader.tileRef = bb.ReadInt64();
 

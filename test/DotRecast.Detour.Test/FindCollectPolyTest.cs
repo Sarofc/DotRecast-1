@@ -47,7 +47,7 @@ public class FindCollectPolyTest : AbstractDetourTest
     public void TestFindNearestPoly()
     {
         IDtQueryFilter filter = new DtQueryDefaultFilter();
-        Vector3 extents = new Vector3(2, 4, 2);
+        Vector3 extents = new(2, 4, 2);
         var polys = new long[32];
         for (int i = 0; i < startRefs.Length; i++)
         {

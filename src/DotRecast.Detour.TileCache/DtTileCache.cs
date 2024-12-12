@@ -47,11 +47,11 @@ namespace DotRecast.Detour.TileCache
         private readonly IRcCompressor m_tcomp;
         private readonly IDtTileCacheMeshProcess m_tmproc;
 
-        private readonly List<DtTileCacheObstacle> m_obstacles = new List<DtTileCacheObstacle>();
+        private readonly List<DtTileCacheObstacle> m_obstacles = new();
         private DtTileCacheObstacle m_nextFreeObstacle;
 
-        private readonly List<DtObstacleRequest> m_reqs = new List<DtObstacleRequest>();
-        private readonly List<long> m_update = new List<long>();
+        private readonly List<DtObstacleRequest> m_reqs = new();
+        private readonly List<long> m_update = new();
 
         public DtTileCache(DtTileCacheParams option, DtNavMesh navmesh, IRcCompressor tcomp, IDtTileCacheMeshProcess tmprocs)
         {
@@ -234,7 +234,7 @@ namespace DotRecast.Detour.TileCache
         public long AddTile(byte[] data, int flags)
         {
             // Make sure the data is in right format.
-            RcByteBuffer buf = new RcByteBuffer(data);
+            RcByteBuffer buf = new(data);
             var reader = new DtTileCacheLayerHeaderReader();
             DtTileCacheLayerHeader header = reader.Read(ref buf);
             // Make sure the location is free.
@@ -379,7 +379,7 @@ namespace DotRecast.Detour.TileCache
 
         private DtObstacleRequest AddObstacleRequest(DtTileCacheObstacle ob)
         {
-            DtObstacleRequest req = new DtObstacleRequest(DtObstacleRequestAction.REQUEST_ADD, GetObstacleRef(ob));
+            DtObstacleRequest req = new(DtObstacleRequestAction.REQUEST_ADD, GetObstacleRef(ob));
             m_reqs.Add(req);
             return req;
         }
@@ -391,7 +391,7 @@ namespace DotRecast.Detour.TileCache
                 return;
             }
 
-            DtObstacleRequest req = new DtObstacleRequest(DtObstacleRequestAction.REQUEST_REMOVE, refs);
+            DtObstacleRequest req = new(DtObstacleRequestAction.REQUEST_REMOVE, refs);
             m_reqs.Add(req);
         }
 
@@ -452,8 +452,8 @@ namespace DotRecast.Detour.TileCache
                     for (int i = 0; i < ntiles; i++)
                     {
                         DtCompressedTile tile = m_tiles[DecodeTileIdTile(tiles[i])];
-                        Vector3 tbmin = new Vector3();
-                        Vector3 tbmax = new Vector3();
+                        Vector3 tbmin = new();
+                        Vector3 tbmax = new();
                         CalcTightTileBounds(tile.header, ref tbmin, ref tbmax);
                         if (DtUtils.OverlapBounds(bmin, bmax, tbmin, tbmax))
                         {
@@ -497,8 +497,8 @@ namespace DotRecast.Detour.TileCache
                     if (req.action == DtObstacleRequestAction.REQUEST_ADD)
                     {
                         // Find touched tiles.
-                        Vector3 bmin = new Vector3();
-                        Vector3 bmax = new Vector3();
+                        Vector3 bmin = new();
+                        Vector3 bmax = new();
                         GetObstacleBounds(ob, ref bmin, ref bmax);
                         ob.ntouched = (byte)QueryTiles(bmin, bmax, ob.touched);
                         // Add tiles to update list.
@@ -641,7 +641,7 @@ namespace DotRecast.Detour.TileCache
                 return;
             }
 
-            DtNavMeshCreateParams option = new DtNavMeshCreateParams();
+            DtNavMeshCreateParams option = new();
             option.verts = polyMesh.verts;
             option.vertCount = polyMesh.nverts;
             option.polys = polyMesh.polys;

@@ -969,7 +969,7 @@ namespace DotRecast.Recast
         {
             using var timer = ctx.ScopedTimer(RcTimerLabel.RC_TIMER_BUILD_POLYMESH);
 
-            RcPolyMesh mesh = new RcPolyMesh();
+            RcPolyMesh mesh = new();
             mesh.bmin = cset.bmin;
             mesh.bmax = cset.bmax;
             mesh.cs = cset.cs;
@@ -1217,7 +1217,7 @@ namespace DotRecast.Recast
 
             using var timer = ctx.ScopedTimer(RcTimerLabel.RC_TIMER_MERGE_POLYMESH);
 
-            RcPolyMesh mesh = new RcPolyMesh();
+            RcPolyMesh mesh = new();
             mesh.nvp = meshes[0].nvp;
             mesh.cs = meshes[0].cs;
             mesh.ch = meshes[0].ch;
@@ -1340,7 +1340,7 @@ namespace DotRecast.Recast
 
         public static RcPolyMesh CopyPolyMesh(RcContext ctx, RcPolyMesh src)
         {
-            RcPolyMesh dst = new RcPolyMesh();
+            RcPolyMesh dst = new();
 
             dst.nverts = src.nverts;
             dst.npolys = src.npolys;

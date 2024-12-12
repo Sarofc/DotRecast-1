@@ -66,10 +66,10 @@ public class AbstractCrowdTest
         navmesh = new DtNavMesh();
         navmesh.Init(nmd, 6, 0);
         query = new DtNavMeshQuery(navmesh, DtCrowdConst.MAX_COMMON_NODES);
-        DtCrowdConfig config = new DtCrowdConfig(0.6f);
+        DtCrowdConfig config = new(0.6f);
         crowd = new DtCrowd(config);
         crowd.SetNavMesh(navmesh);
-        DtObstacleAvoidanceParams option = new DtObstacleAvoidanceParams();
+        DtObstacleAvoidanceParams option = new();
         option.velBias = 0.5f;
         option.adaptiveDivs = 5;
         option.adaptiveRings = 2;
@@ -98,7 +98,7 @@ public class AbstractCrowdTest
 
     protected DtCrowdAgentParams GetAgentParams(DtCrowdAgentUpdateFlags updateFlags, int obstacleAvoidanceType)
     {
-        DtCrowdAgentParams ap = new DtCrowdAgentParams();
+        DtCrowdAgentParams ap = new();
         ap.radius = 0.6f;
         ap.height = 2f;
         ap.maxAcceleration = 8.0f;
@@ -118,7 +118,7 @@ public class AbstractCrowdTest
         {
             for (int j = 0; j < size; j++)
             {
-                Vector3 pos = new Vector3();
+                Vector3 pos = new();
                 pos.X = startPos.X + i * distance;
                 pos.Y = startPos.Y;
                 pos.Z = startPos.Z + j * distance;
