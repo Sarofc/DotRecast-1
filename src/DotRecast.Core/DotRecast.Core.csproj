@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
+    <PackageReference Include="Utf8StreamReader" />
   </ItemGroup>
 
 

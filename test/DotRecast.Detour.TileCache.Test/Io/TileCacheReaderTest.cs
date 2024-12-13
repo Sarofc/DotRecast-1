@@ -33,8 +33,7 @@ public class TileCacheReaderTest : AbstractTileCacheTest
     [Test]
     public void TestDungeon()
     {
-        using var ms = new MemoryStream(RcIO.ReadFileIfFound("dungeon_all_tiles_tilecache.bin"));
-        using var br = new BinaryReader(ms);
+        using var br = new BinaryReader(RcIO.ReadFileIfFound("dungeon_all_tiles_tilecache.bin"));
         DtTileCache tc = reader.Read(br, 6, null);
         Assert.That(tc.GetNavMesh().GetMaxTiles(), Is.EqualTo(256));
         Assert.That(tc.GetNavMesh().GetParams().maxPolys, Is.EqualTo(16384));

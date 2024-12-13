@@ -20,8 +20,9 @@ public class ModernOpenGLDraw : IOpenGLDraw
     private float fogEnd;
     private bool fogEnabled;
     private int uniformViewMatrix;
-    private readonly ArrayBuffer<OpenGLVertex> vertices = new(512);
-    private readonly ArrayBuffer<int> elements = new(512);
+    const int BUFFER_SIZE = 1024 * 1024 * 10; // 10m
+    private readonly ArrayBuffer<OpenGLVertex> vertices = new(BUFFER_SIZE);
+    private readonly ArrayBuffer<int> elements = new(BUFFER_SIZE);
     private GLCheckerTexture _texture;
     private readonly float[] _viewMatrix = new float[16];
     private readonly float[] _projectionMatrix = new float[16];

@@ -38,8 +38,8 @@ namespace DotRecast.Recast.Geom
 
         public static SimpleInputGeomProvider LoadFile(string objFilePath)
         {
-            byte[] chunk = RcIO.ReadFileIfFound(objFilePath);
-            var context = RcObjImporter.LoadContext(chunk);
+            using var stream = RcIO.ReadFileIfFound(objFilePath);
+            var context = RcObjImporter.LoadContext(stream);
             return new SimpleInputGeomProvider(context.vertexPositions, context.meshFaces);
         }
 
