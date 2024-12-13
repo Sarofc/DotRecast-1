@@ -19,7 +19,6 @@ freely, subject to the following restrictions:
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace DotRecast.Core
 {
@@ -36,20 +35,12 @@ namespace DotRecast.Core
             return new RcByteBuffer(data);
         }
 
-        [SkipLocalsInit]
         public static byte[] ToByteArray(BinaryReader br)
         {
-            using var ms = new MemoryStream();
-            Span<byte> buffer = stackalloc byte[4096];
-            int l;
-            while ((l = br.Read(buffer)) > 0)
-            {
-                ms.Write(buffer.Slice(0, l));
-            }
-
-            return ms.ToArray();
+            byte[] buffer = new byte[br.BaseStream.Length];
+            br.Read(buffer);
+            return buffer;
         }
-
 
         public static RcByteBuffer ToByteBuffer(BinaryReader br)
         {
@@ -57,7 +48,7 @@ namespace DotRecast.Core
             return new RcByteBuffer(bytes);
         }
 
-        public static byte[] ReadFileIfFound(string filename)
+        public static Stream ReadFileIfFound(string filename)
         {
             if (string.IsNullOrEmpty(filename))
                 return null;
@@ -78,13 +69,8 @@ namespace DotRecast.Core
                 }
             }
 
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            byte[] buffer = new byte[fs.Length];
-            var read = fs.Read(buffer, 0, buffer.Length);
-            if (read != buffer.Length)
-                return null;
-
-            return buffer;
+            var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return fs;
         }
 
         public static void Write(BinaryWriter ws, float value)

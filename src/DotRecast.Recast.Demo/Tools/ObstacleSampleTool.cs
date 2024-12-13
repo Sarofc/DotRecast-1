@@ -32,6 +32,8 @@ public class ObstacleSampleTool : ISampleTool
             {
                 _sample.Update(_sample.GetInputGeom(), buildResult.RecastBuilderResults, buildResult.NavMesh);
             }
+
+            GC.Collect();
         }
 
         if (ImGui.Button("Remove All Temp Obstacles"))

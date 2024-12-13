@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace DotRecast.Recast.Geom
 {
@@ -28,7 +29,7 @@ namespace DotRecast.Recast.Geom
     {
         /// Creates partitioned triangle mesh (AABB tree),
         /// where each node contains at max trisPerChunk triangles.
-        public static bool CreateChunkyTriMesh(ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int ntris, int trisPerChunk, RcChunkyTriMesh cm)
+        public unsafe static bool CreateChunkyTriMesh(ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int ntris, int trisPerChunk, RcChunkyTriMesh cm)
         {
             int nchunks = (ntris + trisPerChunk - 1) / trisPerChunk;
 
@@ -36,8 +37,9 @@ namespace DotRecast.Recast.Geom
             cm.ntris = ntris;
 
             // Build tree
-            //BoundsItem[] items = new BoundsItem[ntris];
-            Span<BoundsItem> items = stackalloc BoundsItem[ntris];
+            //Span<BoundsItem> items = stackalloc BoundsItem[ntris];
+            BoundsItem* ptr = (BoundsItem*)NativeMemory.Alloc((nuint)(sizeof(BoundsItem) * ntris));
+            Span<BoundsItem> items = new(ptr, ntris);
 
             for (int i = 0; i < ntris; i++)
             {
@@ -74,7 +76,7 @@ namespace DotRecast.Recast.Geom
 
             Subdivide(items, 0, ntris, trisPerChunk, cm.nodes, tris);
 
-            items = null;
+            NativeMemory.Free(ptr);
 
             // Calc max tris per node.
             cm.maxTrisPerChunk = 0;

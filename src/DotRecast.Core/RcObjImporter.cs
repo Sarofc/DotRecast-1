@@ -21,53 +21,37 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using Cysharp.IO;
 
 namespace DotRecast.Core
 {
     public static class RcObjImporter
     {
-        [Obsolete("use 'LoadContext(Stream)' instead")]
-        public static RcObjImporterContext LoadContext(byte[] chunk)
-        {
-            RcObjImporterContext context = new RcObjImporterContext();
-            try
-            {
-                using StreamReader reader = new StreamReader(new MemoryStream(chunk));
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    line = line.Trim();
-                    ReadLine(line, context);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message, e);
-            }
-
-            return context;
-        }
-
         public static RcObjImporterContext LoadContext(Stream stream)
         {
-            RcObjImporterContext context = new RcObjImporterContext();
-            try
+            var context = new RcObjImporterContext(); // TODO 大量内存分配
+
+            // 达成字符串解析0gc！
+
+            const int BUFFER_SIZE = 4096;
+            using var reader = new Utf8StreamReader(stream)
             {
-                using StreamReader reader = new StreamReader(stream);
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    ReadLine(line, context);
-                }
+                SyncRead = true
             }
-            catch (Exception e)
+            .AsTextReader(BUFFER_SIZE);
+#pragma warning disable
+            while (reader.LoadIntoBufferAsync().Result) // SyncRead 可以直接用Result，而不需要等
+#pragma warning restore
             {
-                throw new Exception(e.Message, e);
+                while (reader.TryReadLine(out var line))
+                {
+                    ReadLine(line.Span, context);
+                }
             }
 
             return context;
         }
-
 
         public static void ReadLine(ReadOnlySpan<char> line, RcObjImporterContext context)
         {
@@ -93,6 +77,7 @@ namespace DotRecast.Core
             }
         }
 
+        [SkipLocalsInit]
         private static Vector3 ReadVector3f(ReadOnlySpan<char> line)
         {
             Span<Range> v = stackalloc Range[4];
@@ -110,6 +95,7 @@ namespace DotRecast.Core
             );
         }
 
+        [SkipLocalsInit]
         private static void ReadFace(ReadOnlySpan<char> line, RcObjImporterContext context)
         {
             Span<Range> v = stackalloc Range[16]; // incase
@@ -129,6 +115,7 @@ namespace DotRecast.Core
             }
         }
 
+        [SkipLocalsInit]
         private static int ReadFaceVertex(ReadOnlySpan<char> face, RcObjImporterContext context)
         {
             Span<Range> v = stackalloc Range[2];

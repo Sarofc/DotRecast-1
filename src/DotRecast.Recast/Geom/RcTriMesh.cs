@@ -53,6 +53,7 @@ namespace DotRecast.Recast.Geom
             }
 
             using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+
             var context = RcObjImporter.LoadContext(fs);
             //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
             return new RcTriMesh(context.vertexPositions, context.meshFaces);
