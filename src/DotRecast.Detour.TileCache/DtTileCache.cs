@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using DotRecast.Core;
@@ -234,9 +235,9 @@ namespace DotRecast.Detour.TileCache
         public long AddTile(byte[] data, int flags)
         {
             // Make sure the data is in right format.
-            RcByteBuffer buf = new(data);
+            RcByteBuffer br = new(data);
             var reader = new DtTileCacheLayerHeaderReader();
-            DtTileCacheLayerHeader header = reader.Read(ref buf);
+            DtTileCacheLayerHeader header = reader.Read(ref br);
             // Make sure the location is free.
             if (GetTileAt(header.tx, header.ty, header.tlayer) != null)
             {
@@ -266,7 +267,7 @@ namespace DotRecast.Detour.TileCache
             // Init tile.
             tile.header = header;
             tile.data = data;
-            tile.compressed = Align4(buf.Position());
+            tile.compressed = Align4(br.Position());
             tile.flags = flags;
 
             return GetTileRef(tile);

@@ -34,13 +34,7 @@ namespace DotRecast.Detour.TileCache.Io
             _compressor = compressor;
         }
 
-        public DtTileCache Read(BinaryReader @is, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
-        {
-            RcByteBuffer bb = RcIO.ToByteBuffer(@is);
-            return Read(ref bb, maxVertPerPoly, meshProcessor);
-        }
-
-        public DtTileCache Read(ref RcByteBuffer bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
+        public DtTileCache Read(BinaryReader bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
         {
             DtTileCacheSetHeader header = new();
             header.magic = bb.ReadInt32();
@@ -59,8 +53,8 @@ namespace DotRecast.Detour.TileCache.Io
             }
 
             header.numTiles = bb.ReadInt32();
-            header.meshParams = paramReader.Read(ref bb);
-            header.cacheParams = ReadCacheParams(ref bb);
+            header.meshParams = paramReader.Read(bb);
+            header.cacheParams = ReadCacheParams(bb);
             DtNavMesh mesh = new();
             mesh.Init(header.meshParams, maxVertPerPoly);
             DtTileCache tc = new(header.cacheParams, mesh, _compressor, meshProcessor);
@@ -74,7 +68,7 @@ namespace DotRecast.Detour.TileCache.Io
                     break;
                 }
 
-                byte[] data = bb.ReadBytes(dataSize).ToArray();
+                byte[] data = bb.ReadBytes(dataSize);
                 long tile = tc.AddTile(data, 0);
                 if (tile != 0)
                 {
@@ -85,7 +79,7 @@ namespace DotRecast.Detour.TileCache.Io
             return tc;
         }
 
-        private DtTileCacheParams ReadCacheParams(ref RcByteBuffer bb)
+        private DtTileCacheParams ReadCacheParams(BinaryReader bb)
         {
             DtTileCacheParams option = new();
 

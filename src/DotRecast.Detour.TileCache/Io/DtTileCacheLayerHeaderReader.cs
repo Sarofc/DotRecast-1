@@ -25,36 +25,36 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheLayerHeaderReader
     {
-        public DtTileCacheLayerHeader Read(ref RcByteBuffer data)
+        public DtTileCacheLayerHeader Read(ref RcByteBuffer br)
         {
             DtTileCacheLayerHeader header = new();
-            header.magic = data.ReadInt32();
-            header.version = data.ReadInt32();
+            header.magic = br.ReadInt32();
+            header.version = br.ReadInt32();
 
             if (header.magic != DtTileCacheLayerHeader.DT_TILECACHE_MAGIC)
                 throw new IOException("Invalid magic");
             if (header.version != DtTileCacheLayerHeader.DT_TILECACHE_VERSION)
                 throw new IOException("Invalid version");
 
-            header.tx = data.ReadInt32();
-            header.ty = data.ReadInt32();
-            header.tlayer = data.ReadInt32();
+            header.tx = br.ReadInt32();
+            header.ty = br.ReadInt32();
+            header.tlayer = br.ReadInt32();
 
-            header.bmin.X = data.ReadSingle();
-            header.bmin.Y = data.ReadSingle();
-            header.bmin.Z = data.ReadSingle();
-            header.bmax.X = data.ReadSingle();
-            header.bmax.Y = data.ReadSingle();
-            header.bmax.Z = data.ReadSingle();
+            header.bmin.X = br.ReadSingle();
+            header.bmin.Y = br.ReadSingle();
+            header.bmin.Z = br.ReadSingle();
+            header.bmax.X = br.ReadSingle();
+            header.bmax.Y = br.ReadSingle();
+            header.bmax.Z = br.ReadSingle();
 
-            header.hmin = data.ReadInt16() & 0xFFFF;
-            header.hmax = data.ReadInt16() & 0xFFFF;
-            header.width = data.ReadByte() & 0xFF;
-            header.height = data.ReadByte() & 0xFF;
-            header.minx = data.ReadByte() & 0xFF;
-            header.maxx = data.ReadByte() & 0xFF;
-            header.miny = data.ReadByte() & 0xFF;
-            header.maxy = data.ReadByte() & 0xFF;
+            header.hmin = br.ReadInt16() & 0xFFFF;
+            header.hmax = br.ReadInt16() & 0xFFFF;
+            header.width = br.ReadByte() & 0xFF;
+            header.height = br.ReadByte() & 0xFF;
+            header.minx = br.ReadByte() & 0xFF;
+            header.maxx = br.ReadByte() & 0xFF;
+            header.miny = br.ReadByte() & 0xFF;
+            header.maxy = br.ReadByte() & 0xFF;
 
             return header;
         }

@@ -25,78 +25,72 @@ namespace DotRecast.Detour.Io
 
     public struct DtMeshDataReader
     {
-        public DtMeshData Read(BinaryReader stream, int maxVertPerPoly)
-        {
-            RcByteBuffer buf = RcIO.ToByteBuffer(stream);
-            return Read(ref buf, maxVertPerPoly);
-        }
-
-        public DtMeshData Read(ref RcByteBuffer buf, int maxVertPerPoly)
+        public DtMeshData Read(BinaryReader br, int maxVertPerPoly)
         {
             DtMeshData data = new();
             DtMeshHeader header = new();
             data.header = header;
-            header.magic = buf.ReadInt32();
+            header.magic = br.ReadInt32();
             if (header.magic != DT_NAVMESH_MAGIC)
             {
                 throw new IOException("Invalid magic");
             }
 
-            header.version = buf.ReadInt32();
+            header.version = br.ReadInt32();
             if (header.version != DT_NAVMESH_VERSION)
             {
                 throw new IOException("Invalid version " + header.version);
             }
 
-            header.x = buf.ReadInt32();
-            header.y = buf.ReadInt32();
-            header.layer = buf.ReadInt32();
-            header.userId = buf.ReadInt32();
-            header.polyCount = buf.ReadInt32();
-            header.vertCount = buf.ReadInt32();
-            header.maxLinkCount = buf.ReadInt32();
-            header.detailMeshCount = buf.ReadInt32();
-            header.detailVertCount = buf.ReadInt32();
-            header.detailTriCount = buf.ReadInt32();
-            header.bvNodeCount = buf.ReadInt32();
-            header.offMeshConCount = buf.ReadInt32();
-            header.offMeshBase = buf.ReadInt32();
-            header.walkableHeight = buf.ReadSingle();
-            header.walkableRadius = buf.ReadSingle();
-            header.walkableClimb = buf.ReadSingle();
+            header.x = br.ReadInt32();
+            header.y = br.ReadInt32();
+            header.layer = br.ReadInt32();
+            header.userId = br.ReadInt32();
+            header.polyCount = br.ReadInt32();
+            header.vertCount = br.ReadInt32();
+            header.maxLinkCount = br.ReadInt32();
+            header.detailMeshCount = br.ReadInt32();
+            header.detailVertCount = br.ReadInt32();
+            header.detailTriCount = br.ReadInt32();
+            header.bvNodeCount = br.ReadInt32();
+            header.offMeshConCount = br.ReadInt32();
+            header.offMeshBase = br.ReadInt32();
+            header.walkableHeight = br.ReadSingle();
+            header.walkableRadius = br.ReadSingle();
+            header.walkableClimb = br.ReadSingle();
 
-            header.bmin.X = buf.ReadSingle();
-            header.bmin.Y = buf.ReadSingle();
-            header.bmin.Z = buf.ReadSingle();
+            header.bmin.X = br.ReadSingle();
+            header.bmin.Y = br.ReadSingle();
+            header.bmin.Z = br.ReadSingle();
 
-            header.bmax.X = buf.ReadSingle();
-            header.bmax.Y = buf.ReadSingle();
-            header.bmax.Z = buf.ReadSingle();
+            header.bmax.X = br.ReadSingle();
+            header.bmax.Y = br.ReadSingle();
+            header.bmax.Z = br.ReadSingle();
 
-            header.bvQuantFactor = buf.ReadSingle();
-            data.verts = ReadVerts(ref buf, header.vertCount);
-            data.polys = ReadPolys(ref buf, header, maxVertPerPoly);
+            header.bvQuantFactor = br.ReadSingle();
+            data.verts = ReadVerts(br, header.vertCount);
+            data.polys = ReadPolys(br, header, maxVertPerPoly);
 
-            data.detailMeshes = ReadPolyDetails(ref buf, header);
-            data.detailVerts = ReadVerts(ref buf, header.detailVertCount);
-            data.detailTris = ReadDTris(ref buf, header);
-            data.bvTree = ReadBVTree(ref buf, header);
-            data.offMeshCons = ReadOffMeshCons(ref buf, header);
+            data.detailMeshes = ReadPolyDetails(br, header);
+            data.detailVerts = ReadVerts(br, header.detailVertCount);
+            data.detailTris = ReadDTris(br, header);
+            data.bvTree = ReadBVTree(br, header);
+            data.offMeshCons = ReadOffMeshCons(br, header);
             return data;
         }
 
-        private float[] ReadVerts(ref RcByteBuffer buf, int count)
+        private float[] ReadVerts(BinaryReader br, int count)
         {
             float[] verts = new float[count * 3];
             for (int i = 0; i < verts.Length; i++)
             {
-                verts[i] = buf.ReadSingle();
+                verts[i] = br.ReadSingle();
             }
 
             return verts;
         }
 
-        private DtPoly[] ReadPolys(ref RcByteBuffer buf, DtMeshHeader header, int maxVertPerPoly)
+        private DtPoly[] ReadPolys(BinaryReader br, DtMeshHeader header, int maxVertPerPoly)
         {
             DtPoly[] polys = new DtPoly[header.polyCount];
             for (int i = 0; i < polys.Length; i++)
@@ -105,23 +99,23 @@ namespace DotRecast.Detour.Io
 
                 for (int j = 0; j < polys[i].verts.Length; j++)
                 {
-                    polys[i].verts[j] = buf.ReadInt16() & 0xFFFF;
+                    polys[i].verts[j] = br.ReadInt16() & 0xFFFF;
                 }
 
                 for (int j = 0; j < polys[i].neis.Length; j++)
                 {
-                    polys[i].neis[j] = buf.ReadInt16() & 0xFFFF;
+                    polys[i].neis[j] = br.ReadInt16() & 0xFFFF;
                 }
 
-                polys[i].flags = buf.ReadInt16() & 0xFFFF;
-                polys[i].vertCount = buf.ReadByte() & 0xFF;
-                polys[i].areaAndtype = buf.ReadByte() & 0xFF;
+                polys[i].flags = br.ReadInt16() & 0xFFFF;
+                polys[i].vertCount = br.ReadByte() & 0xFF;
+                polys[i].areaAndtype = br.ReadByte() & 0xFF;
             }
 
             return polys;
         }
 
-        private DtPolyDetail[] ReadPolyDetails(ref RcByteBuffer buf, DtMeshHeader header)
+        private DtPolyDetail[] ReadPolyDetails(BinaryReader buf, DtMeshHeader header)
         {
             DtPolyDetail[] polys = new DtPolyDetail[header.detailMeshCount];
             for (int i = 0; i < polys.Length; i++)
@@ -136,7 +130,7 @@ namespace DotRecast.Detour.Io
             return polys;
         }
 
-        private int[] ReadDTris(ref RcByteBuffer buf, DtMeshHeader header)
+        private int[] ReadDTris(BinaryReader buf, DtMeshHeader header)
         {
             int[] tris = new int[4 * header.detailTriCount];
             for (int i = 0; i < tris.Length; i++)
@@ -147,7 +141,7 @@ namespace DotRecast.Detour.Io
             return tris;
         }
 
-        private unsafe DtBVNode[] ReadBVTree(ref RcByteBuffer buf, DtMeshHeader header)
+        private unsafe DtBVNode[] ReadBVTree(BinaryReader buf, DtMeshHeader header)
         {
             DtBVNode[] nodes = new DtBVNode[header.bvNodeCount];
             for (int i = 0; i < nodes.Length; i++)
@@ -170,7 +164,7 @@ namespace DotRecast.Detour.Io
             return nodes;
         }
 
-        private unsafe DtOffMeshConnection[] ReadOffMeshCons(ref RcByteBuffer buf, DtMeshHeader header)
+        private unsafe DtOffMeshConnection[] ReadOffMeshCons(BinaryReader buf, DtMeshHeader header)
         {
             DtOffMeshConnection[] cons = new DtOffMeshConnection[header.offMeshConCount];
             for (int i = 0; i < cons.Length; i++)

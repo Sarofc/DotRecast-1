@@ -25,9 +25,7 @@ public class RcIoTests
         }
 
         {
-            using MemoryStream ms = new(actual);
-            using BinaryReader br = new(ms);
-            var byteBuffer = RcIO.ToByteBuffer(br);
+            var byteBuffer = new RcByteBuffer(actual);
 
             Assert.That(byteBuffer.ReadInt64(), Is.EqualTo(tileRef));
             Assert.That(byteBuffer.ReadInt32(), Is.EqualTo(dataSize));

@@ -1,10 +1,11 @@
+using System.IO;
 using DotRecast.Core;
 
 namespace DotRecast.Detour.Io
 {
     public struct DtNavMeshParamsReader
     {
-        public DtNavMeshParams Read(ref RcByteBuffer bb)
+        public DtNavMeshParams Read(BinaryReader bb)
         {
             DtNavMeshParams option;
             option.orig.X = bb.ReadSingle();

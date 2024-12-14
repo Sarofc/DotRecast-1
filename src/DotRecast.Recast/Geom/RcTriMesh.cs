@@ -20,7 +20,6 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using DotRecast.Core;
@@ -35,30 +34,11 @@ namespace DotRecast.Recast.Geom
 
         public static RcTriMesh Load(string filename)
         {
-            if (string.IsNullOrEmpty(filename))
-                return null;
-
-            if (!File.Exists(filename))
-            {
-                var searchFilePath = RcDirectory.SearchFile($"{filename}");
-                if (!File.Exists(searchFilePath))
-                {
-                    searchFilePath = RcDirectory.SearchFile($"resources/{filename}");
-                }
-
-                if (File.Exists(searchFilePath))
-                {
-                    filename = searchFilePath;
-                }
-            }
-
-            using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-            var context = RcObjImporter.LoadContext(fs);
+            using var stream = RcIO.ReadFileIfFound(filename);
+            var context = RcObjImporter.LoadContext(stream);
             //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
             return new RcTriMesh(context.vertexPositions, context.meshFaces);
         }
-
 
         public RcTriMesh(List<float> vertices, List<int> faces)
         {

@@ -24,30 +24,6 @@ namespace DotRecast.Core
 {
     public static class RcIO
     {
-        public static RcByteBuffer ToByteBuffer(BinaryReader br, bool direct)
-        {
-            byte[] data = ToByteArray(br);
-            if (direct)
-            {
-                Array.Reverse(data);
-            }
-
-            return new RcByteBuffer(data);
-        }
-
-        public static byte[] ToByteArray(BinaryReader br)
-        {
-            byte[] buffer = new byte[br.BaseStream.Length];
-            br.Read(buffer);
-            return buffer;
-        }
-
-        public static RcByteBuffer ToByteBuffer(BinaryReader br)
-        {
-            var bytes = ToByteArray(br);
-            return new RcByteBuffer(bytes);
-        }
-
         public static Stream ReadFileIfFound(string filename)
         {
             if (string.IsNullOrEmpty(filename))
@@ -57,7 +33,7 @@ namespace DotRecast.Core
 
             if (!File.Exists(filePath))
             {
-                var searchFilePath = RcDirectory.SearchFile($"{filename}");
+                var searchFilePath = RcDirectory.SearchFile(filename);
                 if (!File.Exists(searchFilePath))
                 {
                     searchFilePath = RcDirectory.SearchFile($"resources/{filename}");
@@ -73,14 +49,14 @@ namespace DotRecast.Core
             return fs;
         }
 
-        public static void Write(BinaryWriter ws, float value)
+        public static void Write(BinaryWriter bw, float value)
         {
-            ws.Write(value);
+            bw.Write(value);
         }
 
-        public static void Write(BinaryWriter ws, short value)
+        public static void Write(BinaryWriter bw, short value)
         {
-            ws.Write(value);
+            bw.Write(value);
         }
 
         public static void Write(BinaryWriter ws, long value)
@@ -102,13 +78,5 @@ namespace DotRecast.Core
         {
             ws.Write(value);
         }
-
-        //public static void Write(BinaryWriter ws, MemoryStream ms)
-        //{
-        //    ms.Position = 0;
-        //    byte[] buffer = new byte[ms.Length];
-        //    ms.Read(buffer, 0, buffer.Length);
-        //    ws.Write(buffer);
-        //}
     }
 }
