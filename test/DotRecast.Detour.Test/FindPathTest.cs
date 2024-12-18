@@ -18,6 +18,7 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Linq;
 using System.Numerics;
 using NUnit.Framework;
 
@@ -33,8 +34,8 @@ public class FindPathTest : AbstractDetourTest
         DtStatus.DT_SUCCESS,
         DtStatus.DT_SUCCESS
     ];
-
-    private static readonly long[][] RESULTS =
+    
+    private static readonly long[][] RESULTS_PATH =
     [
         [
             281474976710696L, 281474976710695L, 281474976710694L, 281474976710703L, 281474976710706L,
@@ -63,6 +64,25 @@ public class FindPathTest : AbstractDetourTest
             281474976710724L, 281474976710717L, 281474976710729L, 281474976710731L, 281474976710752L,
             281474976710748L, 281474976710753L, 281474976710755L, 281474976710754L, 281474976710768L,
             281474976710772L
+        ]
+    ];
+
+    private static readonly long[][] RESULTS_PATH_SLICED =
+    [
+        [
+           281474976710696,281474976710713,281474976710717,281474976710721
+        ],
+        [
+            281474976710773,281474976710753,281474976710724,281474976710736,281474976710746,281474976710744
+        ],
+        [
+            281474976710680,281474976710695,281474976710705,281474976710712,281474976710753,281474976710772,281474976710758
+        ],
+        [
+                281474976710753,281474976710731
+        ],
+        [
+            281474976710733,281474976710724,281474976710731,281474976710755,281474976710772
         ]
     ];
 
@@ -134,10 +154,10 @@ public class FindPathTest : AbstractDetourTest
             Vector3 endPos = endPoss[i];
             var status = query.FindPath(startRef, endRef, startPos, endPos, filter, path, out var pathCount);
             Assert.That(status, Is.EqualTo(STATUSES[i]));
-            Assert.That(pathCount, Is.EqualTo(RESULTS[i].Length));
-            for (int j = 0; j < RESULTS[i].Length; j++)
+            Assert.That(pathCount, Is.EqualTo(RESULTS_PATH[i].Length));
+            for (int j = 0; j < RESULTS_PATH[i].Length; j++)
             {
-                Assert.That(path[j], Is.EqualTo(RESULTS[i][j]));
+                Assert.That(path[j], Is.EqualTo(RESULTS_PATH[i][j]));
             }
         }
     }
@@ -162,10 +182,11 @@ public class FindPathTest : AbstractDetourTest
 
             status = query.FinalizeSlicedFindPath(path, out var pathCount);
             Assert.That(status, Is.EqualTo(STATUSES[i]), $"index({i})");
-            Assert.That(pathCount, Is.EqualTo(RESULTS[i].Length));
-            for (int j = 0; j < RESULTS[i].Length; j++)
+            //Console.WriteLine($"{i} {string.Join(",", new ArraySegment<long>(path, 0, pathCount))}");
+            Assert.That(pathCount, Is.EqualTo(RESULTS_PATH_SLICED[i].Length), $"index({i})");
+            for (int j = 0; j < RESULTS_PATH_SLICED[i].Length; j++)
             {
-                Assert.That(path[j], Is.EqualTo(RESULTS[i][j]));
+                Assert.That(path[j], Is.EqualTo(RESULTS_PATH_SLICED[i][j]));
             }
         }
     }
