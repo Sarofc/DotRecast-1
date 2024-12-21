@@ -1,14 +1,16 @@
 using System;
+using System.Buffers;
 using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 
 namespace DotRecast.Core
 {
-    public ref struct RcByteBuffer
+    public ref struct RcSpanReader
     {
-        private Span<byte> _bytes;
+        private ReadOnlySpan<byte> _bytes;
         private int _position;
 
-        public RcByteBuffer(Span<byte> bytes)
+        public RcSpanReader(ReadOnlySpan<byte> bytes)
         {
             _bytes = bytes;
             _position = 0;
@@ -36,7 +38,7 @@ namespace DotRecast.Core
             return _position;
         }
 
-        public Span<byte> ReadBytes(int length)
+        ReadOnlySpan<byte> ReadBytes(int length)
         {
             var nextPos = _position + length;
             (nextPos, _position) = (_position, nextPos);
@@ -73,6 +75,51 @@ namespace DotRecast.Core
         {
             var span = ReadBytes(8);
             return BinaryPrimitives.ReadInt64LittleEndian(span);
+        }
+
+    }
+
+    public sealed class RcSpanWriter : IBufferWriter<byte> // lz4 不支持 ref struct 泛型，用class就行了
+    {
+        private byte[] _bytes;
+        private int _position;
+
+        public ReadOnlySpan<byte> WrittenSpan => _bytes.AsSpan(0, _position);
+
+        public RcSpanWriter(byte[] bytes)
+        {
+            _bytes = bytes;
+            _position = 0;
+        }
+
+        public unsafe void Write<T>(T value) where T : unmanaged
+        {
+            var bytes = GetSpan(sizeof(T));
+            MemoryMarshal.Write(bytes, value);
+            Advance(sizeof(T));
+        }
+
+        public unsafe void Write(ReadOnlySpan<byte> value)
+        {
+            var nbytes = value.Length;
+            var bytes = GetSpan(nbytes);
+            value.CopyTo(bytes);
+            Advance(nbytes);
+        }
+
+        public void Advance(int count)
+        {
+            _position += count;
+        }
+
+        public Memory<byte> GetMemory(int sizeHint = 0)
+        {
+            return _bytes.AsMemory(_position, sizeHint);
+        }
+
+        public Span<byte> GetSpan(int sizeHint)
+        {
+            return _bytes.AsSpan(_position, sizeHint);
         }
     }
 }

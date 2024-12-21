@@ -25,10 +25,10 @@ public class RcIoTests
         }
 
         {
-            var byteBuffer = new RcByteBuffer(actual);
+            var sr = new RcSpanReader(actual);
 
-            Assert.That(byteBuffer.ReadInt64(), Is.EqualTo(tileRef));
-            Assert.That(byteBuffer.ReadInt32(), Is.EqualTo(dataSize));
+            Assert.That(sr.ReadInt64(), Is.EqualTo(tileRef));
+            Assert.That(sr.ReadInt32(), Is.EqualTo(dataSize));
         }
     }
 }

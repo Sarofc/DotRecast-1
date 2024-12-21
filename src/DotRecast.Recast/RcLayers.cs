@@ -471,10 +471,10 @@ namespace DotRecast.Recast
 
                 int gridSize = lw * lh;
 
-                layer.heights = new int[gridSize];
-                Array.Fill(layer.heights, 0xFF);
-                layer.areas = new int[gridSize];
-                layer.cons = new int[gridSize];
+                layer.heights = new byte[gridSize];
+                Array.Fill<byte>(layer.heights, 0xFF);
+                layer.areas = new byte[gridSize];
+                layer.cons = new byte[gridSize];
 
                 // Find layer height bounds.
                 int hmin = 0, hmax = 0;
@@ -533,8 +533,8 @@ namespace DotRecast.Recast
 
                             // Store height and area type.
                             int idx = x + y * lw;
-                            layer.heights[idx] = (char)(s.y - hmin);
-                            layer.areas[idx] = chf.areas[j];
+                            layer.heights[idx] = (byte)(s.y - hmin);
+                            layer.areas[idx] = (byte)chf.areas[j];
 
                             // Check connection.
                             char portal = (char)0;
@@ -554,7 +554,7 @@ namespace DotRecast.Recast
                                         // Update height so that it matches on both sides of the portal.
                                         ref readonly RcCompactSpan @as = ref chf.spans[ai];
                                         if (@as.y > hmin)
-                                            layer.heights[idx] = Math.Max(layer.heights[idx], (char)(@as.y - hmin));
+                                            layer.heights[idx] = Math.Max(layer.heights[idx], (byte)(@as.y - hmin));
                                     }
 
                                     // Valid connection mask
@@ -568,7 +568,7 @@ namespace DotRecast.Recast
                                 }
                             }
 
-                            layer.cons[idx] = (portal << 4) | con;
+                            layer.cons[idx] = (byte)((portal << 4) | con);
                         }
                     }
                 }

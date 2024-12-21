@@ -158,7 +158,7 @@ namespace DotRecast.Detour.TileCache
             DtCompressedTile tile = m_posLookup[h];
             while (tile != null)
             {
-                if (tile.header != null && tile.header.tx == tx && tile.header.ty == ty)
+                if (tile.header.IsValid() && tile.header.tx == tx && tile.header.ty == ty)
                 {
                     if (n < tiles.Length)
                         tiles[n++] = (GetTileRef(tile));
@@ -176,7 +176,7 @@ namespace DotRecast.Detour.TileCache
             DtCompressedTile tile = m_posLookup[h];
             while (tile != null)
             {
-                if (tile.header != null && tile.header.tx == tx && tile.header.ty == ty && tile.header.tlayer == tlayer)
+                if (tile.header.IsValid() && tile.header.tx == tx && tile.header.ty == ty && tile.header.tlayer == tlayer)
                 {
                     return tile;
                 }
@@ -235,9 +235,9 @@ namespace DotRecast.Detour.TileCache
         public long AddTile(byte[] data, int flags)
         {
             // Make sure the data is in right format.
-            RcByteBuffer br = new(data);
+            var sr = new RcSpanReader(data);
             var reader = new DtTileCacheLayerHeaderReader();
-            DtTileCacheLayerHeader header = reader.Read(ref br);
+            DtTileCacheLayerHeader header = reader.Read(ref sr);
             // Make sure the location is free.
             if (GetTileAt(header.tx, header.ty, header.tlayer) != null)
             {
@@ -267,7 +267,7 @@ namespace DotRecast.Detour.TileCache
             // Init tile.
             tile.header = header;
             tile.data = data;
-            tile.compressed = Align4(br.Position());
+            tile.compressed = Align4(sr.Position());
             tile.flags = flags;
 
             return GetTileRef(tile);
@@ -322,7 +322,7 @@ namespace DotRecast.Detour.TileCache
                 cur = cur.next;
             }
 
-            tile.header = null;
+            tile.header = default;
             tile.data = null;
             tile.compressed = 0;
             tile.flags = 0;

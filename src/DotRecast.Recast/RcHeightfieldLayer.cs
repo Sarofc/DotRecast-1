@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 namespace DotRecast.Recast
 {
@@ -18,8 +18,8 @@ namespace DotRecast.Recast
         public int maxy; // < The maximum y-bounds of usable data. (Along the z-axis.)
         public int hmin; // < The minimum height bounds of usable data. (Along the y-axis.)
         public int hmax; // < The maximum height bounds of usable data. (Along the y-axis.)
-        public int[] heights; // < The heightfield. [Size: width * height]
-        public int[] areas; // < Area ids. [Size: Same as #heights]
-        public int[] cons; // < Packed neighbor connection information. [Size: Same as #heights]
+        public byte[] heights; // < The heightfield. [Size: width * height]
+        public byte[] areas; // < Area ids. [Size: Same as #heights]
+        public byte[] cons; // < Packed neighbor connection information. [Size: Same as #heights]
     }
 }

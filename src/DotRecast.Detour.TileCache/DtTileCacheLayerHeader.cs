@@ -18,11 +18,12 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Numerics;
 
 namespace DotRecast.Detour.TileCache
 {
-    public class DtTileCacheLayerHeader // TODO struct
+    public struct DtTileCacheLayerHeader
     {
         public const int DT_TILECACHE_MAGIC = 'D' << 24 | 'T' << 16 | 'L' << 8 | 'R'; // < 'DTLR';
         public const int DT_TILECACHE_VERSION = 1;
@@ -36,5 +37,10 @@ namespace DotRecast.Detour.TileCache
         public int hmin, hmax; // < Height min/max range
         public int width, height; // < Dimension of the layer.
         public int minx, maxx, miny, maxy; // < Usable sub-region.
+
+        public readonly bool IsValid()
+        {
+            return magic == DT_TILECACHE_MAGIC;
+        }
     }
 }

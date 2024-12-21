@@ -19,6 +19,7 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
@@ -1916,68 +1917,52 @@ namespace DotRecast.Detour.TileCache
             }
         }
 
-        public static byte[] CompressTileCacheLayer(IRcCompressor comp, DtTileCacheLayer layer)
+        public unsafe static byte[] CompressTileCacheLayer(IRcCompressor comp, DtTileCacheLayer layer)
         {
-            using var ms = new MemoryStream();
-            using var bw = new BinaryWriter(ms);
-            DtTileCacheLayerHeaderWriter hw = new();
-            try
-            {
-                hw.Write(bw, layer.header);
-                int gridSize = layer.header.width * layer.header.height;
-                byte[] buffer = new byte[gridSize * 3];
-                for (int i = 0; i < gridSize; i++)
-                {
-                    buffer[i] = (byte)layer.heights[i];
-                    buffer[gridSize + i] = (byte)layer.areas[i];
-                    buffer[gridSize * 2 + i] = (byte)layer.cons[i];
-                }
-
-                var compressed = comp.Compress(buffer);
-                bw.Write(compressed);
-                return ms.ToArray();
-            }
-            catch (IOException e)
-            {
-                throw new Exception(e.Message, e);
-            }
+            return CompressTileCacheLayer(layer.header, layer.heights, layer.areas, layer.cons, comp);
         }
 
-        public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, ReadOnlySpan<int> areas, int[] cons, IRcCompressor comp)
+        public unsafe static byte[] CompressTileCacheLayer(in DtTileCacheLayerHeader header, ReadOnlySpan<byte> heights, ReadOnlySpan<byte> areas, ReadOnlySpan<byte> cons, IRcCompressor comp)
         {
-            using var ms = new MemoryStream(); // TODO 临时buffer，使用内存池
-            using var bw = new BinaryWriter(ms);
-            DtTileCacheLayerHeaderWriter hw = new();
+            int gridSize = header.width * header.height;
+
+            var bufferSize = sizeof(DtTileCacheLayerHeader) + gridSize * 3;
+            var gbuffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+            var sw = new RcSpanWriter(gbuffer);
+
+            DtTileCacheLayerHeaderWriter hw;
             try
             {
-                hw.Write(bw, header);
-                int gridSize = header.width * header.height;
+                hw.Write(sw, header);
                 Span<byte> buffer = stackalloc byte[gridSize * 3];
                 for (int i = 0; i < gridSize; i++)
                 {
-                    buffer[i] = (byte)heights[i];
-                    buffer[gridSize + i] = (byte)areas[i];
-                    buffer[gridSize * 2 + i] = (byte)cons[i];
+                    buffer[i] = heights[i];
+                    buffer[gridSize + i] = areas[i];
+                    buffer[gridSize * 2 + i] = cons[i];
                 }
 
-                var compressed = comp.Compress(buffer);
-                bw.Write(compressed);
-                return ms.ToArray();
+                comp.Compress(buffer, sw);
+                return sw.WrittenSpan.ToArray(); // only alloc here
             }
             catch (IOException e)
             {
                 throw new Exception(e.Message, e);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(gbuffer);
             }
         }
 
         public static DtTileCacheLayer DecompressTileCacheLayer(IRcCompressor comp, byte[] compressed)
         {
-            RcByteBuffer buf = new(compressed);
+            var sr = new RcSpanReader(compressed);
             DtTileCacheLayer layer = new();
             try
             {
                 var reader = new DtTileCacheLayerHeaderReader();
-                layer.header = reader.Read(ref buf);
+                layer.header = reader.Read(ref sr);
             }
             catch (IOException e)
             {
@@ -1987,7 +1972,7 @@ namespace DotRecast.Detour.TileCache
             int gridSize = layer.header.width * layer.header.height;
 
             Span<byte> grids = stackalloc byte[gridSize * 3];
-            comp.Decompress(compressed.AsSpan(buf.Position(), compressed.Length - buf.Position()), grids);
+            comp.Decompress(compressed.AsSpan(sr.Position(), compressed.Length - sr.Position()), grids);
             layer.heights = new byte[gridSize];
             layer.areas = new byte[gridSize];
             layer.cons = new byte[gridSize];

@@ -25,29 +25,29 @@ namespace DotRecast.Detour.TileCache.Io
 {
     public struct DtTileCacheLayerHeaderWriter
     {
-        public void Write(BinaryWriter stream, DtTileCacheLayerHeader header)
+        public void Write(RcSpanWriter sw, in DtTileCacheLayerHeader header)
         {
-            RcIO.Write(stream, header.magic);
-            RcIO.Write(stream, header.version);
-            RcIO.Write(stream, header.tx);
-            RcIO.Write(stream, header.ty);
-            RcIO.Write(stream, header.tlayer);
+            sw.Write(header.magic);
+            sw.Write(header.version);
+            sw.Write(header.tx);
+            sw.Write(header.ty);
+            sw.Write(header.tlayer);
 
-            RcIO.Write(stream, header.bmin.X);
-            RcIO.Write(stream, header.bmin.Y);
-            RcIO.Write(stream, header.bmin.Z);
-            RcIO.Write(stream, header.bmax.X);
-            RcIO.Write(stream, header.bmax.Y);
-            RcIO.Write(stream, header.bmax.Z);
+            sw.Write(header.bmin.X);
+            sw.Write(header.bmin.Y);
+            sw.Write(header.bmin.Z);
+            sw.Write(header.bmax.X);
+            sw.Write(header.bmax.Y);
+            sw.Write(header.bmax.Z);
 
-            RcIO.Write(stream, (short)header.hmin);
-            RcIO.Write(stream, (short)header.hmax);
-            RcIO.Write(stream, (byte)header.width);
-            RcIO.Write(stream, (byte)header.height);
-            RcIO.Write(stream, (byte)header.minx);
-            RcIO.Write(stream, (byte)header.maxx);
-            RcIO.Write(stream, (byte)header.miny);
-            RcIO.Write(stream, (byte)header.maxy);
+            sw.Write((short)header.hmin);
+            sw.Write((short)header.hmax);
+            sw.Write((byte)header.width);
+            sw.Write((byte)header.height);
+            sw.Write((byte)header.minx);
+            sw.Write((byte)header.maxx);
+            sw.Write((byte)header.miny);
+            sw.Write((byte)header.maxy);
         }
     }
 }
