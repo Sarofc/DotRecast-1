@@ -30,14 +30,14 @@ namespace DotRecast.Core
     {
         public static RcObjImporterContext LoadContext(Stream stream)
         {
-            var context = new RcObjImporterContext(); // TODO 大量内存分配
+            var context = new RcObjImporterContext();
 
             // 达成字符串解析0gc！
 
             const int BUFFER_SIZE = 4096;
             using var reader = new Utf8StreamReader(stream)
             {
-                SyncRead = true
+                SyncRead = true // 同步读取
             }
             .AsTextReader(BUFFER_SIZE);
 #pragma warning disable
@@ -46,34 +46,34 @@ namespace DotRecast.Core
             {
                 while (reader.TryReadLine(out var line))
                 {
-                    ReadLine(line.Span, context);
+                    ReadLine(line.Span, ref context);
                 }
             }
 
             return context;
         }
 
-        public static void ReadLine(ReadOnlySpan<char> line, RcObjImporterContext context)
+        public static void ReadLine(ReadOnlySpan<char> line, ref RcObjImporterContext context)
         {
             line = line.Trim();
             if (line.StartsWith("v"))
             {
-                ReadVertex(line, context);
+                ReadVertex(line, ref context);
             }
             else if (line.StartsWith("f"))
             {
-                ReadFace(line, context);
+                ReadFace(line, ref context);
             }
         }
 
-        private static void ReadVertex(ReadOnlySpan<char> line, RcObjImporterContext context)
+        private static void ReadVertex(ReadOnlySpan<char> line, ref RcObjImporterContext context)
         {
             if (line.StartsWith("v "))
             {
                 var vert = ReadVector3f(line);
-                context.vertexPositions.Add(vert.X);
-                context.vertexPositions.Add(vert.Y);
-                context.vertexPositions.Add(vert.Z);
+                context.AddVertex(vert.X);
+                context.AddVertex(vert.Y);
+                context.AddVertex(vert.Z);
             }
         }
 
@@ -96,7 +96,7 @@ namespace DotRecast.Core
         }
 
         [SkipLocalsInit]
-        private static void ReadFace(ReadOnlySpan<char> line, RcObjImporterContext context)
+        private static void ReadFace(ReadOnlySpan<char> line, ref RcObjImporterContext context)
         {
             Span<Range> v = stackalloc Range[16]; // incase
             var n = line.Split(v, ' ', StringSplitOptions.RemoveEmptyEntries);
@@ -107,20 +107,20 @@ namespace DotRecast.Core
 
             for (int j = 0; j < n - 3; j++)
             {
-                context.meshFaces.Add(ReadFaceVertex(line[v[1]], context));
+                context.AddFace(ReadFaceVertex(line[v[1]], ref context));
                 for (int i = 0; i < 2; i++)
                 {
-                    context.meshFaces.Add(ReadFaceVertex(line[v[2 + j + i]], context));
+                    context.AddFace(ReadFaceVertex(line[v[2 + j + i]], ref context));
                 }
             }
         }
 
         [SkipLocalsInit]
-        private static int ReadFaceVertex(ReadOnlySpan<char> face, RcObjImporterContext context)
+        private static int ReadFaceVertex(ReadOnlySpan<char> face, ref RcObjImporterContext context)
         {
             Span<Range> v = stackalloc Range[2];
             var n = face.Split(v, '/');
-            return GetIndex(int.Parse(face[v[0]]), context.vertexPositions.Count);
+            return GetIndex(int.Parse(face[v[0]]), context.Vertices.Length);
         }
 
         private static int GetIndex(int posi, int size)

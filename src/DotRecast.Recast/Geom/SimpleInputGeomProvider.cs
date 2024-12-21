@@ -27,8 +27,8 @@ namespace DotRecast.Recast.Geom
 {
     public class SimpleInputGeomProvider : IInputGeomProvider
     {
-        private readonly List<float> vertices;
-        private readonly List<int> faces;
+        private readonly float[] vertices;
+        private readonly int[] faces;
         private readonly float[] normals;
         private Vector3 bmin;
         private Vector3 bmax;
@@ -39,19 +39,19 @@ namespace DotRecast.Recast.Geom
         public static SimpleInputGeomProvider LoadFile(string objFilePath)
         {
             using var stream = RcIO.ReadFileIfFound(objFilePath);
-            var context = RcObjImporter.LoadContext(stream);
-            return new SimpleInputGeomProvider(context.vertexPositions, context.meshFaces);
+            using var context = RcObjImporter.LoadContext(stream);
+            return new SimpleInputGeomProvider(context.Vertices.ToArray(), context.Faces.ToArray());
         }
 
-        public SimpleInputGeomProvider(List<float> vertices, List<int> faces)
+        public SimpleInputGeomProvider(float[] vertices, int[] faces)
         {
             this.vertices = vertices;
             this.faces = faces;
-            normals = new float[faces.Count];
+            normals = new float[faces.Length];
             CalculateNormals();
             bmin = RcVec.Create(vertices, 0);
             bmax = RcVec.Create(vertices, 0);
-            for (int i = 1; i < vertices.Count / 3; i++)
+            for (int i = 1; i < vertices.Length / 3; i++)
             {
                 bmin = Vector3.Min(bmin, RcVec.Create(vertices, i * 3));
                 bmax = Vector3.Max(bmax, RcVec.Create(vertices, i * 3));
@@ -120,7 +120,7 @@ namespace DotRecast.Recast.Geom
 
         public void CalculateNormals()
         {
-            for (int i = 0; i < faces.Count; i += 3)
+            for (int i = 0; i < faces.Length; i += 3)
             {
                 int v0 = faces[i] * 3;
                 int v1 = faces[i + 1] * 3;

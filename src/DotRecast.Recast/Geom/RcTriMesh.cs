@@ -29,8 +29,8 @@ namespace DotRecast.Recast.Geom
 {
     public class RcTriMesh
     {
-        private readonly List<float> vertices;
-        private readonly List<int> faces;
+        private readonly float[] vertices;
+        private readonly int[] faces;
         public readonly RcChunkyTriMesh chunkyTriMesh;
 
         //private readonly ArrayPool<float>
@@ -38,18 +38,18 @@ namespace DotRecast.Recast.Geom
         public static RcTriMesh Load(string filename)
         {
             using var stream = RcIO.ReadFileIfFound(filename);
-            var context = RcObjImporter.LoadContext(stream);
-            //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
-            return new RcTriMesh(context.vertexPositions, context.meshFaces);
+            using var context = RcObjImporter.LoadContext(stream);
+            return new RcTriMesh(context.Vertices.ToArray(), context.Faces.ToArray()); // alloc here
         }
 
         public RcTriMesh(RcTriMesh mesh, Vector3 position, Quaternion rotation, Vector3 scale)
         {
-            vertices = new List<float>(mesh.vertices.Count);
-            faces = new List<int>(mesh.faces);
+            vertices = new float[mesh.vertices.Length];
+            faces = new int[mesh.faces.Length];
 
-            CollectionsMarshal.SetCount(vertices, mesh.vertices.Count);
-            for (int i = 0; i < faces.Count; i++)
+            Array.Copy(mesh.faces, faces, faces.Length);
+
+            for (int i = 0; i < faces.Length; i++)
             {
                 var v = RcVec.Create(mesh.vertices, faces[i] * 3);
 
@@ -61,25 +61,25 @@ namespace DotRecast.Recast.Geom
             }
 
             chunkyTriMesh = new RcChunkyTriMesh();
-            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Count / 3, 32, chunkyTriMesh);
+            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Length / 3, 32, chunkyTriMesh);
         }
 
-        public RcTriMesh(List<float> vertices, List<int> faces)
+        public RcTriMesh(float[] vertices, int[] faces)
         {
             this.vertices = vertices;
             this.faces = faces;
             chunkyTriMesh = new RcChunkyTriMesh();
-            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Count / 3, 32, chunkyTriMesh);
+            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Length / 3, 32, chunkyTriMesh);
         }
 
         public Span<int> GetTris()
         {
-            return CollectionsMarshal.AsSpan(faces);
+            return faces.AsSpan();
         }
 
         public Span<float> GetVerts()
         {
-            return CollectionsMarshal.AsSpan(vertices);
+            return vertices.AsSpan();
         }
 
         public List<RcChunkyTriMeshNode> GetChunksOverlappingRect(Vector2 bmin, Vector2 bmax)
@@ -89,7 +89,7 @@ namespace DotRecast.Recast.Geom
 
         public override string ToString()
         {
-            return $"vertices={vertices.Count} faces={faces.Count}";
+            return $"vertices={vertices.Length} faces={faces.Length}";
         }
     }
 }
