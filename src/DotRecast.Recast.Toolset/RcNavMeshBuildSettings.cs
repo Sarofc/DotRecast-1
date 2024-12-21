@@ -30,7 +30,7 @@ namespace DotRecast.Recast.Toolset
         public float detailSampleMaxError = 1f;
 
         public bool tiled = true;
-        public int tileSize = 32;
+        public int tileSize = 128;
 
         public bool keepInterResults = false;
         public bool buildAll = true;

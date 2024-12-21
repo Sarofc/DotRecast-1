@@ -1945,14 +1945,14 @@ namespace DotRecast.Detour.TileCache
 
         public static byte[] CompressTileCacheLayer(DtTileCacheLayerHeader header, int[] heights, ReadOnlySpan<int> areas, int[] cons, IRcCompressor comp)
         {
-            using var ms = new MemoryStream();
+            using var ms = new MemoryStream(); // TODO 临时buffer，使用内存池
             using var bw = new BinaryWriter(ms);
             DtTileCacheLayerHeaderWriter hw = new();
             try
             {
                 hw.Write(bw, header);
                 int gridSize = header.width * header.height;
-                byte[] buffer = new byte[gridSize * 3];
+                Span<byte> buffer = stackalloc byte[gridSize * 3];
                 for (int i = 0; i < gridSize; i++)
                 {
                     buffer[i] = (byte)heights[i];

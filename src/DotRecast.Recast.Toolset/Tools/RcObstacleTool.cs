@@ -36,7 +36,6 @@ namespace DotRecast.Recast.Toolset.Tools
         {
             if (null == geom || 0 == geom.Meshes().Count)
             {
-                //m_ctx->log(RC_LOG_ERROR, "buildTiledNavigation: No vertices and triangles.");
                 return new NavMeshBuildResult();
             }
 
@@ -76,6 +75,7 @@ namespace DotRecast.Recast.Toolset.Tools
             for (int i = 0; i < layers.Count; ++i)
             {
                 var layer = layers[i];
+                System.Diagnostics.Debug.Assert(layer.Length != 0);
                 var refs = _tc.AddTile(layer, 0);
                 _tc.BuildNavMeshTile(refs);
             }

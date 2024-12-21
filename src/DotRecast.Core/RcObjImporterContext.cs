@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace DotRecast.Core
 {
+    // TODO ArrayPool
     public class RcObjImporterContext
     {
         public List<float> vertexPositions;

@@ -19,6 +19,7 @@ freely, subject to the following restrictions:
 */
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -32,12 +33,35 @@ namespace DotRecast.Recast.Geom
         private readonly List<int> faces;
         public readonly RcChunkyTriMesh chunkyTriMesh;
 
+        //private readonly ArrayPool<float>
+
         public static RcTriMesh Load(string filename)
         {
             using var stream = RcIO.ReadFileIfFound(filename);
             var context = RcObjImporter.LoadContext(stream);
             //Console.WriteLine($"{{context.capcatiy}} {context.vertexPositions.Count} {context.meshFaces.Count}");
             return new RcTriMesh(context.vertexPositions, context.meshFaces);
+        }
+
+        public RcTriMesh(RcTriMesh mesh, Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            vertices = new List<float>(mesh.vertices.Count);
+            faces = new List<int>(mesh.faces);
+
+            CollectionsMarshal.SetCount(vertices, mesh.vertices.Count);
+            for (int i = 0; i < faces.Count; i++)
+            {
+                var v = RcVec.Create(mesh.vertices, faces[i] * 3);
+
+                var nv = Vector3.Transform(scale * (v + position), rotation);
+
+                vertices[faces[i] * 3 + 0] = nv.X;
+                vertices[faces[i] * 3 + 1] = nv.Y;
+                vertices[faces[i] * 3 + 2] = nv.Z;
+            }
+
+            chunkyTriMesh = new RcChunkyTriMesh();
+            RcChunkyTriMeshs.CreateChunkyTriMesh(GetVerts(), GetTris(), faces.Count / 3, 32, chunkyTriMesh);
         }
 
         public RcTriMesh(List<float> vertices, List<int> faces)
@@ -61,6 +85,11 @@ namespace DotRecast.Recast.Geom
         public List<RcChunkyTriMeshNode> GetChunksOverlappingRect(Vector2 bmin, Vector2 bmax)
         {
             return RcChunkyTriMeshs.GetChunksOverlappingRect(chunkyTriMesh, bmin, bmax);
+        }
+
+        public override string ToString()
+        {
+            return $"vertices={vertices.Count} faces={faces.Count}";
         }
     }
 }

@@ -302,9 +302,12 @@ public class RecastDemo : IRecastDemoChannel
     private DemoInputGeomProvider LoadInputMesh(string filename)
     {
         var mesh = RcTriMesh.Load(filename);
-        //var mesh1 = RcTriMesh.Load("dungeon.obj");
-        //var geom = new DemoInputGeomProvider([mesh, mesh1]); // 测试多个mesh
         var geom = new DemoInputGeomProvider([mesh]);
+
+        //var mesh1 = RcTriMesh.Load("dungeon.obj");
+        //var mesh1 = new RcTriMesh(mesh, Vector3.UnitX * 100, Quaternion.CreateFromAxisAngle(Vector3.UnitY, 45), Vector3.One /** 2*/);  // mesh 变换
+        //var geom = new DemoInputGeomProvider([mesh, mesh1]); // 测试多个mesh
+
         _lastGeomFileName = filename;
         return geom;
     }

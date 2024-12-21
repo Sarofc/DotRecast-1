@@ -32,6 +32,7 @@ public class ObstacleSampleTool : ISampleTool
             if (buildResult.Success)
             {
                 _sample.Update(_sample.GetInputGeom(), buildResult.RecastBuilderResults, buildResult.NavMesh);
+                Console.WriteLine(buildResult.NavMesh.ToString());
             }
 
             GC.Collect();

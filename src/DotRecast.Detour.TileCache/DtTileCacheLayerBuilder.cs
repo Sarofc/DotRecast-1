@@ -125,6 +125,7 @@ namespace DotRecast.Detour.TileCache
                     header.hmax = layer.hmax;
 
                     var bytes = DtTileCacheBuilder.CompressTileCacheLayer(header, layer.heights, layer.areas, layer.cons, _compressor);
+                    System.Diagnostics.Debug.Assert(bytes.Length != 0);
                     result.Add(bytes);
                 }
             }
