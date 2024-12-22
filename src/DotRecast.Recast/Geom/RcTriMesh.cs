@@ -19,10 +19,8 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using DotRecast.Core;
 
 namespace DotRecast.Recast.Geom
@@ -32,8 +30,6 @@ namespace DotRecast.Recast.Geom
         private readonly float[] vertices;
         private readonly int[] faces;
         public readonly RcChunkyTriMesh chunkyTriMesh;
-
-        //private readonly ArrayPool<float>
 
         public static RcTriMesh Load(string filename)
         {

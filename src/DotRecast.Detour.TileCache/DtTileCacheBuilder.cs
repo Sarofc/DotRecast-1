@@ -1959,20 +1959,14 @@ namespace DotRecast.Detour.TileCache
         {
             var sr = new RcSpanReader(compressed);
             DtTileCacheLayer layer = new();
-            try
-            {
-                var reader = new DtTileCacheLayerHeaderReader();
-                layer.header = reader.Read(ref sr);
-            }
-            catch (IOException e)
-            {
-                throw new Exception(e.Message, e);
-            }
+
+            var reader = new DtTileCacheLayerHeaderReader();
+            layer.header = reader.Read(ref sr);
 
             int gridSize = layer.header.width * layer.header.height;
 
             Span<byte> grids = stackalloc byte[gridSize * 3];
-            comp.Decompress(compressed.AsSpan(sr.Position(), compressed.Length - sr.Position()), grids);
+            comp.Decompress(sr.UnreadSpan, grids);
             layer.heights = new byte[gridSize];
             layer.areas = new byte[gridSize];
             layer.cons = new byte[gridSize];

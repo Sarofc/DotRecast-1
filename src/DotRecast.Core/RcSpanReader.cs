@@ -10,6 +10,8 @@ namespace DotRecast.Core
         private ReadOnlySpan<byte> _bytes;
         private int _position;
 
+        public ReadOnlySpan<byte> UnreadSpan => _bytes.Slice(_position);
+
         public RcSpanReader(ReadOnlySpan<byte> bytes)
         {
             _bytes = bytes;
