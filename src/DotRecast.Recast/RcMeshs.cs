@@ -32,7 +32,7 @@ namespace DotRecast.Recast
         public const int VERTEX_BUCKET_COUNT = (1 << 12);
 
 
-        private unsafe static void BuildMeshAdjacency(int[] polys, int npolys, int nverts, int vertsPerPoly)
+        private unsafe static void BuildMeshAdjacency(ushort[] polys, int npolys, int nverts, int vertsPerPoly)
         {
             // Based on code by Eric Lengyel from:
             // http://www.terathon.com/code/edges.php
@@ -46,15 +46,15 @@ namespace DotRecast.Recast
 
             firstEdge.Slice(0, nverts).Fill(RC_MESH_NULL_IDX);
 
-            for (int i = 0; i < npolys; ++i)
+            for (ushort i = 0; i < npolys; ++i)
             {
                 int t = i * vertsPerPoly * 2;
-                for (int j = 0; j < vertsPerPoly; ++j)
+                for (ushort j = 0; j < vertsPerPoly; ++j)
                 {
                     if (polys[t + j] == RC_MESH_NULL_IDX)
                         break;
-                    int v0 = polys[t + j];
-                    int v1 = (j + 1 >= vertsPerPoly || polys[t + j + 1] == RC_MESH_NULL_IDX)
+                    var v0 = polys[t + j];
+                    var v1 = (j + 1 >= vertsPerPoly || polys[t + j + 1] == RC_MESH_NULL_IDX)
                         ? polys[t + 0]
                         : polys[t + j + 1];
                     if (v0 < v1)
@@ -74,10 +74,10 @@ namespace DotRecast.Recast
                 }
             }
 
-            for (int i = 0; i < npolys; ++i)
+            for (ushort i = 0; i < npolys; ++i)
             {
                 int t = i * vertsPerPoly * 2;
-                for (int j = 0; j < vertsPerPoly; ++j)
+                for (ushort j = 0; j < vertsPerPoly; ++j)
                 {
                     if (polys[t + j] == RC_MESH_NULL_IDX)
                         break;
@@ -125,7 +125,7 @@ namespace DotRecast.Recast
             return (int)(n & (VERTEX_BUCKET_COUNT - 1));
         }
 
-        private static int AddVertex(int x, int y, int z, int[] verts, int[] firstVert, int[] nextVert, ref int nv)
+        private static ushort AddVertex(int x, int y, int z, ushort[] verts, int[] firstVert, int[] nextVert, ref int nv)
         {
             int bucket = ComputeVertexHash(x, 0, z);
             int i = firstVert[bucket];
@@ -134,7 +134,7 @@ namespace DotRecast.Recast
             {
                 int v = i * 3;
                 if (verts[v + 0] == x && (MathF.Abs(verts[v + 1] - y) <= 2) && verts[v + 2] == z)
-                    return i;
+                    return (ushort)i;
                 i = nextVert[i]; // next
             }
 
@@ -142,13 +142,13 @@ namespace DotRecast.Recast
             i = nv;
             nv++;
             int v2 = i * 3;
-            verts[v2 + 0] = x;
-            verts[v2 + 1] = y;
-            verts[v2 + 2] = z;
+            verts[v2 + 0] = (ushort)x;
+            verts[v2 + 1] = (ushort)y;
+            verts[v2 + 2] = (ushort)z;
             nextVert[i] = firstVert[bucket];
-            firstVert[bucket] = i;
+            firstVert[bucket] = (ushort)i;
 
-            return i;
+            return (ushort)i;
         }
 
         public static int Prev(int i, int n)
@@ -448,7 +448,7 @@ namespace DotRecast.Recast
             return ntris;
         }
 
-        private static int CountPolyVerts(int[] p, int j, int nvp)
+        private static int CountPolyVerts(ushort[] p, int j, int nvp)
         {
             for (int i = 0; i < nvp; ++i)
                 if (p[i + j] == RC_MESH_NULL_IDX)
@@ -456,13 +456,13 @@ namespace DotRecast.Recast
             return nvp;
         }
 
-        private static bool Uleft(int[] verts, int a, int b, int c)
+        private static bool Uleft(ushort[] verts, int a, int b, int c)
         {
             return (verts[b + 0] - verts[a + 0]) * (verts[c + 2] - verts[a + 2])
                 - (verts[c + 0] - verts[a + 0]) * (verts[b + 2] - verts[a + 2]) < 0;
         }
 
-        private static int GetPolyMergeValue(int[] polys, int pa, int pb, int[] verts, out int ea, out int eb, int nvp)
+        private static int GetPolyMergeValue(ushort[] polys, int pa, int pb, ushort[] verts, out int ea, out int eb, int nvp)
         {
             ea = 0;
             eb = 0;
@@ -534,13 +534,13 @@ namespace DotRecast.Recast
             return (dx * dx) + (dy * dy);
         }
 
-        private static void MergePolyVerts(int[] polys, int pa, int pb, int ea, int eb, int tmp, int nvp)
+        private static void MergePolyVerts(ushort[] polys, int pa, int pb, int ea, int eb, int tmp, int nvp)
         {
             int na = CountPolyVerts(polys, pa, nvp);
             int nb = CountPolyVerts(polys, pb, nvp);
 
             // Merge polygons.
-            Array.Fill(polys, RC_MESH_NULL_IDX, tmp, (tmp + nvp) - (tmp));
+            Array.Fill<ushort>(polys, RC_MESH_NULL_IDX, tmp, (tmp + nvp) - (tmp));
             int n = 0;
             // Add pa
             for (int i = 0; i < na - 1; ++i)
@@ -559,7 +559,7 @@ namespace DotRecast.Recast
             RcArrays.Copy(polys, tmp, polys, pa, nvp);
         }
 
-        private static int PushFront(int v, int[] arr, int an)
+        private static int PushFront<T>(T v, T[] arr, int an)
         {
             an++;
             for (int i = an - 1; i > 0; --i)
@@ -568,7 +568,7 @@ namespace DotRecast.Recast
             return an;
         }
 
-        private static int PushBack(int v, int[] arr, int an)
+        private static int PushBack<T>(T v, T[] arr, int an)
         {
             arr[an] = v;
             an++;
@@ -696,16 +696,16 @@ namespace DotRecast.Recast
             }
 
             int nedges = 0;
-            int[] edges = new int[numRemovedVerts * nvp * 4];
+            ushort[] edges = new ushort[numRemovedVerts * nvp * 4];
 
             int nhole = 0;
-            int[] hole = new int[numRemovedVerts * nvp];
+            ushort[] hole = new ushort[numRemovedVerts * nvp];
 
             int nhreg = 0;
-            int[] hreg = new int[numRemovedVerts * nvp];
+            ushort[] hreg = new ushort[numRemovedVerts * nvp];
 
             int nharea = 0;
-            int[] harea = new int[numRemovedVerts * nvp];
+            ushort[] harea = new ushort[numRemovedVerts * nvp];
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -789,10 +789,10 @@ namespace DotRecast.Recast
 
                 for (int i = 0; i < nedges; ++i)
                 {
-                    int ea = edges[i * 4 + 0];
-                    int eb = edges[i * 4 + 1];
-                    int r = edges[i * 4 + 2];
-                    int a = edges[i * 4 + 3];
+                    var ea = edges[i * 4 + 0];
+                    var eb = edges[i * 4 + 1];
+                    var r = edges[i * 4 + 2];
+                    var a = edges[i * 4 + 3];
                     bool add = false;
                     if (hole[0] == eb)
                     {
@@ -854,9 +854,9 @@ namespace DotRecast.Recast
             }
 
             // Merge the hole triangles back to polygons.
-            int[] polys = new int[(ntris + 1) * nvp];
-            int[] pregs = new int[ntris];
-            int[] pareas = new int[ntris];
+            ushort[] polys = new ushort[(ntris + 1) * nvp]; // TODO alloc
+            ushort[] pregs = new ushort[ntris];
+            ushort[] pareas = new ushort[ntris];
 
             int tmpPoly = ntris * nvp;
 
@@ -950,7 +950,7 @@ namespace DotRecast.Recast
                 for (int j = 0; j < nvp; ++j)
                     mesh.polys[p + j] = polys[i * nvp + j];
                 mesh.regs[mesh.npolys] = pregs[i];
-                mesh.areas[mesh.npolys] = pareas[i];
+                mesh.areas[mesh.npolys] = (byte)pareas[i];
                 mesh.npolys++;
                 if (mesh.npolys > maxTris)
                 {
@@ -995,13 +995,13 @@ namespace DotRecast.Recast
                 throw new Exception("rcBuildPolyMesh: Too many vertices " + maxVertices);
             }
 
-            int[] vflags = new int[maxVertices]; // TODO alloc
+            ushort[] vflags = new ushort[maxVertices]; // TODO alloc
 
-            mesh.verts = new int[maxVertices * 3];
-            mesh.polys = new int[maxTris * nvp * 2];
+            mesh.verts = new ushort[maxVertices * 3];
+            mesh.polys = new ushort[maxTris * nvp * 2];
             Array.Fill(mesh.polys, RC_MESH_NULL_IDX);
-            mesh.regs = new int[maxTris];
-            mesh.areas = new int[maxTris];
+            mesh.regs = new ushort[maxTris];
+            mesh.areas = new byte[maxTris];
 
             mesh.nverts = 0;
             mesh.npolys = 0;
@@ -1016,7 +1016,7 @@ namespace DotRecast.Recast
 
             int[] indices = new int[maxVertsPerCont];
             int[] tris = new int[maxVertsPerCont * 3];
-            int[] polys = new int[(maxVertsPerCont + 1) * nvp];
+            ushort[] polys = new ushort[(maxVertsPerCont + 1) * nvp];
 
             int tmpPoly = maxVertsPerCont * nvp;
 
@@ -1029,7 +1029,7 @@ namespace DotRecast.Recast
                     continue;
 
                 // Triangulate contour
-                for (int j = 0; j < cont.nverts; ++j)
+                for (ushort j = 0; j < cont.nverts; ++j)
                     indices[j] = j;
                 int ntris = Triangulate(cont.nverts, cont.verts, indices, tris);
                 if (ntris <= 0)
@@ -1061,9 +1061,9 @@ namespace DotRecast.Recast
                     int t = j * 3;
                     if (tris[t + 0] != tris[t + 1] && tris[t + 0] != tris[t + 2] && tris[t + 1] != tris[t + 2])
                     {
-                        polys[npolys * nvp + 0] = indices[tris[t + 0]];
-                        polys[npolys * nvp + 1] = indices[tris[t + 1]];
-                        polys[npolys * nvp + 2] = indices[tris[t + 2]];
+                        polys[npolys * nvp + 0] = (ushort)indices[tris[t + 0]];
+                        polys[npolys * nvp + 1] = (ushort)indices[tris[t + 1]];
+                        polys[npolys * nvp + 2] = (ushort)indices[tris[t + 2]];
                         npolys++;
                     }
                 }
@@ -1192,7 +1192,7 @@ namespace DotRecast.Recast
             }
 
             // Just allocate the mesh flags array. The user is resposible to fill it.
-            mesh.flags = new int[mesh.npolys];
+            mesh.flags = new ushort[mesh.npolys];
 
             if (mesh.nverts > MAX_MESH_VERTS_POLY)
             {
@@ -1237,14 +1237,14 @@ namespace DotRecast.Recast
             }
 
             mesh.nverts = 0;
-            mesh.verts = new int[maxVerts * 3];
+            mesh.verts = new ushort[maxVerts * 3];
 
             mesh.npolys = 0;
-            mesh.polys = new int[maxPolys * 2 * mesh.nvp];
+            mesh.polys = new ushort[maxPolys * 2 * mesh.nvp];
             Array.Fill(mesh.polys, RC_MESH_NULL_IDX, 0, (mesh.polys.Length) - (0));
-            mesh.regs = new int[maxPolys];
-            mesh.areas = new int[maxPolys];
-            mesh.flags = new int[maxPolys];
+            mesh.regs = new ushort[maxPolys];
+            mesh.areas = new byte[maxPolys];
+            mesh.flags = new ushort[maxPolys];
 
             int[] nextVert = new int[maxVerts];
 
@@ -1252,7 +1252,7 @@ namespace DotRecast.Recast
             for (int i = 0; i < VERTEX_BUCKET_COUNT; ++i)
                 firstVert[i] = -1;
 
-            int[] vremap = new int[maxVertsPerMesh];
+            ushort[] vremap = new ushort[maxVertsPerMesh];
 
             for (int i = 0; i < nmeshes; ++i)
             {
@@ -1353,15 +1353,15 @@ namespace DotRecast.Recast
             dst.borderSize = src.borderSize;
             dst.maxEdgeError = src.maxEdgeError;
 
-            dst.verts = new int[src.nverts * 3];
+            dst.verts = new ushort[src.nverts * 3];
             RcArrays.Copy(src.verts, 0, dst.verts, 0, dst.verts.Length);
-            dst.polys = new int[src.npolys * 2 * src.nvp];
+            dst.polys = new ushort[src.npolys * 2 * src.nvp];
             RcArrays.Copy(src.polys, 0, dst.polys, 0, dst.polys.Length);
-            dst.regs = new int[src.npolys];
+            dst.regs = new ushort[src.npolys];
             RcArrays.Copy(src.regs, 0, dst.regs, 0, dst.regs.Length);
-            dst.areas = new int[src.npolys];
+            dst.areas = new byte[src.npolys];
             RcArrays.Copy(src.areas, 0, dst.areas, 0, dst.areas.Length);
-            dst.flags = new int[src.npolys];
+            dst.flags = new ushort[src.npolys];
             RcArrays.Copy(src.flags, 0, dst.flags, 0, dst.flags.Length);
             return dst;
         }

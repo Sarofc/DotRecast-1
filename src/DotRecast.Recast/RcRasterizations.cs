@@ -113,9 +113,9 @@ namespace DotRecast.Recast
             // Create the new span.
             RcSpan newSpan = new();
             //RcSpan newSpan = AllocSpan(heightfield); // 效果还没直接new好
-            newSpan.smin = min;
-            newSpan.smax = max;
-            newSpan.area = areaID;
+            newSpan.smin = (ushort)min;
+            newSpan.smax = (ushort)max;
+            newSpan.area = (byte)areaID;
             newSpan.next = null;
 
             int columnIndex = x + z * heightfield.width;
@@ -478,7 +478,7 @@ namespace DotRecast.Recast
         /// @param[in]		flagMergeThreshold	The distance where the walkable flag is favored over the non-walkable flag. 
         ///										[Limit: >= 0] [Units: vx]
         /// @returns True if the operation completed successfully.
-        public static void RasterizeTriangles(RcContext context, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int[] triAreaIDs, int numTris,
+        public static void RasterizeTriangles(RcContext context, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, byte[] triAreaIDs, int numTris,
             RcHeightfield heightfield, int flagMergeThreshold)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_RASTERIZE_TRIANGLES);

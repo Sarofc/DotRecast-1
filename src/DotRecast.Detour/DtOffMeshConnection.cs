@@ -31,15 +31,15 @@ namespace DotRecast.Detour
         public float rad;
 
         /// The polygon reference of the connection within the tile.
-        public int poly;
+        public ushort poly;
 
         /// Link flags. 
         /// @note These are not the connection's user defined flags. Those are assigned via the 
         /// connection's dtPoly definition. These are link flags used for internal purposes.
-        public int flags;
+        public byte flags;
 
         /// End point side.
-        public int side;
+        public byte side;
 
         /// The id of the offmesh connection. (User assigned when the navigation mesh is built.)
         public int userId;

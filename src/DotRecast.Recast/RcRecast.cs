@@ -29,7 +29,7 @@ namespace DotRecast.Recast
         /// Represents the null area.
         /// When a data element is given this value it is considered to no longer be 
         /// assigned to a usable area.  (E.g. It is un-walkable.)
-        public const int RC_NULL_AREA = 0;
+        public const byte RC_NULL_AREA = 0;
 
         /// The default area id used to indicate a walkable polygon. 
         /// This is also the maximum allowed area id, and the only non-null area id 
@@ -85,12 +85,12 @@ namespace DotRecast.Recast
         /// The region id field of a vertex may have several flags applied to it. So the
         /// fields value can't be used directly.
         /// @see rcContour::verts, rcContour::rverts
-        public const int RC_CONTOUR_REG_MASK = 0xffff;
+        public const ushort RC_CONTOUR_REG_MASK = 0xffff;
 
         /// A value which indicates an invalid index within a mesh.
         /// @note This does not necessarily indicate an error.
         /// @see rcPolyMesh::polys
-        public const int RC_MESH_NULL_IDX = 0xffff;
+        public const ushort RC_MESH_NULL_IDX = 0xffff;
 
         public const int RC_LOG_WARNING = 1;
 
@@ -185,9 +185,9 @@ namespace DotRecast.Recast
         /// See the #rcConfig documentation for more information on the configuration parameters.
         ///
         /// @see rcHeightfield, rcClearUnwalkableTriangles, rcRasterizeTriangles
-        public static int[] MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, RcAreaModification areaMod)
+        public static byte[] MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, RcAreaModification areaMod)
         {
-            int[] areas = new int[nt];
+            byte[] areas = new byte[nt];
             float walkableThr = MathF.Cos(float.DegreesToRadians(walkableSlopeAngle));
             Vector3 norm = default;
             for (int i = 0; i < nt; ++i)

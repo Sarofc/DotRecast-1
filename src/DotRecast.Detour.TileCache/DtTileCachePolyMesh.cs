@@ -25,10 +25,10 @@ namespace DotRecast.Detour.TileCache
         public int nvp;
         public int nverts; // < Number of vertices.
         public int npolys; // < Number of polygons.
-        public int[] verts; // < Vertices of the mesh, 3 elements per vertex.
-        public int[] polys; // < Polygons of the mesh, nvp*2 elements per polygon.
-        public int[] flags; // < Per polygon flags.
-        public int[] areas; // < Area ID of polygons.
+        public ushort[] verts; // < Vertices of the mesh, 3 elements per vertex.
+        public ushort[] polys; // < Polygons of the mesh, nvp*2 elements per polygon.
+        public ushort[] flags; // < Per polygon flags.
+        public byte[] areas; // < Area ID of polygons.
 
         public DtTileCachePolyMesh(int nvp)
         {

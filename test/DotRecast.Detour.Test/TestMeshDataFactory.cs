@@ -109,9 +109,9 @@ public static class TestMeshDataFactory
         option.offMeshConRads[0] = 0.1f;
         option.offMeshConDirs = new bool[1];
         option.offMeshConDirs[0] = true;
-        option.offMeshConAreas = new int[1];
+        option.offMeshConAreas = new byte[1];
         option.offMeshConAreas[0] = 2;
-        option.offMeshConFlags = new int[1];
+        option.offMeshConFlags = new ushort[1];
         option.offMeshConFlags[0] = 12;
         option.offMeshConUserID = new int[1];
         option.offMeshConUserID[0] = 0x4567;

@@ -36,9 +36,9 @@ namespace DotRecast.Recast
         public int nrverts;
 
         /** The region id of the contour. */
-        public int area;
+        public ushort reg;
 
         /** The area id of the contour. */
-        public int reg;
+        public byte area;
     }
 }

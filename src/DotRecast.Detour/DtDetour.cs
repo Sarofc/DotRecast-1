@@ -31,7 +31,7 @@ namespace DotRecast.Detour
 
         /// A flag that indicates that an off-mesh connection can be traversed in
         /// both directions. (Is bidirectional.)
-        public const int DT_OFFMESH_CON_BIDIR = 1;
+        public const byte DT_OFFMESH_CON_BIDIR = 1;
 
         /// The maximum number of user defined area ids.
         public const int DT_MAX_AREAS = 64;

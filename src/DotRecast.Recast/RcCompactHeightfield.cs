@@ -44,16 +44,16 @@ namespace DotRecast.Recast
         public int borderSize;
 
         /** The maximum distance value of any span within the field. */
-        public int maxDistance;
+        public ushort maxDistance;
 
         /** The maximum region id of any span within the field. */
-        public int maxRegions;
+        public ushort maxRegions;
 
         /** The minimum bounds in world space. [(x, y, z)] */
-        public Vector3 bmin = new();
+        public Vector3 bmin;
 
         /** The maximum bounds in world space. [(x, y, z)] */
-        public Vector3 bmax = new();
+        public Vector3 bmax;
 
         /** The size of each cell. (On the xz-plane.) */
         public float cs;
@@ -68,9 +68,9 @@ namespace DotRecast.Recast
         public RcCompactSpan[] spans;
 
         /** Array containing border distance data. [Size: #spanCount] */
-        public int[] dist;
+        public ushort[] dist;
 
         /** Array containing area id data. [Size: #spanCount] */
-        public int[] areas;
+        public byte[] areas;
     }
 }

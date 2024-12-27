@@ -27,8 +27,8 @@ namespace DotRecast.Detour
     /// @see dtMeshTile
     public struct DtBVNode
     {
-        public Int3 bmin; //< Minimum bounds of the node's AABB. [(x, y, z)]
-        public Int3 bmax; //< Maximum bounds of the node's AABB. [(x, y, z)]
+        public UShort3 bmin; //< Minimum bounds of the node's AABB. [(x, y, z)]
+        public UShort3 bmax; //< Maximum bounds of the node's AABB. [(x, y, z)]
         public int i; //< The node's index. (Negative for escape sequence.)
     }
 }

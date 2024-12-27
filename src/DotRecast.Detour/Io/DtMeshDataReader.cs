@@ -99,17 +99,17 @@ namespace DotRecast.Detour.Io
 
                 for (int j = 0; j < polys[i].verts.Length; j++)
                 {
-                    polys[i].verts[j] = br.ReadInt16() & 0xFFFF;
+                    polys[i].verts[j] = br.ReadUInt16();
                 }
 
                 for (int j = 0; j < polys[i].neis.Length; j++)
                 {
-                    polys[i].neis[j] = br.ReadInt16() & 0xFFFF;
+                    polys[i].neis[j] = br.ReadUInt16();
                 }
 
-                polys[i].flags = br.ReadInt16() & 0xFFFF;
-                polys[i].vertCount = br.ReadByte() & 0xFF;
-                polys[i].areaAndtype = br.ReadByte() & 0xFF;
+                polys[i].flags = br.ReadUInt16();
+                polys[i].vertCount = br.ReadByte();
+                polys[i].areaAndtype = br.ReadByte();
             }
 
             return polys;
@@ -122,20 +122,20 @@ namespace DotRecast.Detour.Io
             {
                 int vertBase = buf.ReadInt32();
                 int triBase = buf.ReadInt32();
-                byte vertCount = (byte)(buf.ReadByte() & 0xFF);
-                byte triCount = (byte)(buf.ReadByte() & 0xFF);
+                byte vertCount = buf.ReadByte();
+                byte triCount = buf.ReadByte();
                 polys[i] = new DtPolyDetail(vertBase, triBase, vertCount, triCount);
             }
 
             return polys;
         }
 
-        private int[] ReadDTris(BinaryReader buf, DtMeshHeader header)
+        private byte[] ReadDTris(BinaryReader buf, DtMeshHeader header)
         {
-            int[] tris = new int[4 * header.detailTriCount];
+            byte[] tris = new byte[4 * header.detailTriCount];
             for (int i = 0; i < tris.Length; i++)
             {
-                tris[i] = buf.ReadByte() & 0xFF;
+                tris[i] = buf.ReadByte();
             }
 
             return tris;
@@ -150,12 +150,12 @@ namespace DotRecast.Detour.Io
 
                 for (int j = 0; j < 3; j++)
                 {
-                    n.bmin[j] = buf.ReadInt16() & 0xFFFF;
+                    n.bmin[j] = buf.ReadUInt16();
                 }
 
                 for (int j = 0; j < 3; j++)
                 {
-                    n.bmax[j] = buf.ReadInt16() & 0xFFFF;
+                    n.bmax[j] = buf.ReadUInt16();
                 }
 
                 n.i = buf.ReadInt32();
@@ -178,9 +178,9 @@ namespace DotRecast.Detour.Io
                 }
 
                 cons[i].rad = buf.ReadSingle();
-                cons[i].poly = buf.ReadInt16() & 0xFFFF;
-                cons[i].flags = buf.ReadByte() & 0xFF;
-                cons[i].side = buf.ReadByte() & 0xFF;
+                cons[i].poly = buf.ReadUInt16();
+                cons[i].flags = buf.ReadByte();
+                cons[i].side = buf.ReadByte();
                 cons[i].userId = buf.ReadInt32();
             }
 

@@ -107,9 +107,9 @@ namespace DotRecast.Recast.Geom
 
         public bool[] OffMeshConDirs => throw new NotImplementedException();
 
-        public int[] OffMeshConAreas => throw new NotImplementedException();
+        public byte[] OffMeshConAreas => throw new NotImplementedException();
 
-        public int[] OffMeshConFlags => throw new NotImplementedException();
+        public ushort[] OffMeshConFlags => throw new NotImplementedException();
 
         public int[] OffMeshConId => throw new NotImplementedException();
 

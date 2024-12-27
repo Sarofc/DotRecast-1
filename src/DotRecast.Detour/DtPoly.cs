@@ -31,50 +31,50 @@ namespace DotRecast.Detour
 
         /// The indices of the polygon's vertices.
         /// The actual vertices are located in dtMeshTile::verts.
-        public readonly int[] verts;
+        public readonly ushort[] verts;
 
         /// Packed data representing neighbor polygons references and flags for each edge.
-        public readonly int[] neis;
+        public readonly ushort[] neis;
 
         /// The user defined polygon flags.
-        public int flags;
+        public ushort flags;
 
         /// The number of vertices in the polygon.
-        public int vertCount;
+        public byte vertCount;
 
         /// The bit packed area id and polygon type.
         /// @note Use the structure's set and get methods to access this value.
-        public int areaAndtype;
+        public byte areaAndtype;
 
         public DtPoly(int index, int maxVertsPerPoly)
         {
             this.index = index;
-            verts = new int[maxVertsPerPoly];
-            neis = new int[maxVertsPerPoly];
+            verts = new ushort[maxVertsPerPoly];
+            neis = new ushort[maxVertsPerPoly];
         }
 
         /// Sets the user defined area id. [Limit: < #DT_MAX_AREAS]
-        public void SetArea(int a)
+        public void SetArea(byte a)
         {
-            areaAndtype = (areaAndtype & 0xc0) | (a & 0x3f);
+            areaAndtype = (byte)((areaAndtype & 0xc0) | (a & 0x3f));
         }
 
         /// Sets the polygon type. (See: #dtPolyTypes.)
-        public void SetPolyType(int t)
+        public void SetPolyType(byte t)
         {
-            areaAndtype = (areaAndtype & 0x3f) | (t << 6);
+            areaAndtype = (byte)((areaAndtype & 0x3f) | (t << 6));
         }
 
         /// Gets the user defined area id.
-        public int GetArea()
+        public byte GetArea()
         {
-            return areaAndtype & 0x3f;
+            return (byte)(areaAndtype & 0x3f);
         }
 
         /// Gets the polygon type. (See: #dtPolyTypes)
-        public int GetPolyType()
+        public byte GetPolyType()
         {
-            return areaAndtype >> 6;
+            return (byte)(areaAndtype >> 6);
         }
     }
 }

@@ -1029,8 +1029,8 @@ namespace DotRecast.Recast
         }
 
 
-        public static void SeedArrayWithPolyCenter(RcContext ctx, RcCompactHeightfield chf, ReadOnlySpan<int> meshpoly, int poly, int npoly,
-            ReadOnlySpan<int> verts, int bs, RcHeightPatch hp, List<int> array)
+        public static void SeedArrayWithPolyCenter(RcContext ctx, RcCompactHeightfield chf, ReadOnlySpan<ushort> meshpoly, int poly, int npoly,
+            ReadOnlySpan<ushort> verts, int bs, RcHeightPatch hp, List<int> array)
         {
             // Note: Reads to the compact heightfield are offset by border size (bs)
             // since border size offset is already removed from the polymesh vertices.
@@ -1187,8 +1187,8 @@ namespace DotRecast.Recast
         }
 
         public static void GetHeightData(RcContext ctx, RcCompactHeightfield chf,
-            ReadOnlySpan<int> meshpolys, int poly, int npoly,
-            ReadOnlySpan<int> verts, int bs,
+            ReadOnlySpan<ushort> meshpolys, int poly, int npoly,
+            ReadOnlySpan<ushort> verts, int bs,
             ref RcHeightPatch hp, ref List<int> queue,
             int region)
         {
@@ -1396,7 +1396,7 @@ namespace DotRecast.Recast
             dmesh.nverts = 0;
             dmesh.verts = new float[vcap * 3];
             dmesh.ntris = 0;
-            dmesh.tris = new int[tcap * 4];
+            dmesh.tris = new byte[tcap * 4];
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -1489,7 +1489,7 @@ namespace DotRecast.Recast
                         tcap += 256;
                     }
 
-                    int[] newt = new int[tcap * 4];
+                    byte[] newt = new byte[tcap * 4];
                     if (dmesh.ntris != 0)
                     {
                         RcArrays.Copy(dmesh.tris, 0, newt, 0, 4 * dmesh.ntris);
@@ -1501,10 +1501,10 @@ namespace DotRecast.Recast
                 for (int j = 0; j < ntris; ++j)
                 {
                     int t = j * 4;
-                    dmesh.tris[dmesh.ntris * 4 + 0] = tris[t + 0];
-                    dmesh.tris[dmesh.ntris * 4 + 1] = tris[t + 1];
-                    dmesh.tris[dmesh.ntris * 4 + 2] = tris[t + 2];
-                    dmesh.tris[dmesh.ntris * 4 + 3] = tris[t + 3];
+                    dmesh.tris[dmesh.ntris * 4 + 0] = (byte)tris[t + 0];
+                    dmesh.tris[dmesh.ntris * 4 + 1] = (byte)tris[t + 1];
+                    dmesh.tris[dmesh.ntris * 4 + 2] = (byte)tris[t + 2];
+                    dmesh.tris[dmesh.ntris * 4 + 3] = (byte)tris[t + 3];
                     dmesh.ntris++;
                 }
             }
@@ -1538,7 +1538,7 @@ namespace DotRecast.Recast
             mesh.nmeshes = 0;
             mesh.meshes = new int[maxMeshes * 4];
             mesh.ntris = 0;
-            mesh.tris = new int[maxTris * 4];
+            mesh.tris = new byte[maxTris * 4];
             mesh.nverts = 0;
             mesh.verts = new float[maxVerts * 3];
 

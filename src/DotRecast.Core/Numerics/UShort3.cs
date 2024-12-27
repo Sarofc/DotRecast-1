@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace DotRecast.Core
 {
-    public struct Int3
+    public struct UShort3
     {
-        public int X;
-        public int Y;
-        public int Z;
+        public ushort X;
+        public ushort Y;
+        public ushort Z;
 
-        public int this[int index]
+        public ushort this[int index]
         {
             readonly get
             {
@@ -19,7 +19,7 @@ namespace DotRecast.Core
                     ThrowIndexOutOfRangeException();
                 }
 
-                return Unsafe.Add(ref Unsafe.As<Int3, int>(ref Unsafe.AsRef(in this)), index);
+                return Unsafe.Add(ref Unsafe.As<UShort3, ushort>(ref Unsafe.AsRef(in this)), index);
             }
             set
             {
@@ -28,7 +28,7 @@ namespace DotRecast.Core
                     ThrowIndexOutOfRangeException();
                 }
 
-                Unsafe.Add(ref Unsafe.As<Int3, int>(ref this), index) = value;
+                Unsafe.Add(ref Unsafe.As<UShort3, ushort>(ref this), index) = value;
             }
         }
 

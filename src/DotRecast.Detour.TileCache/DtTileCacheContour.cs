@@ -23,7 +23,7 @@ namespace DotRecast.Detour.TileCache
     public class DtTileCacheContour
     {
         public int nverts;
-        public int[] verts;
+        public byte[] verts;
         public byte reg;
         public byte area;
     }

@@ -77,17 +77,17 @@ namespace DotRecast.Detour.Io
             {
                 for (int j = 0; j < data.polys[i].verts.Length; j++)
                 {
-                    RcIO.Write(stream, (short)data.polys[i].verts[j]);
+                    RcIO.Write(stream, data.polys[i].verts[j]);
                 }
 
                 for (int j = 0; j < data.polys[i].neis.Length; j++)
                 {
-                    RcIO.Write(stream, (short)data.polys[i].neis[j]);
+                    RcIO.Write(stream, data.polys[i].neis[j]);
                 }
 
-                RcIO.Write(stream, (short)data.polys[i].flags);
-                RcIO.Write(stream, (byte)data.polys[i].vertCount);
-                RcIO.Write(stream, (byte)data.polys[i].areaAndtype);
+                RcIO.Write(stream, data.polys[i].flags);
+                RcIO.Write(stream, data.polys[i].vertCount);
+                RcIO.Write(stream, data.polys[i].areaAndtype);
             }
         }
 
@@ -97,8 +97,8 @@ namespace DotRecast.Detour.Io
             {
                 RcIO.Write(stream, data.detailMeshes[i].vertBase);
                 RcIO.Write(stream, data.detailMeshes[i].triBase);
-                RcIO.Write(stream, (byte)data.detailMeshes[i].vertCount);
-                RcIO.Write(stream, (byte)data.detailMeshes[i].triCount);
+                RcIO.Write(stream, data.detailMeshes[i].vertCount);
+                RcIO.Write(stream, data.detailMeshes[i].triCount);
             }
         }
 
@@ -106,7 +106,7 @@ namespace DotRecast.Detour.Io
         {
             for (int i = 0; i < data.header.detailTriCount * 4; i++)
             {
-                RcIO.Write(stream, (byte)data.detailTris[i]);
+                RcIO.Write(stream, data.detailTris[i]);
             }
         }
 
@@ -116,12 +116,12 @@ namespace DotRecast.Detour.Io
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    RcIO.Write(stream, (short)data.bvTree[i].bmin[j]);
+                    RcIO.Write(stream, data.bvTree[i].bmin[j]);
                 }
 
                 for (int j = 0; j < 3; j++)
                 {
-                    RcIO.Write(stream, (short)data.bvTree[i].bmax[j]);
+                    RcIO.Write(stream, data.bvTree[i].bmax[j]);
                 }
 
                 RcIO.Write(stream, data.bvTree[i].i);
@@ -140,9 +140,9 @@ namespace DotRecast.Detour.Io
                 }
 
                 RcIO.Write(stream, data.offMeshCons[i].rad);
-                RcIO.Write(stream, (short)data.offMeshCons[i].poly);
-                RcIO.Write(stream, (byte)data.offMeshCons[i].flags);
-                RcIO.Write(stream, (byte)data.offMeshCons[i].side);
+                RcIO.Write(stream, data.offMeshCons[i].poly);
+                RcIO.Write(stream, data.offMeshCons[i].flags);
+                RcIO.Write(stream, data.offMeshCons[i].side);
                 RcIO.Write(stream, data.offMeshCons[i].userId);
             }
         }

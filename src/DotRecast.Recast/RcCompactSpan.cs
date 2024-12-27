@@ -24,16 +24,16 @@ namespace DotRecast.Recast
     public readonly struct RcCompactSpan
     {
         /** The lower extent of the span. (Measured from the heightfield's base.) */
-        public readonly int y;
+        public readonly ushort y;
 
         /** The id of the region the span belongs to. (Or zero if not in a region.) */
-        public readonly int reg;
+        public readonly ushort reg;
 
         /** Packed neighbor connection data. */
-        public readonly int con;
+        public readonly int con; // 24 bit // TODO 位域
 
         /** The height of the span. (Measured from #y.) */
-        public readonly int h;
+        public readonly int h; // 8bit
 
         public RcCompactSpan(RcCompactSpanBuilder span)
         {

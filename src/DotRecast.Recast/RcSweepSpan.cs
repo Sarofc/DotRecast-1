@@ -2,9 +2,9 @@ namespace DotRecast.Recast
 {
     public struct RcSweepSpan
     {
-        public int rid; // row id
-        public int id; // region id
-        public int ns; // number samples
-        public int nei; // neighbour id
+        public ushort rid; // row id
+        public ushort id; // region id
+        public ushort ns; // number samples
+        public ushort nei; // neighbour id
     }
 }

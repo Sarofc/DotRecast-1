@@ -33,8 +33,8 @@ namespace DotRecast.Recast.Toolset.Geom
         public float[] OffMeshConVerts { get; } = new float[MAX_OFFMESH_CONNECTIONS * 3 * 2];
         public float[] OffMeshConRads { get; } = new float[MAX_OFFMESH_CONNECTIONS];
         public bool[] OffMeshConDirs { get; } = new bool[MAX_OFFMESH_CONNECTIONS];
-        public int[] OffMeshConAreas { get; } = new int[MAX_OFFMESH_CONNECTIONS];
-        public int[] OffMeshConFlags { get; } = new int[MAX_OFFMESH_CONNECTIONS];
+        public byte[] OffMeshConAreas { get; } = new byte[MAX_OFFMESH_CONNECTIONS];
+        public ushort[] OffMeshConFlags { get; } = new ushort[MAX_OFFMESH_CONNECTIONS];
         public int[] OffMeshConId { get; } = new int[MAX_OFFMESH_CONNECTIONS];
         int m_offMeshConCount;
 
@@ -103,8 +103,8 @@ namespace DotRecast.Recast.Toolset.Geom
             Span<float> v = OffMeshConVerts.AsSpan(m_offMeshConCount * 3 * 2);
             OffMeshConRads[m_offMeshConCount] = radius;
             OffMeshConDirs[m_offMeshConCount] = bidir;
-            OffMeshConAreas[m_offMeshConCount] = area;
-            OffMeshConFlags[m_offMeshConCount] = flags;
+            OffMeshConAreas[m_offMeshConCount] = (byte)area;
+            OffMeshConFlags[m_offMeshConCount] = (ushort)flags;
             OffMeshConId[m_offMeshConCount] = 1000 + m_offMeshConCount;
             spos.CopyTo(v);
             epos.CopyTo(v.Slice(3));

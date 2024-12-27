@@ -76,7 +76,7 @@ namespace DotRecast.Recast
             compactHeightfield.ch = heightfield.ch;
             compactHeightfield.cells = new RcCompactCell[xSize * zSize];
             compactHeightfield.spans = new RcCompactSpan[spanCount];
-            compactHeightfield.areas = new int[spanCount];
+            compactHeightfield.areas = new byte[spanCount];
 
             RcCompactSpanBuilder[] array = null;
             Span<RcCompactSpanBuilder> tempSpans = spanCount > 2048 ?
@@ -101,9 +101,9 @@ namespace DotRecast.Recast
                 {
                     if (span.area != RC_NULL_AREA)
                     {
-                        int bot = span.smax;
-                        int top = span.next != null ? span.next.smin : MAX_HEIGHT;
-                        tempSpans[currentCellIndex].y = Math.Clamp(bot, 0, MAX_HEIGHT);
+                        var bot = span.smax;
+                        var top = span.next != null ? span.next.smin : MAX_HEIGHT;
+                        tempSpans[currentCellIndex].y = (ushort)Math.Clamp(bot, 0, MAX_HEIGHT);
                         tempSpans[currentCellIndex].h = Math.Clamp(top - bot, 0, MAX_HEIGHT);
                         compactHeightfield.areas[currentCellIndex] = span.area;
                         currentCellIndex++;

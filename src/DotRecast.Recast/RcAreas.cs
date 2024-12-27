@@ -270,9 +270,9 @@ namespace DotRecast.Recast
 
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_MEDIAN_AREA);
 
-            int[] areas = new int[compactHeightfield.spanCount];
+            byte[] areas = new byte[compactHeightfield.spanCount];
 
-            Span<int> neighborAreas = stackalloc int[9];
+            Span<byte> neighborAreas = stackalloc byte[9];
 
             for (int z = 0; z < zSize; ++z)
             {

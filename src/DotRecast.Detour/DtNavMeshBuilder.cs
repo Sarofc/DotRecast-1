@@ -31,7 +31,7 @@ namespace DotRecast.Detour
     {
         const int MESH_NULL_IDX = 0xffff;
 
-        private static void CalcExtends(BVItem[] items, int nitems, int imin, int imax, ref Int3 bmin, ref Int3 bmax)
+        private static void CalcExtends(BVItem[] items, int nitems, int imin, int imax, ref UShort3 bmin, ref UShort3 bmax)
         {
             bmin[0] = items[imin].bmin[0];
             bmin[1] = items[imin].bmin[1];
@@ -167,13 +167,13 @@ namespace DotRecast.Detour
                     }
 
                     // BV-tree uses cs for all dimensions
-                    it.bmin[0] = Math.Clamp((int)((bmin.X - option.bmin.X) * quantFactor), 0, int.MaxValue);
-                    it.bmin[1] = Math.Clamp((int)((bmin.Y - option.bmin.Y) * quantFactor), 0, int.MaxValue);
-                    it.bmin[2] = Math.Clamp((int)((bmin.Z - option.bmin.Z) * quantFactor), 0, int.MaxValue);
+                    it.bmin[0] = (ushort)Math.Clamp((int)((bmin.X - option.bmin.X) * quantFactor), 0, ushort.MaxValue);
+                    it.bmin[1] = (ushort)Math.Clamp((int)((bmin.Y - option.bmin.Y) * quantFactor), 0, ushort.MaxValue);
+                    it.bmin[2] = (ushort)Math.Clamp((int)((bmin.Z - option.bmin.Z) * quantFactor), 0, ushort.MaxValue);
 
-                    it.bmax[0] = Math.Clamp((int)((bmax.X - option.bmin.X) * quantFactor), 0, int.MaxValue);
-                    it.bmax[1] = Math.Clamp((int)((bmax.Y - option.bmin.Y) * quantFactor), 0, int.MaxValue);
-                    it.bmax[2] = Math.Clamp((int)((bmax.Z - option.bmin.Z) * quantFactor), 0, int.MaxValue);
+                    it.bmax[0] = (ushort)Math.Clamp((int)((bmax.X - option.bmin.X) * quantFactor), 0, ushort.MaxValue);
+                    it.bmax[1] = (ushort)Math.Clamp((int)((bmax.Y - option.bmin.Y) * quantFactor), 0, ushort.MaxValue);
+                    it.bmax[2] = (ushort)Math.Clamp((int)((bmax.Z - option.bmin.Z) * quantFactor), 0, ushort.MaxValue);
                 }
                 else
                 {
@@ -186,9 +186,9 @@ namespace DotRecast.Detour
                     {
                         if (option.polys[p + j] == MESH_NULL_IDX)
                             break;
-                        int x = option.verts[option.polys[p + j] * 3 + 0];
-                        int y = option.verts[option.polys[p + j] * 3 + 1];
-                        int z = option.verts[option.polys[p + j] * 3 + 2];
+                        var x = option.verts[option.polys[p + j] * 3 + 0];
+                        var y = option.verts[option.polys[p + j] * 3 + 1];
+                        var z = option.verts[option.polys[p + j] * 3 + 2];
 
                         if (x < it.bmin[0])
                             it.bmin[0] = x;
@@ -206,8 +206,8 @@ namespace DotRecast.Detour
                     }
 
                     // Remap y
-                    it.bmin[1] = (int)MathF.Floor(it.bmin[1] * option.ch * quantFactor);
-                    it.bmax[1] = (int)MathF.Ceiling(it.bmax[1] * option.ch * quantFactor);
+                    it.bmin[1] = (ushort)MathF.Floor(it.bmin[1] * option.ch * quantFactor);
+                    it.bmax[1] = (ushort)MathF.Ceiling(it.bmax[1] * option.ch * quantFactor);
                 }
             }
 
@@ -219,7 +219,7 @@ namespace DotRecast.Detour
         const int XM = 1 << 2;
         const int ZM = 1 << 3;
 
-        public static int ClassifyOffMeshPoint(Vector3 pt, Vector3 bmin, Vector3 bmax)
+        public static byte ClassifyOffMeshPoint(Vector3 pt, Vector3 bmin, Vector3 bmax)
         {
             int outcode = 0;
             outcode |= (pt.X >= bmax.X) ? XP : 0;
@@ -264,14 +264,14 @@ namespace DotRecast.Detour
 
             // Classify off-mesh connection points. We store only the connections
             // whose start point is inside the tile.
-            scoped Span<int> offMeshConClass = null;
+            scoped Span<byte> offMeshConClass = null;
 
             int storedOffMeshConCount = 0;
             int offMeshConLinkCount = 0;
 
             if (option.offMeshConCount > 0)
             {
-                offMeshConClass = stackalloc int[option.offMeshConCount * 2];
+                offMeshConClass = stackalloc byte[option.offMeshConCount * 2];
 
                 // Find tight heigh bounds, used for culling out off-mesh start
                 // locations.
@@ -412,7 +412,7 @@ namespace DotRecast.Detour
             DtPoly[] navPolys = new DtPoly[totPolyCount];
             DtPolyDetail[] navDMeshes = new DtPolyDetail[option.polyCount];
             float[] navDVerts = new float[3 * uniqueDetailVertCount];
-            int[] navDTris = new int[4 * detailTriCount];
+            byte[] navDTris = new byte[4 * detailTriCount];
             DtBVNode[] navBvtree = new DtBVNode[bvTreeSize];
             DtOffMeshConnection[] offMeshCons = new DtOffMeshConnection[storedOffMeshConCount];
 
@@ -501,7 +501,7 @@ namespace DotRecast.Detour
                     else
                     {
                         // Normal connection
-                        p.neis[j] = option.polys[src + nvp + j] + 1;
+                        p.neis[j] = (ushort)(option.polys[src + nvp + j] + 1);
                     }
 
                     p.vertCount++;
@@ -520,8 +520,8 @@ namespace DotRecast.Detour
                     DtPoly p = new(offMeshPolyBase + n, nvp);
                     navPolys[offMeshPolyBase + n] = p;
                     p.vertCount = 2;
-                    p.verts[0] = offMeshVertsBase + n * 2 + 0;
-                    p.verts[1] = offMeshVertsBase + n * 2 + 1;
+                    p.verts[0] = (ushort)(offMeshVertsBase + n * 2 + 0);
+                    p.verts[1] = (ushort)(offMeshVertsBase + n * 2 + 1);
                     p.flags = option.offMeshConFlags[i];
                     p.SetArea(option.offMeshConAreas[i]);
                     p.SetPolyType(DtPolyTypes.DT_POLYTYPE_OFFMESH_CONNECTION);
@@ -572,11 +572,11 @@ namespace DotRecast.Detour
                     byte triCount = (byte)(nv - 2);
                     navDMeshes[i] = new DtPolyDetail(vertBase, triBase, vertCount, triCount);
                     // Triangulate polygon (local indices).
-                    for (int j = 2; j < nv; ++j)
+                    for (byte j = 2; j < nv; ++j)
                     {
                         int t = tbase * 4;
                         navDTris[t + 0] = 0;
-                        navDTris[t + 1] = (j - 1);
+                        navDTris[t + 1] = (byte)(j - 1);
                         navDTris[t + 2] = j;
                         // Bit for each edge that belongs to poly boundary.
                         navDTris[t + 3] = (1 << 2);
@@ -605,7 +605,7 @@ namespace DotRecast.Detour
                 if (offMeshConClass[i * 2 + 0] == 0xff)
                 {
                     ref DtOffMeshConnection con = ref offMeshCons[n];
-                    con.poly = (offMeshPolyBase + n);
+                    con.poly = (ushort)(offMeshPolyBase + n);
                     // Copy connection end-points.
                     int endPts = i * 2 * 3;
                     for (int j = 0; j < 2; ++j)
@@ -616,7 +616,7 @@ namespace DotRecast.Detour
                     }
 
                     con.rad = option.offMeshConRads[i];
-                    con.flags = option.offMeshConDirs[i] != false ? DT_OFFMESH_CON_BIDIR : 0;
+                    con.flags = (byte)(option.offMeshConDirs[i] != false ? DT_OFFMESH_CON_BIDIR : 0);
                     con.side = offMeshConClass[i * 2 + 1];
                     if (option.offMeshConUserID != null)
                         con.userId = option.offMeshConUserID[i];

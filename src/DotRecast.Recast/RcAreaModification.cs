@@ -60,6 +60,6 @@ namespace DotRecast.Recast
 
         public readonly int GetMaskedValue() => Value & Mask;
 
-        public readonly int Apply(int area) => (Value & Mask) | (area & ~Mask);
+        public readonly byte Apply(byte area) => (byte)((Value & Mask) | (area & ~Mask));
     }
 }

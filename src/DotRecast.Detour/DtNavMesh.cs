@@ -257,18 +257,18 @@ namespace DotRecast.Detour
                 var tbmax = tile.data.header.bmax;
                 float qfac = tile.data.header.bvQuantFactor;
                 // Calculate quantized box
-                Int3 bmin;
-                Int3 bmax;
+                UShort3 bmin;
+                UShort3 bmax;
                 // dtClamp query box to world box.
                 var min = Vector3.Clamp(qmin, tbmin, tbmax) - tbmin;
                 var max = Vector3.Clamp(qmax, tbmin, tbmax) - tbmin;
                 // Quantize
-                bmin.X = (int)(qfac * min.X) & 0x7ffffffe;
-                bmin.Y = (int)(qfac * min.Y) & 0x7ffffffe;
-                bmin.Z = (int)(qfac * min.Z) & 0x7ffffffe;
-                bmax.X = (int)(qfac * max.X + 1) | 1;
-                bmax.Y = (int)(qfac * max.Y + 1) | 1;
-                bmax.Z = (int)(qfac * max.Z + 1) | 1;
+                bmin.X = (ushort)((int)(qfac * min.X) & 0x7ffffffe);
+                bmin.Y = (ushort)((int)(qfac * min.Y) & 0x7ffffffe);
+                bmin.Z = (ushort)((int)(qfac * min.Z) & 0x7ffffffe);
+                bmax.X = (ushort)((int)(qfac * max.X + 1) | 1);
+                bmax.Y = (ushort)((int)(qfac * max.Y + 1) | 1);
+                bmax.Z = (ushort)((int)(qfac * max.Z + 1) | 1);
 
                 // Traverse tree
                 long @base = GetPolyRefBase(tile);
@@ -1059,7 +1059,7 @@ namespace DotRecast.Detour
                 for (int i = 0; i < pd.triCount; i++)
                 {
                     int ti = (pd.triBase + i) * 4;
-                    int[] tris = tile.data.detailTris;
+                    byte[] tris = tile.data.detailTris;
                     if (onlyBoundary && (tris[ti + 3] & ANY_BOUNDARY_EDGE) == 0)
                     {
                         continue;
@@ -1535,7 +1535,7 @@ namespace DotRecast.Detour
             DtPoly poly = tile.data.polys[ip];
 
             // Change flags.
-            poly.flags = flags;
+            poly.flags = (ushort)flags;
             return DtStatus.DT_SUCCESS;
         }
 
@@ -1576,7 +1576,7 @@ namespace DotRecast.Detour
             return DtStatus.DT_SUCCESS;
         }
 
-        public DtStatus SetPolyArea(long refs, char area)
+        public DtStatus SetPolyArea(long refs, byte area)
         {
             if (refs == 0)
             {

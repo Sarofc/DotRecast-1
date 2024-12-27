@@ -43,8 +43,8 @@ namespace DotRecast.Recast.Geom
         float[] OffMeshConVerts { get; }
         float[] OffMeshConRads { get; }
         bool[] OffMeshConDirs { get; }
-        int[] OffMeshConAreas { get; }
-        int[] OffMeshConFlags { get; }
+        byte[] OffMeshConAreas { get; }
+        ushort[] OffMeshConFlags { get; }
         int[] OffMeshConId { get; }
         public void AddOffMeshConnection(Vector3 start, Vector3 end, float radius, bool bidir, int area, int flags);
         public void RemoveOffMeshConnection(int idx);

@@ -58,7 +58,7 @@ namespace DotRecast.Recast
                 {
                     RcSpan previousSpan = null;
                     bool previousWasWalkable = false;
-                    int previousAreaID = RC_NULL_AREA;
+                    var previousAreaID = RC_NULL_AREA;
 
                     // For each span in the column...
                     for (RcSpan span = heightfield.spans[x + z * xSize]; span != null; previousSpan = span, span = span.next)

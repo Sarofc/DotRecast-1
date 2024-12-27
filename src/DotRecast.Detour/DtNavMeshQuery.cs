@@ -575,8 +575,8 @@ namespace DotRecast.Detour
                 float qfac = tile.data.header.bvQuantFactor;
 
                 // Calculate quantized box
-                Int3 bmin;
-                Int3 bmax;
+                UShort3 bmin;
+                UShort3 bmax;
                 // dtClamp query box to world box.
                 float minx = Math.Clamp(qmin.X, tbmin.X, tbmax.X) - tbmin.X;
                 float miny = Math.Clamp(qmin.Y, tbmin.Y, tbmax.Y) - tbmin.Y;
@@ -585,12 +585,12 @@ namespace DotRecast.Detour
                 float maxy = Math.Clamp(qmax.Y, tbmin.Y, tbmax.Y) - tbmin.Y;
                 float maxz = Math.Clamp(qmax.Z, tbmin.Z, tbmax.Z) - tbmin.Z;
                 // Quantize
-                bmin.X = (int)(qfac * minx) & 0x7ffffffe;
-                bmin.Y = (int)(qfac * miny) & 0x7ffffffe;
-                bmin.Z = (int)(qfac * minz) & 0x7ffffffe;
-                bmax.X = (int)(qfac * maxx + 1) | 1;
-                bmax.Y = (int)(qfac * maxy + 1) | 1;
-                bmax.Z = (int)(qfac * maxz + 1) | 1;
+                bmin.X = (ushort)((int)(qfac * minx) & 0x7ffffffe);
+                bmin.Y = (ushort)((int)(qfac * miny) & 0x7ffffffe);
+                bmin.Z = (ushort)((int)(qfac * minz) & 0x7ffffffe);
+                bmax.X = (ushort)((int)(qfac * maxx + 1) | 1);
+                bmax.Y = (ushort)((int)(qfac * maxy + 1) | 1);
+                bmax.Z = (ushort)((int)(qfac * maxz + 1) | 1);
 
                 // Traverse tree
                 long @base = m_nav.GetPolyRefBase(tile);

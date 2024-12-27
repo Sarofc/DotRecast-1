@@ -24,10 +24,10 @@ namespace DotRecast.Recast
     public readonly struct RcCompactCell
     {
         /** Index to the first span in the column. */
-        public readonly int index;
+        public readonly int index; // 24 bit
 
         /** Number of spans in the column. */
-        public readonly int count;
+        public readonly int count; // 8bit
 
         public RcCompactCell(int index, int count)
         {

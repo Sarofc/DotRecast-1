@@ -30,12 +30,12 @@ namespace DotRecast.Detour
         /// Used to create the base navigation graph.
         /// See #rcPolyMesh for details related to these attributes.
         /// @{
-        public int[] verts; // < The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
+        public ushort[] verts; // < The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
 
         public int vertCount; // < The number vertices in the polygon mesh. [Limit: >= 3]
-        public int[] polys; // < The polygon data. [Size: #polyCount * 2 * #nvp]
-        public int[] polyFlags; // < The user defined flags assigned to each polygon. [Size: #polyCount]
-        public int[] polyAreas; // < The user defined area ids assigned to each polygon. [Size: #polyCount]
+        public ushort[] polys; // < The polygon data. [Size: #polyCount * 2 * #nvp]
+        public ushort[] polyFlags; // < The user defined flags assigned to each polygon. [Size: #polyCount]
+        public byte[] polyAreas; // < The user defined area ids assigned to each polygon. [Size: #polyCount]
         public int polyCount; // < Number of polygons in the mesh. [Limit: >= 1]
         public int nvp; // < Number maximum number of vertices per polygon. [Limit: >= 3]
 
@@ -48,7 +48,7 @@ namespace DotRecast.Detour
 
         public float[] detailVerts; // < The detail mesh vertices. [Size: 3 * #detailVertsCount] [Unit: wu]
         public int detailVertsCount; // < The number of vertices in the detail mesh.
-        public int[] detailTris; // < The detail mesh triangles. [Size: 4 * #detailTriCount]
+        public byte[] detailTris; // < The detail mesh triangles. [Size: 4 * #detailTriCount]
         public int detailTriCount; // < The number of triangles in the detail mesh.
 
         /// @}
@@ -64,10 +64,10 @@ namespace DotRecast.Detour
         public float[] offMeshConRads;
 
         /// User defined flags assigned to the off-mesh connections. [Size: #offMeshConCount]
-        public int[] offMeshConFlags;
+        public ushort[] offMeshConFlags;
 
         /// User defined area ids assigned to the off-mesh connections. [Size: #offMeshConCount]
-        public int[] offMeshConAreas;
+        public byte[] offMeshConAreas;
 
         /// The permitted travel direction of the off-mesh connections. [Size: #offMeshConCount]
         ///

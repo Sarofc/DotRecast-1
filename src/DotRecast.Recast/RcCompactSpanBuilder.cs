@@ -2,8 +2,8 @@ namespace DotRecast.Recast
 {
     public struct RcCompactSpanBuilder
     {
-        public int y;
-        public int reg;
+        public ushort y;
+        public ushort reg;
         public int con;
         public int h;
 
@@ -19,7 +19,7 @@ namespace DotRecast.Recast
             return builder;
         }
 
-        public RcCompactSpanBuilder WithReg(int reg)
+        public RcCompactSpanBuilder WithReg(ushort reg)
         {
             this.reg = reg;
             return this;

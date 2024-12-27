@@ -35,7 +35,7 @@ namespace DotRecast.Detour.TileCache
     {
         public const byte DT_TILECACHE_NULL_AREA = 0;
         public const byte DT_TILECACHE_WALKABLE_AREA = 63;
-        public const int DT_TILECACHE_NULL_IDX = 0xffff;
+        public const ushort DT_TILECACHE_NULL_IDX = 0xffff;
 
         private static readonly int[] DirOffsetX = [-1, 0, 1, 0,];
         private static readonly int[] DirOffsetY = [0, 1, 0, -1];
@@ -690,7 +690,7 @@ namespace DotRecast.Detour.TileCache
                     cont.nverts = temp.nverts;
                     if (cont.nverts > 0)
                     {
-                        cont.verts = new int[4 * temp.nverts];
+                        cont.verts = new byte[4 * temp.nverts];
 
                         for (int i = 0, j = temp.nverts - 1; i < temp.nverts; j = i++)
                         {
@@ -705,14 +705,14 @@ namespace DotRecast.Detour.TileCache
                             int lh = GetCornerHeight(layer, temp.verts[v], temp.verts[v + 1], temp.verts[v + 2],
                                 walkableClimb, out var shouldRemove);
                             cont.verts[dst + 0] = temp.verts[v];
-                            cont.verts[dst + 1] = lh;
+                            cont.verts[dst + 1] = (byte)lh;
                             cont.verts[dst + 2] = temp.verts[v + 2];
 
                             // Store portal direction and remove status to the
                             // fourth component.
                             cont.verts[dst + 3] = 0x0f;
                             if (nei != 0xff && nei >= 0xf8)
-                                cont.verts[dst + 3] = nei - 0xf8;
+                                cont.verts[dst + 3] = (byte)(nei - 0xf8);
                             if (shouldRemove)
                                 cont.verts[dst + 3] |= 0x80;
                         }
@@ -734,10 +734,10 @@ namespace DotRecast.Detour.TileCache
             return (int)(n & (VERTEX_BUCKET_COUNT2 - 1));
         }
 
-        public static int AddVertex(int x, int y, int z, int[] verts, int[] firstVert, int[] nextVert, int nv)
+        static ushort AddVertex(ushort x, ushort y, ushort z, ushort[] verts, ushort[] firstVert, ushort[] nextVert, int nv)
         {
             int bucket = ComputeVertexHash2(x, 0, z);
-            int i = firstVert[bucket];
+            var i = firstVert[bucket];
             while (i != DT_TILECACHE_NULL_IDX)
             {
                 int tv = i * 3;
@@ -747,7 +747,7 @@ namespace DotRecast.Detour.TileCache
             }
 
             // Could not find, create new.
-            i = nv;
+            i = (ushort)nv;
             int v = i * 3;
             verts[v] = x;
             verts[v + 1] = y;
@@ -757,7 +757,7 @@ namespace DotRecast.Detour.TileCache
             return i;
         }
 
-        public unsafe static void BuildMeshAdjacency(int[] polys, int npolys, ReadOnlySpan<int> verts, int nverts, DtTileCacheContourSet lcset,
+        public unsafe static void BuildMeshAdjacency(ushort[] polys, int npolys, ReadOnlySpan<ushort> verts, int nverts, DtTileCacheContourSet lcset,
             int maxVertsPerPoly)
         {
             // Based on code by Eric Lengyel from:
@@ -774,15 +774,15 @@ namespace DotRecast.Detour.TileCache
             for (int i = 0; i < nverts; i++)
                 firstEdge[i] = DT_TILECACHE_NULL_IDX;
 
-            for (int i = 0; i < npolys; ++i)
+            for (ushort i = 0; i < npolys; ++i)
             {
                 int t = i * maxVertsPerPoly * 2;
-                for (int j = 0; j < maxVertsPerPoly; ++j)
+                for (ushort j = 0; j < maxVertsPerPoly; ++j)
                 {
                     if (polys[t + j] == DT_TILECACHE_NULL_IDX)
                         break;
-                    int v0 = polys[t + j];
-                    int v1 = (j + 1 >= maxVertsPerPoly || polys[t + j + 1] == DT_TILECACHE_NULL_IDX)
+                    var v0 = polys[t + j];
+                    var v1 = (j + 1 >= maxVertsPerPoly || polys[t + j + 1] == DT_TILECACHE_NULL_IDX)
                         ? polys[t]
                         : polys[t + j + 1];
                     if (v0 < v1)
@@ -802,15 +802,15 @@ namespace DotRecast.Detour.TileCache
                 }
             }
 
-            for (int i = 0; i < npolys; ++i)
+            for (ushort i = 0; i < npolys; ++i)
             {
                 int t = i * maxVertsPerPoly * 2;
-                for (int j = 0; j < maxVertsPerPoly; ++j)
+                for (ushort j = 0; j < maxVertsPerPoly; ++j)
                 {
                     if (polys[t + j] == DT_TILECACHE_NULL_IDX)
                         break;
-                    int v0 = polys[t + j];
-                    int v1 = (j + 1 >= maxVertsPerPoly || polys[t + j + 1] == DT_TILECACHE_NULL_IDX)
+                    var v0 = polys[t + j];
+                    var v1 = (j + 1 >= maxVertsPerPoly || polys[t + j + 1] == DT_TILECACHE_NULL_IDX)
                         ? polys[t]
                         : polys[t + j + 1];
                     if (v0 > v1)
@@ -834,9 +834,9 @@ namespace DotRecast.Detour.TileCache
                             ref RcEdge edge = ref edges[edgeCount];
                             edge.vert[0] = v1;
                             edge.vert[1] = v0;
-                            edge.poly[0] = (short)i;
-                            edge.polyEdge[0] = (short)j;
-                            edge.poly[1] = (short)i;
+                            edge.poly[0] = i;
+                            edge.polyEdge[0] = j;
+                            edge.poly[1] = i;
                             edge.polyEdge[1] = 0xff;
                             // Insert edge
                             firstEdge[nextEdge + edgeCount] = firstEdge[v1];
@@ -897,7 +897,7 @@ namespace DotRecast.Detour.TileCache
                                 if (OverlapRangeExl(zmin, zmax, ezmin, ezmax))
                                 {
                                     // Reuse the other polyedge to store dir.
-                                    e.polyEdge[1] = dir;
+                                    e.polyEdge[1] = (byte)dir;
                                 }
                             }
                         }
@@ -937,7 +937,7 @@ namespace DotRecast.Detour.TileCache
                                 if (OverlapRangeExl(xmin, xmax, exmin, exmax))
                                 {
                                     // Reuse the other polyedge to store dir.
-                                    e.polyEdge[1] = dir;
+                                    e.polyEdge[1] = (byte)dir;
                                 }
                             }
                         }
@@ -959,7 +959,7 @@ namespace DotRecast.Detour.TileCache
                 else if (e.polyEdge[1] != 0xff)
                 {
                     int p0 = e.poly[0] * maxVertsPerPoly * 2;
-                    polys[p0 + maxVertsPerPoly + e.polyEdge[0]] = 0x8000 | (short)e.polyEdge[1];
+                    polys[p0 + maxVertsPerPoly + e.polyEdge[0]] = (ushort)(0x8000 | e.polyEdge[1]);
                 }
             }
         }
@@ -979,7 +979,7 @@ namespace DotRecast.Detour.TileCache
             return i + 1 < n ? i + 1 : 0;
         }
 
-        public static int Area2(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static int Area2(ReadOnlySpan<byte> verts, int a, int b, int c)
         {
             return (verts[b] - verts[a]) * (verts[c + 2] - verts[a + 2])
                    - (verts[c] - verts[a]) * (verts[b + 2] - verts[a + 2]);
@@ -987,17 +987,17 @@ namespace DotRecast.Detour.TileCache
 
         // Returns true iff c is strictly to the left of the directed
         // line through a to b.
-        public static bool Left(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static bool Left(ReadOnlySpan<byte> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) < 0;
         }
 
-        public static bool LeftOn(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static bool LeftOn(ReadOnlySpan<byte> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) <= 0;
         }
 
-        public static bool Collinear(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static bool Collinear(ReadOnlySpan<byte> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) == 0;
         }
@@ -1005,7 +1005,7 @@ namespace DotRecast.Detour.TileCache
         // Returns true iff ab properly intersects cd: they share
         // a point interior to both segments. The properness of the
         // intersection is ensured by using strict leftness.
-        public static bool IntersectProp(ReadOnlySpan<int> verts, int a, int b, int c, int d)
+        public static bool IntersectProp(ReadOnlySpan<byte> verts, int a, int b, int c, int d)
         {
             // Eliminate improper cases.
             if (Collinear(verts, a, b, c) || Collinear(verts, a, b, d) || Collinear(verts, c, d, a)
@@ -1017,7 +1017,7 @@ namespace DotRecast.Detour.TileCache
 
         // Returns T iff (a,b,c) are collinear and point c lies
         // on the closed segment ab.
-        public static bool Between(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static bool Between(ReadOnlySpan<byte> verts, int a, int b, int c)
         {
             if (!Collinear(verts, a, b, c))
                 return false;
@@ -1031,7 +1031,7 @@ namespace DotRecast.Detour.TileCache
         }
 
         // Returns true iff segments ab and cd intersect, properly or improperly.
-        public static bool Intersect(ReadOnlySpan<int> verts, int a, int b, int c, int d)
+        public static bool Intersect(ReadOnlySpan<byte> verts, int a, int b, int c, int d)
         {
             if (IntersectProp(verts, a, b, c, d))
                 return true;
@@ -1042,14 +1042,14 @@ namespace DotRecast.Detour.TileCache
                 return false;
         }
 
-        public static bool Vequal(ReadOnlySpan<int> verts, int a, int b)
+        public static bool Vequal(ReadOnlySpan<byte> verts, int a, int b)
         {
             return verts[a] == verts[b] && verts[a + 2] == verts[b + 2];
         }
 
         // Returns T iff (v_i, v_j) is a proper internal *or* external
         // diagonal of P, *ignoring edges incident to v_i and v_j*.
-        public static bool Diagonalie(int i, int j, int n, ReadOnlySpan<int> verts, ReadOnlySpan<int> indices)
+        public static bool Diagonalie(int i, int j, int n, ReadOnlySpan<byte> verts, ReadOnlySpan<ushort> indices)
         {
             int d0 = (indices[i] & 0x7fff) * 4;
             int d1 = (indices[j] & 0x7fff) * 4;
@@ -1077,7 +1077,7 @@ namespace DotRecast.Detour.TileCache
 
         // Returns true iff the diagonal (i,j) is strictly internal to the
         // polygon P in the neighborhood of the i endpoint.
-        public static bool InCone(int i, int j, int n, ReadOnlySpan<int> verts, ReadOnlySpan<int> indices)
+        public static bool InCone(int i, int j, int n, ReadOnlySpan<byte> verts, ReadOnlySpan<ushort> indices)
         {
             int pi = (indices[i] & 0x7fff) * 4;
             int pj = (indices[j] & 0x7fff) * 4;
@@ -1094,12 +1094,12 @@ namespace DotRecast.Detour.TileCache
 
         // Returns T iff (v_i, v_j) is a proper internal
         // diagonal of P.
-        public static bool Diagonal(int i, int j, int n, ReadOnlySpan<int> verts, int[] indices)
+        public static bool Diagonal(int i, int j, int n, ReadOnlySpan<byte> verts, ushort[] indices)
         {
             return InCone(i, j, n, verts, indices) && Diagonalie(i, j, n, verts, indices);
         }
 
-        public static int Triangulate(int n, int[] verts, int[] indices, int[] tris)
+        public static int Triangulate(int n, byte[] verts, ushort[] indices, ushort[] tris)
         {
             int ntris = 0;
             int dst = 0; // tris;
@@ -1150,9 +1150,9 @@ namespace DotRecast.Detour.TileCache
                 int i1 = Next(i, n);
                 int i2 = Next(i1, n);
 
-                tris[dst++] = indices[i] & 0x7fff;
-                tris[dst++] = indices[i1] & 0x7fff;
-                tris[dst++] = indices[i2] & 0x7fff;
+                tris[dst++] = (ushort)(indices[i] & 0x7fff);
+                tris[dst++] = (ushort)(indices[i1] & 0x7fff);
+                tris[dst++] = (ushort)(indices[i2] & 0x7fff);
                 ntris++;
 
                 // Removes P[i1] by copying P[i+1]...P[n-1] left one index.
@@ -1176,15 +1176,15 @@ namespace DotRecast.Detour.TileCache
             }
 
             // Append the remaining triangle.
-            tris[dst++] = indices[0] & 0x7fff;
-            tris[dst++] = indices[1] & 0x7fff;
-            tris[dst++] = indices[2] & 0x7fff;
+            tris[dst++] = (ushort)(indices[0] & 0x7fff);
+            tris[dst++] = (ushort)(indices[1] & 0x7fff);
+            tris[dst++] = (ushort)(indices[2] & 0x7fff);
             ntris++;
 
             return ntris;
         }
 
-        public static int CountPolyVerts(ReadOnlySpan<int> polys, int p, int maxVertsPerPoly)
+        public static int CountPolyVerts(ReadOnlySpan<ushort> polys, int p, int maxVertsPerPoly)
         {
             for (int i = 0; i < maxVertsPerPoly; ++i)
                 if (polys[p + i] == DT_TILECACHE_NULL_IDX)
@@ -1192,13 +1192,13 @@ namespace DotRecast.Detour.TileCache
             return maxVertsPerPoly;
         }
 
-        public static bool Uleft(ReadOnlySpan<int> verts, int a, int b, int c)
+        public static bool Uleft(ReadOnlySpan<ushort> verts, int a, int b, int c)
         {
             return (verts[b] - verts[a]) * (verts[c + 2] - verts[a + 2])
                 - (verts[c] - verts[a]) * (verts[b + 2] - verts[a + 2]) < 0;
         }
 
-        public static int GetPolyMergeValue(ReadOnlySpan<int> polys, int pa, int pb, ReadOnlySpan<int> verts, out int ea, out int eb, int maxVertsPerPoly)
+        public static int GetPolyMergeValue(ReadOnlySpan<ushort> polys, int pa, int pb, ReadOnlySpan<ushort> verts, out int ea, out int eb, int maxVertsPerPoly)
         {
             ea = 0;
             eb = 0;
@@ -1270,9 +1270,9 @@ namespace DotRecast.Detour.TileCache
         }
 
         [SkipLocalsInit]
-        public static void MergePolys(Span<int> polys, int pa, int pb, int ea, int eb, int maxVertsPerPoly)
+        public static void MergePolys(Span<ushort> polys, int pa, int pb, int ea, int eb, int maxVertsPerPoly)
         {
-            Span<int> tmp = stackalloc int[maxVertsPerPoly * 2];
+            Span<ushort> tmp = stackalloc ushort[maxVertsPerPoly * 2];
 
             int na = CountPolyVerts(polys, pa, maxVertsPerPoly);
             int nb = CountPolyVerts(polys, pb, maxVertsPerPoly);
@@ -1289,13 +1289,13 @@ namespace DotRecast.Detour.TileCache
             RcArrays.Copy(tmp, 0, polys, pa, maxVertsPerPoly);
         }
 
-        public static int PushFront(int v, List<int> arr)
+        public static int PushFront<T>(T v, List<T> arr)
         {
             arr.Insert(0, v);
             return arr.Count;
         }
 
-        public static int PushBack(int v, List<int> arr)
+        public static int PushBack<T>(T v, List<T> arr)
         {
             arr.Add(v);
             return arr.Count;
@@ -1399,6 +1399,7 @@ namespace DotRecast.Detour.TileCache
             return true;
         }
 
+        const int MAX_REM_EDGES = 48;
         public static void RemoveVertex(DtTileCachePolyMesh mesh, int rem, int maxTris)
         {
             // Count number of polygons to remove.
@@ -1415,11 +1416,12 @@ namespace DotRecast.Detour.TileCache
                 }
             }
 
+            // TODO alloc stackalloc
             int nedges = 0;
-            List<int> edges = new();
+            List<ushort> edges = new(MAX_REM_EDGES * 3);
             int nhole = 0;
-            List<int> hole = new();
-            List<int> harea = new();
+            List<ushort> hole = new(MAX_REM_EDGES);
+            List<ushort> harea = new(MAX_REM_EDGES);
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -1476,9 +1478,9 @@ namespace DotRecast.Detour.TileCache
             for (int i = 0; i < nedges; ++i)
             {
                 if (edges[i * 3] > rem)
-                    edges[i * 3] = edges[i * 3] - 1;
+                    edges[i * 3] = (ushort)(edges[i * 3] - 1);
                 if (edges[i * 3 + 1] > rem)
-                    edges[i * 3 + 1] = edges[i * 3 + 1] - 1;
+                    edges[i * 3 + 1] = (ushort)(edges[i * 3 + 1] - 1);
             }
 
             if (nedges == 0)
@@ -1495,9 +1497,9 @@ namespace DotRecast.Detour.TileCache
 
                 for (int i = 0; i < nedges; ++i)
                 {
-                    int ea = edges[i * 3];
-                    int eb = edges[i * 3 + 1];
-                    int a = edges[i * 3 + 2];
+                    var ea = edges[i * 3];
+                    var eb = edges[i * 3 + 1];
+                    var a = edges[i * 3 + 2];
                     bool add = false;
                     if (hole[0] == eb)
                     {
@@ -1518,8 +1520,8 @@ namespace DotRecast.Detour.TileCache
                     {
                         // The edge segment was added, remove it.
                         edges[i * 3] = edges[(nedges - 1) * 3];
-                        edges[i * 3 + 1] = edges[(nedges - 1) * 3] + 1;
-                        edges[i * 3 + 2] = edges[(nedges - 1) * 3] + 2;
+                        edges[i * 3 + 1] = (ushort)(edges[(nedges - 1) * 3] + 1);
+                        edges[i * 3 + 2] = (ushort)(edges[(nedges - 1) * 3] + 2);
                         --nedges;
                         match = true;
                         --i;
@@ -1530,19 +1532,19 @@ namespace DotRecast.Detour.TileCache
                     break;
             }
 
-            int[] tris = new int[nhole * 3];
-            int[] tverts = new int[nhole * 4];
-            int[] tpoly = new int[nhole];
+            ushort[] tris = new ushort[nhole * 3]; // TODO alloc
+            byte[] tverts = new byte[nhole * 4];
+            ushort[] tpoly = new ushort[nhole];
 
             // Generate temp vertex array for triangulation.
             for (int i = 0; i < nhole; ++i)
             {
                 int pi = hole[i];
-                tverts[i * 4 + 0] = mesh.verts[pi * 3 + 0];
-                tverts[i * 4 + 1] = mesh.verts[pi * 3 + 1];
-                tverts[i * 4 + 2] = mesh.verts[pi * 3 + 2];
+                tverts[i * 4 + 0] = (byte)mesh.verts[pi * 3 + 0];
+                tverts[i * 4 + 1] = (byte)mesh.verts[pi * 3 + 1];
+                tverts[i * 4 + 2] = (byte)mesh.verts[pi * 3 + 2];
                 tverts[i * 4 + 3] = 0;
-                tpoly[i] = i;
+                tpoly[i] = (ushort)i;
             }
 
             // Triangulate the hole.
@@ -1553,8 +1555,8 @@ namespace DotRecast.Detour.TileCache
                 ntris = -ntris;
             }
 
-            int[] polys = new int[ntris * maxVertsPerPoly];
-            int[] pareas = new int[ntris];
+            ushort[] polys = new ushort[ntris * maxVertsPerPoly];
+            byte[] pareas = new byte[ntris];
 
             // Build initial polygons.
             int npolys = 0;
@@ -1567,7 +1569,7 @@ namespace DotRecast.Detour.TileCache
                     polys[npolys * maxVertsPerPoly + 0] = hole[tris[t]];
                     polys[npolys * maxVertsPerPoly + 1] = hole[tris[t + 1]];
                     polys[npolys * maxVertsPerPoly + 2] = hole[tris[t + 2]];
-                    pareas[npolys] = harea[tris[t]];
+                    pareas[npolys] = (byte)harea[tris[t]];
                     npolys++;
                 }
             }
@@ -1657,28 +1659,29 @@ namespace DotRecast.Detour.TileCache
 
             DtTileCachePolyMesh mesh = new(maxVertsPerPoly);
 
-            int[] vflags = new int[maxVertices];
+            int[] vflags = new int[maxVertices]; // TODO alloc
 
-            mesh.verts = new int[maxVertices * 3];
-            mesh.polys = new int[maxTris * maxVertsPerPoly * 2];
-            mesh.areas = new int[maxTris];
+            mesh.verts = new ushort[maxVertices * 3];
+            mesh.polys = new ushort[maxTris * maxVertsPerPoly * 2];
+            mesh.areas = new byte[maxTris];
             // Just allocate and clean the mesh flags array. The user is resposible
             // for filling it.
-            mesh.flags = new int[maxTris];
+            mesh.flags = new ushort[maxTris];
 
             mesh.nverts = 0;
             mesh.npolys = 0;
 
             Array.Fill(mesh.polys, DT_TILECACHE_NULL_IDX);
 
-            int[] firstVert = new int[VERTEX_BUCKET_COUNT2];
+            ushort[] firstVert = new ushort[VERTEX_BUCKET_COUNT2];
             for (int i = 0; i < VERTEX_BUCKET_COUNT2; ++i)
                 firstVert[i] = DT_TILECACHE_NULL_IDX;
 
-            int[] nextVert = new int[maxVertices];
-            int[] indices = new int[maxVertsPerCont];
-            int[] tris = new int[maxVertsPerCont * 3];
-            int[] polys = new int[maxVertsPerCont * maxVertsPerPoly];
+            // TODO alloc
+            ushort[] nextVert = new ushort[maxVertices];
+            ushort[] indices = new ushort[maxVertsPerCont];
+            ushort[] tris = new ushort[maxVertsPerCont * 3];
+            ushort[] polys = new ushort[maxVertsPerCont * maxVertsPerPoly];
 
             for (int i = 0; i < lcset.nconts; ++i)
             {
@@ -1690,7 +1693,7 @@ namespace DotRecast.Detour.TileCache
 
                 // Triangulate contour
                 for (int j = 0; j < cont.nverts; ++j)
-                    indices[j] = j;
+                    indices[j] = (ushort)j;
 
                 int ntris = Triangulate(cont.nverts, cont.verts, indices, tris);
                 if (ntris <= 0)

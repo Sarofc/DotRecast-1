@@ -32,7 +32,7 @@ namespace DotRecast.Detour
 
         /// The detail mesh's triangles. [(vertA, vertB, vertC, triFlags) * dtMeshHeader::detailTriCount].
         /// See dtDetailTriEdgeFlags and dtGetDetailTriEdgeFlags.
-        public int[] detailTris;
+        public byte[] detailTris;
 
         /// The tile bounding volume nodes. [Size: dtMeshHeader::bvNodeCount]
         /// (Will be null if bounding volumes are disabled.)

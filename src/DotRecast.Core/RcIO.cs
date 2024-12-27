@@ -59,12 +59,22 @@ namespace DotRecast.Core
             bw.Write(value);
         }
 
+        public static void Write(BinaryWriter ws, ushort value)
+        {
+            ws.Write(value);
+        }
+
         public static void Write(BinaryWriter ws, long value)
         {
             ws.Write(value);
         }
 
         public static void Write(BinaryWriter ws, int value)
+        {
+            ws.Write(value);
+        }
+
+        public static void Write(BinaryWriter ws, uint value)
         {
             ws.Write(value);
         }

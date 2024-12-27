@@ -803,10 +803,10 @@ namespace DotRecast.Recast
                             continue;
                         }
 
-                        int reg = chf.spans[i].reg;
+                        var reg = chf.spans[i].reg;
                         if (reg == 0 || (reg & RC_BORDER_REG) != 0)
                             continue;
-                        int area = chf.areas[i];
+                        var area = chf.areas[i];
 
                         verts.Clear();
                         simplified.Clear();
