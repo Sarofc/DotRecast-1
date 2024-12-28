@@ -734,7 +734,7 @@ namespace DotRecast.Detour.TileCache
             return (int)(n & (VERTEX_BUCKET_COUNT2 - 1));
         }
 
-        static ushort AddVertex(ushort x, ushort y, ushort z, ushort[] verts, ushort[] firstVert, ushort[] nextVert, int nv)
+        static ushort AddVertex(ushort x, ushort y, ushort z, ushort[] verts, Span<ushort> firstVert, ushort[] nextVert, int nv)
         {
             int bucket = ComputeVertexHash2(x, 0, z);
             var i = firstVert[bucket];
@@ -1094,12 +1094,12 @@ namespace DotRecast.Detour.TileCache
 
         // Returns T iff (v_i, v_j) is a proper internal
         // diagonal of P.
-        public static bool Diagonal(int i, int j, int n, ReadOnlySpan<byte> verts, ushort[] indices)
+        public static bool Diagonal(int i, int j, int n, ReadOnlySpan<byte> verts, Span<ushort> indices)
         {
             return InCone(i, j, n, verts, indices) && Diagonalie(i, j, n, verts, indices);
         }
 
-        public static int Triangulate(int n, byte[] verts, ushort[] indices, ushort[] tris)
+        public static int Triangulate(int n, Span<byte> verts, Span<ushort> indices, Span<ushort> tris)
         {
             int ntris = 0;
             int dst = 0; // tris;
@@ -1289,16 +1289,18 @@ namespace DotRecast.Detour.TileCache
             RcArrays.Copy(tmp, 0, polys, pa, maxVertsPerPoly);
         }
 
-        public static int PushFront<T>(T v, List<T> arr)
+        static void PushFront(ushort v, Span<ushort> arr, ref int an)
         {
-            arr.Insert(0, v);
-            return arr.Count;
+            an++;
+            for (int i = an - 1; i > 0; --i)
+                arr[i] = arr[i - 1];
+            arr[0] = v;
         }
 
-        public static int PushBack<T>(T v, List<T> arr)
+        static void PushBack(ushort v, Span<ushort> arr, ref int an)
         {
-            arr.Add(v);
-            return arr.Count;
+            arr[an] = v;
+            an++;
         }
 
         public static bool CanRemoveVertex(DtTileCachePolyMesh mesh, int rem)
@@ -1416,12 +1418,12 @@ namespace DotRecast.Detour.TileCache
                 }
             }
 
-            // TODO alloc stackalloc
             int nedges = 0;
-            List<ushort> edges = new(MAX_REM_EDGES * 3);
+            Span<ushort> edges = stackalloc ushort[MAX_REM_EDGES * 3];
             int nhole = 0;
-            List<ushort> hole = new(MAX_REM_EDGES);
-            List<ushort> harea = new(MAX_REM_EDGES);
+            Span<ushort> hole = stackalloc ushort[MAX_REM_EDGES];
+            int nharea = 0;
+            Span<ushort> harea = stackalloc ushort[MAX_REM_EDGES];
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -1438,9 +1440,13 @@ namespace DotRecast.Detour.TileCache
                     {
                         if (mesh.polys[p + j] != rem && mesh.polys[p + k] != rem)
                         {
-                            edges.Add(mesh.polys[p + k]);
-                            edges.Add(mesh.polys[p + j]);
-                            edges.Add(mesh.areas[i]);
+                            if (nedges >= MAX_REM_EDGES)
+                            {
+                                throw new InvalidOperationException("DT_BUFFER_TOO_SMALL");
+                            }
+                            edges[nedges + 0] = (mesh.polys[p + k]);
+                            edges[nedges + 1] = (mesh.polys[p + j]);
+                            edges[nedges + 2] = (mesh.areas[i]);
                             nedges++;
                         }
                     }
@@ -1488,8 +1494,8 @@ namespace DotRecast.Detour.TileCache
 
             // Start with one vertex, keep appending connected
             // segments to the start and end of the hole.
-            nhole = PushBack(edges[0], hole);
-            PushBack(edges[2], harea);
+            PushBack(edges[0], hole, ref nhole);
+            PushBack(edges[2], harea, ref nharea);
 
             while (nedges != 0)
             {
@@ -1504,15 +1510,15 @@ namespace DotRecast.Detour.TileCache
                     if (hole[0] == eb)
                     {
                         // The segment matches the beginning of the hole boundary.
-                        nhole = PushFront(ea, hole);
-                        PushFront(a, harea);
+                        PushFront(ea, hole, ref nhole);
+                        PushFront(a, harea, ref nharea);
                         add = true;
                     }
                     else if (hole[nhole - 1] == ea)
                     {
                         // The segment matches the end of the hole boundary.
-                        nhole = PushBack(eb, hole);
-                        PushBack(a, harea);
+                        PushBack(eb, hole, ref nhole);
+                        PushBack(a, harea, ref nharea);
                         add = true;
                     }
 
@@ -1532,9 +1538,9 @@ namespace DotRecast.Detour.TileCache
                     break;
             }
 
-            ushort[] tris = new ushort[nhole * 3]; // TODO alloc
-            byte[] tverts = new byte[nhole * 4];
-            ushort[] tpoly = new ushort[nhole];
+            Span<ushort> tris = stackalloc ushort[nhole * 3];
+            Span<byte> tverts = stackalloc byte[nhole * 4];
+            Span<ushort> tpoly = stackalloc ushort[nhole];
 
             // Generate temp vertex array for triangulation.
             for (int i = 0; i < nhole; ++i)
@@ -1555,12 +1561,13 @@ namespace DotRecast.Detour.TileCache
                 ntris = -ntris;
             }
 
-            ushort[] polys = new ushort[ntris * maxVertsPerPoly];
-            byte[] pareas = new byte[ntris];
+            Span<ushort> polys = new ushort[ntris * maxVertsPerPoly];
+            Span<byte> pareas = new byte[ntris];
 
             // Build initial polygons.
             int npolys = 0;
-            Array.Fill(polys, DT_TILECACHE_NULL_IDX, 0, ntris * maxVertsPerPoly);
+            //Array.Fill(polys, DT_TILECACHE_NULL_IDX, 0, ntris * maxVertsPerPoly);
+            polys.Slice(0, ntris * maxVertsPerPoly).Fill(DT_TILECACHE_NULL_IDX);
             for (int j = 0; j < ntris; ++j)
             {
                 int t = j * 3;
@@ -1635,9 +1642,11 @@ namespace DotRecast.Detour.TileCache
                 mesh.npolys++;
                 if (mesh.npolys > maxTris)
                 {
-                    throw new Exception("Buffer too small");
+                    throw new InvalidOperationException("Buffer too small");
                 }
             }
+
+            return;
         }
 
         public static DtTileCachePolyMesh BuildTileCachePolyMesh(DtTileCacheContourSet lcset, int maxVertsPerPoly)
@@ -1659,7 +1668,7 @@ namespace DotRecast.Detour.TileCache
 
             DtTileCachePolyMesh mesh = new(maxVertsPerPoly);
 
-            int[] vflags = new int[maxVertices]; // TODO alloc
+            byte[] vflags = new byte[maxVertices]; // TODO alloc
 
             mesh.verts = new ushort[maxVertices * 3];
             mesh.polys = new ushort[maxTris * maxVertsPerPoly * 2];
@@ -1673,7 +1682,7 @@ namespace DotRecast.Detour.TileCache
 
             Array.Fill(mesh.polys, DT_TILECACHE_NULL_IDX);
 
-            ushort[] firstVert = new ushort[VERTEX_BUCKET_COUNT2];
+            Span<ushort> firstVert = stackalloc ushort[(int)VERTEX_BUCKET_COUNT2];
             for (int i = 0; i < VERTEX_BUCKET_COUNT2; ++i)
                 firstVert[i] = DT_TILECACHE_NULL_IDX;
 
@@ -1931,6 +1940,7 @@ namespace DotRecast.Detour.TileCache
 
             var bufferSize = sizeof(DtTileCacheLayerHeader) + gridSize * 3;
             var gbuffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+            //Span<byte> gbuffer = stackalloc byte[bufferSize];
             var sw = new RcSpanWriter(gbuffer);
 
             DtTileCacheLayerHeaderWriter hw;

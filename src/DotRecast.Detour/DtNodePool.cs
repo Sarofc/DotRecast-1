@@ -34,7 +34,7 @@ namespace DotRecast.Detour
 
         const int DT_NULL_IDX = ushort.MaxValue;
 
-        public DtNodePool(int maxNodes) : this(maxNodes, (int)RcMath.dtNextPow2((uint)(maxNodes / 4)))
+        public DtNodePool(int maxNodes) : this(maxNodes, RcMath.NextPow2((maxNodes / 4)))
         { }
 
         public DtNodePool(int maxNodes, int hashSize)

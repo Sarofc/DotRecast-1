@@ -80,8 +80,10 @@ namespace DotRecast.Recast
             int w = chf.width;
             int h = chf.height;
 
-            byte[] srcReg = ArrayPool<byte>.Shared.Rent(chf.spanCount);
-            Array.Fill<byte>(srcReg, 0xFF);
+            Span<byte> srcReg = chf.spanCount > 2048 * 100
+                ? new byte[chf.spanCount]
+                : stackalloc byte[chf.spanCount];
+            srcReg.Fill(0xFF);
 
             int nsweeps = chf.width;
             Span<RcLayerSweepSpan> sweeps = stackalloc RcLayerSweepSpan[nsweeps];
@@ -259,8 +261,6 @@ namespace DotRecast.Recast
                     }
                 }
             }
-
-            ArrayPool<byte>.Shared.Return(srcReg);
 
             // Create 2D layers from regions.
             byte layerId = 0;

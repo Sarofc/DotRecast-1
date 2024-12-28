@@ -17,6 +17,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using DotRecast.Core;
@@ -40,6 +41,8 @@ namespace DotRecast.Recast
             // Find triangles which are walkable based on their slope and rasterize them.
             // If your input data is multiple meshes, you can transform them here, calculate
             // the are type for each of the meshes and rasterize them.
+
+            byte[] triAreaIDs = null;
             foreach (RcTriMesh geom in geomProvider.Meshes())
             {
                 var verts = geom.GetVerts();
@@ -56,8 +59,13 @@ namespace DotRecast.Recast
                     {
                         var tris = node.tris;
                         int ntris = tris.Length / 3;
-                        // TODO alloc
-                        byte[] m_triareas = RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod);
+
+                        if (triAreaIDs == null || triAreaIDs.Length < ntris)
+                            triAreaIDs = new byte[ntris * 2];
+                        Span<byte> m_triareas = triAreaIDs.AsSpan(0, ntris);
+                        m_triareas.Clear();
+
+                        RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod, m_triareas);
                         RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                     }
                 }
@@ -65,8 +73,13 @@ namespace DotRecast.Recast
                 {
                     var tris = geom.GetTris();
                     int ntris = tris.Length / 3;
-                    // TODO alloc
-                    byte[] m_triareas = RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod);
+
+                    if (triAreaIDs == null || triAreaIDs.Length < ntris)
+                        triAreaIDs = new byte[ntris * 2];
+                    Span<byte> m_triareas = triAreaIDs.AsSpan(0, ntris);
+                    m_triareas.Clear();
+
+                    RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod, m_triareas);
                     RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                 }
             }

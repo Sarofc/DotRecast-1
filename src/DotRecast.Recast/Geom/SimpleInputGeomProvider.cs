@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using DotRecast.Core;
 
 namespace DotRecast.Recast.Geom
@@ -39,7 +40,7 @@ namespace DotRecast.Recast.Geom
         public static SimpleInputGeomProvider LoadFile(string objFilePath)
         {
             using var stream = RcIO.ReadFileIfFound(objFilePath);
-            using var context = RcObjImporter.LoadContext(stream);
+            var context = RcObjImporter.LoadContext(stream);
             return new SimpleInputGeomProvider(context.Vertices.ToArray(), context.Faces.ToArray());
         }
 

@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Recast.Geom;
 using DotRecast.Recast.Toolset.Geom;
@@ -165,7 +166,7 @@ namespace DotRecast.Recast.Toolset.Builder
             RcRecast.CalcGridSize(geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), cellSize, out var gw, out var gh);
             int tw = (gw + tileSize - 1) / tileSize;
             int th = (gh + tileSize - 1) / tileSize;
-            int tileBits = Math.Min(DtUtils.Ilog2(DtUtils.NextPow2(tw * th * EXPECTED_LAYERS_PER_TILE)), 14);
+            int tileBits = Math.Min(DtUtils.Ilog2(RcMath.NextPow2(tw * th * EXPECTED_LAYERS_PER_TILE)), 14);
             if (tileBits > 14)
                 tileBits = 14;
             return tileBits;

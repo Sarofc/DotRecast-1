@@ -1481,8 +1481,9 @@ namespace DotRecast.Recast
             int borderSize = chf.borderSize;
             ushort id = 1;
 
-            ushort[] srcReg = ArrayPool<ushort>.Shared.Rent(chf.spanCount);
-            srcReg.AsSpan(0, chf.spanCount).Fill(0);
+            Span<ushort> srcReg = chf.spanCount > 2048 * 100
+                ? new ushort[chf.spanCount]
+                : stackalloc ushort[chf.spanCount];
 
             int nsweeps = Math.Max(chf.width, chf.height);
             Span<RcSweepSpan> sweeps = stackalloc RcSweepSpan[nsweeps];
@@ -1504,7 +1505,7 @@ namespace DotRecast.Recast
                 id++;
             }
 
-            int[] prev = new int[1024]; // TODO alloc
+            int[] prev = new int[256];
 
             // Sweep one line at a time.
             for (int y = borderSize; y < h - borderSize; ++y)
@@ -1629,8 +1630,6 @@ namespace DotRecast.Recast
                     .WithReg(srcReg[i])
                     .Build();
             }
-
-            ArrayPool<ushort>.Shared.Return(srcReg);
         }
 
         /// @par
@@ -1673,10 +1672,8 @@ namespace DotRecast.Recast
 
             List<RcLevelStackEntry> stack = new(256);
 
-            ushort[] srcReg = ArrayPool<ushort>.Shared.Rent(chf.spanCount);
-            srcReg.AsSpan(0, chf.spanCount).Fill(0);
-            ushort[] srcDist = ArrayPool<ushort>.Shared.Rent(chf.spanCount);
-            srcDist.AsSpan(0, chf.spanCount).Fill(0);
+            Span<ushort> srcReg = chf.spanCount > 512 ? new ushort[chf.spanCount] : stackalloc ushort[chf.spanCount];
+            Span<ushort> srcDist = chf.spanCount > 512 ? new ushort[chf.spanCount] : stackalloc ushort[chf.spanCount];
 
             ushort regionId = 1;
             int level = (chf.maxDistance + 1) & ~1;
@@ -1779,9 +1776,6 @@ namespace DotRecast.Recast
                     .WithReg(srcReg[i])
                     .Build();
             }
-
-            ArrayPool<ushort>.Shared.Return(srcReg);
-            ArrayPool<ushort>.Shared.Return(srcDist);
         }
 
         public static bool BuildLayerRegions(RcContext ctx, RcCompactHeightfield chf, int minRegionArea)
@@ -1793,8 +1787,10 @@ namespace DotRecast.Recast
             int borderSize = chf.borderSize;
             ushort id = 1;
 
-            ushort[] srcReg = ArrayPool<ushort>.Shared.Rent(chf.spanCount);
-            srcReg.AsSpan(0, chf.spanCount).Fill(0);
+            Span<ushort> srcReg = chf.spanCount > 2048 * 100
+                ? new ushort[chf.spanCount]
+                : stackalloc ushort[chf.spanCount];
+
             int nsweeps = Math.Max(chf.width, chf.height);
             Span<RcSweepSpan> sweeps = stackalloc RcSweepSpan[nsweeps];
 
@@ -1815,7 +1811,7 @@ namespace DotRecast.Recast
                 id++;
             }
 
-            int[] prev = new int[1024]; // TODO alloc
+            int[] prev = new int[256]; // TODO alloc
 
             // Sweep one line at a time.
             for (int y = borderSize; y < h - borderSize; ++y)
@@ -1942,8 +1938,6 @@ namespace DotRecast.Recast
                     .WithReg(srcReg[i])
                     .Build();
             }
-
-            ArrayPool<ushort>.Shared.Return(srcReg);
 
             return true;
         }

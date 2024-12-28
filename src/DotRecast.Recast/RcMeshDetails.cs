@@ -714,7 +714,7 @@ namespace DotRecast.Recast
         public static int BuildPolyDetail(RcContext ctx, Span<float> @in, int nin,
                                             float sampleDist, float sampleMaxError,
                                             int heightSearchRadius, RcCompactHeightfield chf,
-                                            RcHeightPatch hp, float[] verts,
+                                            RcHeightPatch hp, Span<float> verts,
                                             ref List<int> tris, ref List<int> edges, ref List<int> samples)
         {
             const int MAX_VERTS = 127;
@@ -972,7 +972,8 @@ namespace DotRecast.Recast
                     // Mark sample as added.
                     samples[besti * 4 + 3] = 1;
                     // Add the new sample point.
-                    bestpt.CopyTo(verts, nverts * 3);
+                    //bestpt.CopyTo(verts, nverts * 3);
+                    bestpt.CopyTo(verts.Slice(nverts * 3));
                     nverts++;
 
                     // Create new triangulation.
@@ -1339,7 +1340,7 @@ namespace DotRecast.Recast
             List<int> tris = new(512);
             List<int> arr = new(512);
             List<int> samples = new(512);
-            float[] verts = new float[256 * 3];
+            Span<float> verts = stackalloc float[256 * 3];
             RcHeightPatch hp = new();
             int nPolyVerts = 0;
             int maxhw = 0, maxhh = 0;

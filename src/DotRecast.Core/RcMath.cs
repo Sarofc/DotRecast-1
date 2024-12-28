@@ -32,7 +32,7 @@ namespace DotRecast.Core
             return (value1 * (1.0f - amount)) + (value2 * amount);
         }
 
-        public static uint dtNextPow2(uint v)
+        public static int NextPow2(int v)
         {
             v--;
             v |= v >> 1;

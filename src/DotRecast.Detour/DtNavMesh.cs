@@ -64,7 +64,7 @@ namespace DotRecast.Detour
             // Init tiles
             m_maxVertPerPoly = maxVertsPerPoly;
             m_maxTiles = param.maxTiles;
-            m_tileLutSize = DtUtils.NextPow2(param.maxTiles);
+            m_tileLutSize = RcMath.NextPow2(param.maxTiles);
             if (0 == m_tileLutSize)
                 m_tileLutSize = 1;
             m_tileLutMask = m_tileLutSize - 1;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace DotRecast.Core
 {
@@ -17,7 +17,7 @@ namespace DotRecast.Core
 
         public RcRand(long seed)
         {
-            _r = new Random((int)seed); // TODO : 랜덤 시드 확인 필요
+            _r = new Random((int)seed);
         }
 
         public float Next()

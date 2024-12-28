@@ -55,7 +55,7 @@ namespace DotRecast.Detour.Crowd
             m_cellSize = cellSize;
             m_invCellSize = 1.0f / cellSize;
 
-            m_bucketsSize = (int)RcMath.dtNextPow2((uint)poolSize);
+            m_bucketsSize = RcMath.NextPow2(poolSize);
             m_buckets = new ushort[m_bucketsSize];
 
             m_poolSize = poolSize;

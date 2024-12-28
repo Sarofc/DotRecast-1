@@ -78,11 +78,9 @@ namespace DotRecast.Recast
             compactHeightfield.spans = new RcCompactSpan[spanCount];
             compactHeightfield.areas = new byte[spanCount];
 
-            RcCompactSpanBuilder[] array = null;
-            Span<RcCompactSpanBuilder> tempSpans = spanCount > 2048 ?
-                (array = ArrayPool<RcCompactSpanBuilder>.Shared.Rent(spanCount))
+            Span<RcCompactSpanBuilder> tempSpans = spanCount > 2048 * 100 ?
+                new RcCompactSpanBuilder[spanCount]
                 : stackalloc RcCompactSpanBuilder[spanCount];
-            tempSpans = tempSpans.Slice(0, spanCount);
 
             // Fill in cells and spans.
             int currentCellIndex = 0;
@@ -170,20 +168,11 @@ namespace DotRecast.Recast
 
             if (maxLayerIndex > MAX_LAYERS)
             {
-                if (array != null)
-                {
-                    ArrayPool<RcCompactSpanBuilder>.Shared.Return(array);
-                    array = null;
-                }
-
                 throw new Exception($"rcBuildCompactHeightfield: Heightfield has too many layers {maxLayerIndex} (max: {MAX_LAYERS})");
             }
 
             for (int i = 0; i < spanCount; i++)
                 compactHeightfield.spans[i] = tempSpans[i].Build();
-
-            if (array != null)
-                ArrayPool<RcCompactSpanBuilder>.Shared.Return(array);
 
             return compactHeightfield;
         }

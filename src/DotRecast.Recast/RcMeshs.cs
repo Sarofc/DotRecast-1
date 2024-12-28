@@ -125,7 +125,7 @@ namespace DotRecast.Recast
             return (int)(n & (VERTEX_BUCKET_COUNT - 1));
         }
 
-        private static ushort AddVertex(int x, int y, int z, ushort[] verts, int[] firstVert, int[] nextVert, ref int nv)
+        private static ushort AddVertex(int x, int y, int z, Span<ushort> verts, Span<int> firstVert, Span<int> nextVert, ref int nv)
         {
             int bucket = ComputeVertexHash(x, 0, z);
             int i = firstVert[bucket];
@@ -161,7 +161,7 @@ namespace DotRecast.Recast
             return i + 1 < n ? i + 1 : 0;
         }
 
-        private static int Area2(int[] verts, int a, int b, int c)
+        private static int Area2(Span<int> verts, int a, int b, int c)
         {
             return (verts[b + 0] - verts[a + 0]) * (verts[c + 2] - verts[a + 2])
                    - (verts[c + 0] - verts[a + 0]) * (verts[b + 2] - verts[a + 2]);
@@ -169,17 +169,17 @@ namespace DotRecast.Recast
 
         // Returns true iff c is strictly to the left of the directed
         // line through a to b.
-        public static bool Left(int[] verts, int a, int b, int c)
+        public static bool Left(Span<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) < 0;
         }
 
-        public static bool LeftOn(int[] verts, int a, int b, int c)
+        public static bool LeftOn(Span<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) <= 0;
         }
 
-        private static bool Collinear(int[] verts, int a, int b, int c)
+        private static bool Collinear(Span<int> verts, int a, int b, int c)
         {
             return Area2(verts, a, b, c) == 0;
         }
@@ -187,7 +187,7 @@ namespace DotRecast.Recast
         // Returns true iff ab properly intersects cd: they share
         // a point interior to both segments. The properness of the
         // intersection is ensured by using strict leftness.
-        private static bool IntersectProp(int[] verts, int a, int b, int c, int d)
+        private static bool IntersectProp(Span<int> verts, int a, int b, int c, int d)
         {
             // Eliminate improper cases.
             if (Collinear(verts, a, b, c) || Collinear(verts, a, b, d) || Collinear(verts, c, d, a)
@@ -199,7 +199,7 @@ namespace DotRecast.Recast
 
         // Returns T iff (a,b,c) are collinear and point c lies
         // on the closed segment ab.
-        private static bool Between(int[] verts, int a, int b, int c)
+        private static bool Between(Span<int> verts, int a, int b, int c)
         {
             if (!Collinear(verts, a, b, c))
                 return false;
@@ -214,7 +214,7 @@ namespace DotRecast.Recast
         }
 
         // Returns true iff segments ab and cd intersect, properly or improperly.
-        public static bool Intersect(int[] verts, int a, int b, int c, int d)
+        public static bool Intersect(Span<int> verts, int a, int b, int c, int d)
         {
             if (IntersectProp(verts, a, b, c, d))
                 return true;
@@ -226,14 +226,14 @@ namespace DotRecast.Recast
             return false;
         }
 
-        public static bool VEqual(int[] verts, int a, int b)
+        public static bool VEqual(Span<int> verts, int a, int b)
         {
             return verts[a + 0] == verts[b + 0] && verts[a + 2] == verts[b + 2];
         }
 
         // Returns T iff (v_i, v_j) is a proper internal *or* external
         // diagonal of P, *ignoring edges incident to v_i and v_j*.
-        private static bool Diagonalie(int i, int j, int n, int[] verts, int[] indices)
+        private static bool Diagonalie(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             int d0 = (indices[i] & 0x0fffffff) * 4;
             int d1 = (indices[j] & 0x0fffffff) * 4;
@@ -261,7 +261,7 @@ namespace DotRecast.Recast
 
         // Returns true iff the diagonal (i,j) is strictly internal to the
         // polygon P in the neighborhood of the i endpoint.
-        private static bool InCone(int i, int j, int n, int[] verts, int[] indices)
+        private static bool InCone(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             int pi = (indices[i] & 0x0fffffff) * 4;
             int pj = (indices[j] & 0x0fffffff) * 4;
@@ -280,12 +280,12 @@ namespace DotRecast.Recast
 
         // Returns T iff (v_i, v_j) is a proper internal
         // diagonal of P.
-        private static bool Diagonal(int i, int j, int n, int[] verts, int[] indices)
+        private static bool Diagonal(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             return InCone(i, j, n, verts, indices) && Diagonalie(i, j, n, verts, indices);
         }
 
-        private static bool DiagonalieLoose(int i, int j, int n, int[] verts, int[] indices)
+        private static bool DiagonalieLoose(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             int d0 = (indices[i] & 0x0fffffff) * 4;
             int d1 = (indices[j] & 0x0fffffff) * 4;
@@ -311,7 +311,7 @@ namespace DotRecast.Recast
             return true;
         }
 
-        private static bool InConeLoose(int i, int j, int n, int[] verts, int[] indices)
+        private static bool InConeLoose(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             int pi = (indices[i] & 0x0fffffff) * 4;
             int pj = (indices[j] & 0x0fffffff) * 4;
@@ -326,12 +326,12 @@ namespace DotRecast.Recast
             return !(LeftOn(verts, pi, pj, pi1) && LeftOn(verts, pj, pi, pin1));
         }
 
-        private static bool DiagonalLoose(int i, int j, int n, int[] verts, int[] indices)
+        private static bool DiagonalLoose(int i, int j, int n, Span<int> verts, Span<int> indices)
         {
             return InConeLoose(i, j, n, verts, indices) && DiagonalieLoose(i, j, n, verts, indices);
         }
 
-        private static int Triangulate(int n, int[] verts, int[] indices, int[] tris)
+        private static int Triangulate(int n, Span<int> verts, Span<int> indices, Span<int> tris)
         {
             int ntris = 0;
 
@@ -559,7 +559,7 @@ namespace DotRecast.Recast
             RcArrays.Copy(polys, tmp, polys, pa, nvp);
         }
 
-        private static int PushFront<T>(T v, T[] arr, int an)
+        private static int PushFront<T>(T v, Span<T> arr, int an)
         {
             an++;
             for (int i = an - 1; i > 0; --i)
@@ -568,7 +568,7 @@ namespace DotRecast.Recast
             return an;
         }
 
-        private static int PushBack<T>(T v, T[] arr, int an)
+        private static int PushBack<T>(T v, Span<T> arr, int an)
         {
             arr[an] = v;
             an++;
@@ -696,16 +696,16 @@ namespace DotRecast.Recast
             }
 
             int nedges = 0;
-            ushort[] edges = new ushort[numRemovedVerts * nvp * 4];
+            Span<ushort> edges = stackalloc ushort[numRemovedVerts * nvp * 4];
 
             int nhole = 0;
-            ushort[] hole = new ushort[numRemovedVerts * nvp];
+            Span<ushort> hole = stackalloc ushort[numRemovedVerts * nvp];
 
             int nhreg = 0;
-            ushort[] hreg = new ushort[numRemovedVerts * nvp];
+            Span<ushort> hreg = stackalloc ushort[numRemovedVerts * nvp];
 
             int nharea = 0;
-            ushort[] harea = new ushort[numRemovedVerts * nvp];
+            Span<ushort> harea = stackalloc ushort[numRemovedVerts * nvp];
 
             for (int i = 0; i < mesh.npolys; ++i)
             {
@@ -828,11 +828,9 @@ namespace DotRecast.Recast
                     break;
             }
 
-            int[] tris = new int[nhole * 3];
-
-            int[] tverts = new int[nhole * 4];
-
-            int[] thole = new int[nhole];
+            Span<int> tris = stackalloc int[nhole * 3];
+            Span<int> tverts = stackalloc int[nhole * 4];
+            Span<int> thole = stackalloc int[nhole];
 
             // Generate temp vertex array for triangulation.
             for (int i = 0; i < nhole; ++i)
@@ -1010,9 +1008,8 @@ namespace DotRecast.Recast
 
             int[] nextVert = new int[maxVertices];  // TODO alloc
 
-            int[] firstVert = new int[VERTEX_BUCKET_COUNT];
-            for (int i = 0; i < VERTEX_BUCKET_COUNT; ++i)
-                firstVert[i] = -1;
+            Span<int> firstVert = stackalloc int[VERTEX_BUCKET_COUNT];
+            firstVert.Fill(-1);
 
             int[] indices = new int[maxVertsPerCont];
             int[] tris = new int[maxVertsPerCont * 3];

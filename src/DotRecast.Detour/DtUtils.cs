@@ -6,19 +6,6 @@ namespace DotRecast.Detour
 {
     public static class DtUtils
     {
-        // TODO rcMath
-        public static int NextPow2(int v)
-        {
-            v--;
-            v |= v >> 1;
-            v |= v >> 2;
-            v |= v >> 4;
-            v |= v >> 8;
-            v |= v >> 16;
-            v++;
-            return v;
-        }
-
         public static int Ilog2(int v)
         {
             int r;

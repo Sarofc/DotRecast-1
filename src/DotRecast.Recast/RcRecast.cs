@@ -185,9 +185,8 @@ namespace DotRecast.Recast
         /// See the #rcConfig documentation for more information on the configuration parameters.
         ///
         /// @see rcHeightfield, rcClearUnwalkableTriangles, rcRasterizeTriangles
-        public static byte[] MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, RcAreaModification areaMod)
+        public static void MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, RcAreaModification areaMod, Span<byte> areas)
         {
-            byte[] areas = new byte[nt];
             float walkableThr = MathF.Cos(float.DegreesToRadians(walkableSlopeAngle));
             Vector3 norm = default;
             for (int i = 0; i < nt; ++i)
@@ -201,8 +200,6 @@ namespace DotRecast.Recast
                 if (norm.Y > walkableThr)
                     areas[i] = areaMod.Apply(areas[i]);
             }
-
-            return areas;
         }
 
         public static void CalcTriNormal(Vector3 v0, Vector3 v1, Vector3 v2, ref Vector3 norm)

@@ -109,7 +109,7 @@ namespace DotRecast.Recast
             return ch;
         }
 
-        private static void WalkContour(int x, int y, int i, RcCompactHeightfield chf, Span<int> flags, List<int> points)
+        private static void WalkContour(int x, int y, int i, RcCompactHeightfield chf, Span<byte> flags, List<int> points)
         {
             // Choose the first non-connected edge
             int dir = 0;
@@ -167,7 +167,7 @@ namespace DotRecast.Recast
                     points.Add(pz);
                     points.Add(r);
 
-                    flags[i] &= ~(1 << dir); // Remove visited edges
+                    flags[i] &= (byte)~(1 << dir); // Remove visited edges
                     dir = (dir + 1) & 0x3; // Rotate CW
                 }
                 else
@@ -455,7 +455,7 @@ namespace DotRecast.Recast
             }
         }
 
-        private static int CalcAreaOfPolygon2D(int[] verts, int nverts)
+        private static int CalcAreaOfPolygon2D(ReadOnlySpan<int> verts, int nverts)
         {
             int area = 0;
             for (int i = 0, j = nverts - 1; i < nverts; j = i++)
@@ -745,7 +745,7 @@ namespace DotRecast.Recast
             cset.borderSize = chf.borderSize;
             cset.maxError = maxError;
 
-            int[] flags = ArrayPool<int>.Shared.Rent(chf.spanCount);
+            Span<byte> flags = chf.spanCount > 2048 * 100 ? new byte[chf.spanCount] : stackalloc byte[chf.spanCount];
 
             ctx.StartTimer(RcTimerLabel.RC_TIMER_BUILD_CONTOURS_TRACE);
 
@@ -780,7 +780,7 @@ namespace DotRecast.Recast
                                 res |= (1 << dir);
                         }
 
-                        flags[i] = res ^ 0xf; // Inverse, mark non connected edges.
+                        flags[i] = (byte)(res ^ 0xf); // Inverse, mark non connected edges.
                     }
                 }
             }
@@ -868,13 +868,11 @@ namespace DotRecast.Recast
                 }
             }
 
-            ArrayPool<int>.Shared.Return(flags);
-
             // Merge holes if needed.
             if (cset.conts.Count > 0)
             {
                 // Calculate winding of all polygons.
-                int[] winding = new int[cset.conts.Count]; // TODO alloc temp
+                Span<int> winding = stackalloc int[cset.conts.Count];
                 int nholes = 0;
                 for (int i = 0; i < cset.conts.Count; ++i)
                 {

@@ -71,9 +71,9 @@ namespace DotRecast.Core
             if (line.StartsWith("v "))
             {
                 var vert = ReadVector3f(line);
-                context.AddVertex(vert.X);
-                context.AddVertex(vert.Y);
-                context.AddVertex(vert.Z);
+                context.Vertices.Add(vert.X);
+                context.Vertices.Add(vert.Y);
+                context.Vertices.Add(vert.Z);
             }
         }
 
@@ -107,10 +107,10 @@ namespace DotRecast.Core
 
             for (int j = 0; j < n - 3; j++)
             {
-                context.AddFace(ReadFaceVertex(line[v[1]], ref context));
+                context.Faces.Add(ReadFaceVertex(line[v[1]], ref context));
                 for (int i = 0; i < 2; i++)
                 {
-                    context.AddFace(ReadFaceVertex(line[v[2 + j + i]], ref context));
+                    context.Faces.Add(ReadFaceVertex(line[v[2 + j + i]], ref context));
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace DotRecast.Core
         {
             Span<Range> v = stackalloc Range[2];
             var n = face.Split(v, '/');
-            return GetIndex(int.Parse(face[v[0]]), context.Vertices.Length);
+            return GetIndex(int.Parse(face[v[0]]), context.Vertices.Count);
         }
 
         private static int GetIndex(int posi, int size)

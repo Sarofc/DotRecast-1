@@ -61,7 +61,7 @@ namespace DotRecast.Detour.TileCache
             m_tcomp = tcomp;
             m_tmproc = tmprocs;
 
-            m_tileLutSize = DtUtils.NextPow2(m_params.maxTiles / 4);
+            m_tileLutSize = RcMath.NextPow2(m_params.maxTiles / 4);
             if (m_tileLutSize == 0)
             {
                 m_tileLutSize = 1;
@@ -77,7 +77,7 @@ namespace DotRecast.Detour.TileCache
                 m_nextFreeTile = m_tiles[i];
             }
 
-            m_tileBits = DtUtils.Ilog2(DtUtils.NextPow2(m_params.maxTiles));
+            m_tileBits = DtUtils.Ilog2(RcMath.NextPow2(m_params.maxTiles));
             m_saltBits = Math.Min(31, 32 - m_tileBits);
             if (m_saltBits < 10)
             {

@@ -34,8 +34,8 @@ namespace DotRecast.Recast.Geom
         public static RcTriMesh Load(string filename)
         {
             using var stream = RcIO.ReadFileIfFound(filename);
-            using var context = RcObjImporter.LoadContext(stream);
-            return new RcTriMesh(context.Vertices.ToArray(), context.Faces.ToArray()); // alloc here
+            var context = RcObjImporter.LoadContext(stream);
+            return new RcTriMesh(context.Vertices.ToArray(), context.Faces.ToArray());
         }
 
         public RcTriMesh(RcTriMesh mesh, Vector3 position, Quaternion rotation, Vector3 scale)
