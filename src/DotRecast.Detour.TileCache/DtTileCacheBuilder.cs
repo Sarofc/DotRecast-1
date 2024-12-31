@@ -1406,17 +1406,6 @@ namespace DotRecast.Detour.TileCache
         {
             // Count number of polygons to remove.
             int maxVertsPerPoly = mesh.nvp;
-            int numRemovedVerts = 0;
-            for (int i = 0; i < mesh.npolys; ++i)
-            {
-                int p = i * maxVertsPerPoly * 2;
-                int nv = CountPolyVerts(mesh.polys, p, maxVertsPerPoly);
-                for (int j = 0; j < nv; ++j)
-                {
-                    if (mesh.polys[p + j] == rem)
-                        numRemovedVerts++;
-                }
-            }
 
             int nedges = 0;
             Span<ushort> edges = stackalloc ushort[MAX_REM_EDGES * 3];

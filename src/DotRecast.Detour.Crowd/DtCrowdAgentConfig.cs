@@ -10,6 +10,7 @@ namespace DotRecast.Detour.Crowd
         public int obstacleAvoidanceType = 3;
         public bool separation;
         public float separationWeight = 2f;
+        public bool collision = true;
 
         public DtCrowdAgentUpdateFlags GetUpdateFlags()
         {
@@ -37,6 +38,11 @@ namespace DotRecast.Detour.Crowd
             if (separation)
             {
                 updateFlags |= DtCrowdAgentUpdateFlags.DT_CROWD_SEPARATION;
+            }
+
+            if (collision)
+            {
+                updateFlags |= DtCrowdAgentUpdateFlags.DT_CROWD_COLLISION;
             }
 
             return updateFlags;

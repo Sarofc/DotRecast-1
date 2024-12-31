@@ -1439,6 +1439,12 @@ namespace DotRecast.Detour.Crowd
                 {
                     var ag = agents[i];
                     long idx0 = ag.idx;
+
+                    if ((ag.option.updateFlags & DtCrowdAgentUpdateFlags.DT_CROWD_COLLISION) == 0)
+                    {
+                        continue;
+                    }
+
                     if (ag.state != DtCrowdAgentState.DT_CROWDAGENT_STATE_WALKING)
                     {
                         continue;
@@ -1451,6 +1457,12 @@ namespace DotRecast.Detour.Crowd
                     for (int j = 0; j < ag.nneis; ++j)
                     {
                         DtCrowdAgent nei = ag.neis[j].agent;
+
+                        if ((nei.option.updateFlags & DtCrowdAgentUpdateFlags.DT_CROWD_COLLISION) == 0)
+                        {
+                            continue;
+                        }
+
                         long idx1 = nei.idx;
                         Vector3 diff = Vector3.Subtract(ag.npos, nei.npos);
                         diff.Y = 0;
