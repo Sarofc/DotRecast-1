@@ -85,7 +85,7 @@ namespace DotRecast.Detour
         ///  @param[out]	randomPt		The random location. 
         /// @returns The status flags for the query.
         [SkipLocalsInit]
-        public DtStatus FindRandomPoint(IDtQueryFilter filter, IRcRand frand, out long randomRef, out Vector3 randomPt)
+        public unsafe DtStatus FindRandomPoint(IDtQueryFilter filter, delegate*<float> frand, out long randomRef, out Vector3 randomPt)
         {
             randomRef = 0;
             randomPt = Vector3.Zero;
@@ -109,7 +109,7 @@ namespace DotRecast.Detour
                 // Choose random tile using reservoir sampling.
                 float area = 1.0f; // Could be tile area too.
                 tsum += area;
-                float u = frand.Next();
+                float u = frand();
                 if (u * tsum <= area)
                 {
                     tile = t;
@@ -155,7 +155,7 @@ namespace DotRecast.Detour
 
                 // Choose random polygon weighted by area, using reservoir sampling.
                 areaSum += polyArea;
-                float u = frand.Next();
+                float u = frand();
                 if (u * areaSum <= polyArea)
                 {
                     poly = p;
@@ -177,8 +177,8 @@ namespace DotRecast.Detour
                 RcSpans.Copy(tile.data.verts, poly.verts[j] * 3, verts, j * 3, 3);
             }
 
-            float s = frand.Next();
-            float t0 = frand.Next();
+            float s = frand();
+            float t0 = frand();
 
             DtUtils.RandomPointInConvexPoly(verts, poly.vertCount, areas, s, t0, out var pt);
             ClosestPointOnPoly(polyRef, pt, out var closest, out var _);
@@ -202,8 +202,8 @@ namespace DotRecast.Detour
         ///  @param[out]	randomPt		The random location. [(x, y, z)]
         /// @returns The status flags for the query.
         [SkipLocalsInit]
-        public DtStatus FindRandomPointAroundCircle(long startRef, in Vector3 centerPos, float maxRadius,
-            IDtQueryFilter filter, IRcRand frand,
+        public unsafe DtStatus FindRandomPointAroundCircle(long startRef, in Vector3 centerPos, float maxRadius,
+            IDtQueryFilter filter, delegate*<float> frand,
             out long randomRef, out Vector3 randomPt)
         {
             randomRef = startRef;
@@ -269,7 +269,7 @@ namespace DotRecast.Detour
                     }
                     // Choose random polygon weighted by area, using reservoir sampling.
                     areaSum += polyArea;
-                    float u = frand.Next();
+                    float u = frand();
                     if (u * areaSum <= polyArea)
                     {
                         randomTile = bestTile;
@@ -366,8 +366,8 @@ namespace DotRecast.Detour
                 RcArrays.Copy(randomTile.data.verts, randomPoly.verts[j] * 3, verts, j * 3, 3);
             }
 
-            float s = frand.Next();
-            float t = frand.Next();
+            float s = frand();
+            float t = frand();
 
             DtUtils.RandomPointInConvexPoly(verts, randomPoly.vertCount, areas, s, t, out var pt);
             ClosestPointOnPoly(randomPolyRef, pt, out var closest, out _);
@@ -2247,7 +2247,6 @@ namespace DotRecast.Detour
             }
 
             hit.t = 0;
-            hit.path.Clear();
             hit.pathCount = 0;
             hit.pathCost = 0;
             int n = 0;

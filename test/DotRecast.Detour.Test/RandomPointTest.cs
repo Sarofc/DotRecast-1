@@ -28,15 +28,15 @@ public class RandomPointTest : AbstractDetourTest
 {
     [Test]
     [Repeat(10)]
-    public void TestRandom()
+    public unsafe void TestRandom()
     {
-        RcRand f = new(1);
+        static float f() => Random.Shared.NextSingle();
         IDtQueryFilter filter = new DtQueryDefaultFilter();
 
         var begin = RcFrequency.Ticks;
         for (int i = 0; i < 10000; i++)
         {
-            var status = query.FindRandomPoint(filter, f, out var randomRef, out var randomPt);
+            var status = query.FindRandomPoint(filter, &f, out var randomRef, out var randomPt);
             Assert.That(status.Succeeded(), Is.True);
 
             status = navmesh.GetTileAndPolyByRef(randomRef, out var tile, out var poly);
@@ -62,14 +62,14 @@ public class RandomPointTest : AbstractDetourTest
     }
 
     [Test]
-    public void TestRandomAroundCircle()
+    public unsafe void TestRandomAroundCircle()
     {
-        RcRand f = new(1);
+        static float f() => Random.Shared.NextSingle();
         IDtQueryFilter filter = new DtQueryDefaultFilter();
-        query.FindRandomPoint(filter, f, out var randomRef, out var randomPt);
+        query.FindRandomPoint(filter, &f, out var randomRef, out var randomPt);
         for (int i = 0; i < 1000; i++)
         {
-            var status = query.FindRandomPointAroundCircle(randomRef, randomPt, 5f, filter, f, out var nextRandomRef, out var nextRandomPt);
+            var status = query.FindRandomPointAroundCircle(randomRef, randomPt, 5f, filter, &f, out var nextRandomRef, out var nextRandomPt);
             Assert.That(status.Failed(), Is.False);
 
             randomRef = nextRandomRef;
@@ -116,17 +116,17 @@ public class RandomPointTest : AbstractDetourTest
     //}
 
     [Test]
-    public void TestPerformance()
+    public unsafe void TestPerformance()
     {
-        RcRand f = new(1);
+        static float f() => Random.Shared.NextSingle();
         IDtQueryFilter filter = new DtQueryDefaultFilter();
-        query.FindRandomPoint(filter, f, out var randomRef, out var randomPt);
+        query.FindRandomPoint(filter, &f, out var randomRef, out var randomPt);
 
         float radius = 5f;
         // jvm warmup
         for (int i = 0; i < 1000; i++)
         {
-            query.FindRandomPointAroundCircle(randomRef, randomPt, radius, filter, f, out var _, out var _);
+            query.FindRandomPointAroundCircle(randomRef, randomPt, radius, filter, &f, out var _, out var _);
         }
 
         //for (int i = 0; i < 1000; i++)
@@ -137,7 +137,7 @@ public class RandomPointTest : AbstractDetourTest
         long t1 = RcFrequency.Ticks;
         for (int i = 0; i < 10000; i++)
         {
-            query.FindRandomPointAroundCircle(randomRef, randomPt, radius, filter, f, out var _, out var _);
+            query.FindRandomPointAroundCircle(randomRef, randomPt, radius, filter, &f, out var _, out var _);
         }
 
         long t2 = RcFrequency.Ticks;

@@ -5,7 +5,6 @@ namespace DotRecast.Recast.Toolset.Tools
         public int expandSimOptions = 1;
         public int expandCrowdOptions = 1;
         public int agents = 1000;
-        public int randomSeed = 270;
         public int numberOfZones = 4;
         public float zoneRadius = 20f;
         public float percentMobs = 80f;

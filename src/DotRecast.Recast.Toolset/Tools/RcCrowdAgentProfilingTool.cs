@@ -11,7 +11,7 @@ using DotRecast.Recast.Toolset.Builder;
 
 namespace DotRecast.Recast.Toolset.Tools
 {
-    public class RcCrowdAgentProfilingTool : IRcToolable
+    public unsafe class RcCrowdAgentProfilingTool : IRcToolable
     {
         private RcCrowdAgentProfilingToolConfig _cfg;
 
@@ -21,7 +21,6 @@ namespace DotRecast.Recast.Toolset.Tools
 
         private DtNavMesh _navMesh;
 
-        private IRcRand _rand;
         private readonly List<DtPolyPoint> _polyPoints;
 
         private const int SamplingCount = 500;
@@ -88,9 +87,11 @@ namespace DotRecast.Recast.Toolset.Tools
             return ap;
         }
 
+        static float frand() => Random.Shared.NextSingle();
+
         private DtStatus GetMobPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out Vector3 randomPt)
         {
-            return navquery.FindRandomPoint(filter, _rand, out var randomRef, out randomPt);
+            return navquery.FindRandomPoint(filter, &frand, out var randomRef, out randomPt);
         }
 
         private DtStatus GetVillagerPosition(DtNavMeshQuery navquery, IDtQueryFilter filter, out Vector3 randomPt)
@@ -100,8 +101,8 @@ namespace DotRecast.Recast.Toolset.Tools
             if (0 >= _polyPoints.Count)
                 return DtStatus.DT_FAILURE;
 
-            int zone = (int)(_rand.Next() * _polyPoints.Count);
-            return navquery.FindRandomPointAroundCircle(_polyPoints[zone].refs, _polyPoints[zone].pt, _cfg.zoneRadius, filter, _rand,
+            int zone = (int)(frand() * _polyPoints.Count);
+            return navquery.FindRandomPointAroundCircle(_polyPoints[zone].refs, _polyPoints[zone].pt, _cfg.zoneRadius, filter, &frand,
                 out var randomRef, out randomPt);
         }
 
@@ -115,7 +116,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 float zoneSeparation = _cfg.zoneRadius * _cfg.zoneRadius * 16;
                 for (int k = 0; k < 100; k++)
                 {
-                    var status = navquery.FindRandomPoint(filter, _rand, out var randomRef, out var randomPt);
+                    var status = navquery.FindRandomPoint(filter, &frand, out var randomRef, out var randomPt);
                     if (status.Succeeded())
                     {
                         bool valid = true;
@@ -186,19 +187,18 @@ namespace DotRecast.Recast.Toolset.Tools
             _minUpdateTime = 0;
             _maxUpdateTime = 0;
 
-            _rand = new RcRand(_cfg.randomSeed);
             CreateCrowd();
             CreateZones();
             DtNavMeshQuery navquery = new(_navMesh, 512);
             IDtQueryFilter filter = new DtQueryDefaultFilter();
             for (int i = 0; i < _cfg.agents; i++)
             {
-                float tr = _rand.Next();
+                float tr = frand();
                 RcCrowdAgentType type = RcCrowdAgentType.MOB;
                 float mobsPcnt = _cfg.percentMobs / 100f;
                 if (tr > mobsPcnt)
                 {
-                    tr = _rand.Next();
+                    tr = frand();
                     float travellerPcnt = _cfg.percentTravellers / 100f;
                     if (tr > travellerPcnt)
                     {
@@ -283,7 +283,7 @@ namespace DotRecast.Recast.Toolset.Tools
             var status = navquery.FindNearestPoly(ag.npos, _crowd.GetQueryExtents(), filter, out var nearestRef, out var nearestPt, out var _);
             if (status.Succeeded())
             {
-                status = navquery.FindRandomPointAroundCircle(nearestRef, crowAgentData.home, _cfg.zoneRadius * 2f, filter, _rand,
+                status = navquery.FindRandomPointAroundCircle(nearestRef, crowAgentData.home, _cfg.zoneRadius * 2f, filter, &frand,
                     out var randomRef, out var randomPt);
                 if (status.Succeeded())
                 {
@@ -298,7 +298,7 @@ namespace DotRecast.Recast.Toolset.Tools
             var status = navquery.FindNearestPoly(ag.npos, _crowd.GetQueryExtents(), filter, out var nearestRef, out var nearestPt, out var _);
             if (status.Succeeded())
             {
-                status = navquery.FindRandomPointAroundCircle(nearestRef, crowAgentData.home, _cfg.zoneRadius * 0.2f, filter, _rand,
+                status = navquery.FindRandomPointAroundCircle(nearestRef, crowAgentData.home, _cfg.zoneRadius * 0.2f, filter, &frand,
                     out var randomRef, out var randomPt);
                 if (status.Succeeded())
                 {

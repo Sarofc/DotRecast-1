@@ -81,7 +81,6 @@ public class CrowdAgentProfilingSampleTool : ISampleTool
         ImGui.Text("Simulation Options");
         ImGui.Separator();
         ImGui.SliderInt("Agents", ref toolCfg.agents, 0, 10000);
-        ImGui.SliderInt("Random Seed", ref toolCfg.randomSeed, 0, 1024);
         ImGui.SliderInt("Number of Zones", ref toolCfg.numberOfZones, 0, 10);
         ImGui.SliderFloat("Zone Radius", ref toolCfg.zoneRadius, 0, 100, "%.0f");
         ImGui.SliderFloat("Mobs %", ref toolCfg.percentMobs, 0, 100, "%.0f");

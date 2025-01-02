@@ -25,13 +25,11 @@ namespace DotRecast.Recast.Toolset.Tools
         {
             if (startRef == 0 || endRef == 0)
             {
-                //pathIterPolys?.Clear();
                 smoothPath?.Clear();
 
                 return DtStatus.DT_FAILURE;
             }
 
-            //pathIterPolys ??= new List<long>();
             smoothPath ??= new List<Vector3>();
 
             pathIterPolys.Clear();
@@ -180,9 +178,6 @@ namespace DotRecast.Recast.Toolset.Tools
                 return DtStatus.DT_FAILURE;
             }
 
-            //polys.Clear();
-            //straightPath.Clear();
-
             navQuery.FindPath(startRef, endRef, startPt, endPt, filter, polys, out var polysCount);
 
             if (0 >= polysCount)
@@ -254,12 +249,9 @@ namespace DotRecast.Recast.Toolset.Tools
             straightPathCount = 0;
             if (startRef == 0 || endRef == 0)
             {
-                //polys?.Clear();
                 return DtStatus.DT_FAILURE;
             }
 
-            //var path = new List<long>();
-            //polys ??= new List<long>();
             var status = navQuery.Raycast(startRef, startPos, endPos, filter, out var t, out hitNormal, polys, out var polysCount);
             if (!status.Succeeded())
             {
@@ -350,16 +342,8 @@ namespace DotRecast.Recast.Toolset.Tools
 
             if (startRef == 0)
             {
-                //resultRef?.Clear();
-                //resultParent?.Clear();
                 return DtStatus.DT_FAILURE;
             }
-
-            //resultRef ??= new List<long>();
-            //resultParent ??= new List<long>();
-
-            //resultRef.Clear();
-            //resultParent.Clear();
 
             var status = navQuery.FindLocalNeighbourhood(startRef, spos, radius, filter, resultRef, resultParent, out resultCount, MAX_POLYS);
             return status;
@@ -405,7 +389,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return status;
         }
 
-        public DtStatus FindRandomPointAroundCircle(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 spos, Vector3 epos, IDtQueryFilter filter, /*bool constrainByCircle, */int count,
+        public unsafe DtStatus FindRandomPointAroundCircle(DtNavMeshQuery navQuery, long startRef, long endRef, Vector3 spos, Vector3 epos, IDtQueryFilter filter, /*bool constrainByCircle, */int count,
             ref List<Vector3> points)
         {
             if (startRef == 0 || endRef == 0)
@@ -417,17 +401,13 @@ namespace DotRecast.Recast.Toolset.Tools
             float dz = epos.Z - spos.Z;
             float dist = MathF.Sqrt(dx * dx + dz * dz);
 
-            //IDtPolygonByCircleConstraint constraint = constrainByCircle
-            //    ? DtStrictDtPolygonByCircleConstraint.Shared
-            //    : DtNoOpDtPolygonByCircleConstraint.Shared;
-
-            var frand = new RcRand();
+            static float frand() => Random.Shared.NextSingle();
             int prevCnt = points.Count;
 
             points = new List<Vector3>();
             while (0 < count && points.Count < prevCnt + count)
             {
-                var status = navQuery.FindRandomPointAroundCircle(startRef, spos, dist, filter, frand/*, constraint*/,
+                var status = navQuery.FindRandomPointAroundCircle(startRef, spos, dist, filter, &frand,
                     out var randomRef, out var randomPt);
 
                 if (status.Succeeded())
