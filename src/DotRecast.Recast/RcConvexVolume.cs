@@ -25,6 +25,6 @@ namespace DotRecast.Recast
         public float[] verts;
         public float hmin;
         public float hmax;
-        public RcAreaModification areaMod;
+        public int area;
     }
 }

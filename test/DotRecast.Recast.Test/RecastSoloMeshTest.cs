@@ -116,7 +116,7 @@ public class RecastSoloMeshTest
             m_vertsPerPoly,
             m_detailSampleDist, m_detailSampleMaxError,
             true, true, true,
-            SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+            SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
         RcBuilderConfig bcfg = new(cfg, bmin, bmax);
 
         //
@@ -140,7 +140,7 @@ public class RecastSoloMeshTest
             // If your input data is multiple meshes, you can transform them here, calculate
             // the are type for each of the meshes and rasterize them.
             byte[] m_triareas = new byte[ntris];
-            RcRecast.MarkWalkableTriangles(m_ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod, m_triareas);
+            RcRecast.MarkWalkableTriangles(m_ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, (byte)cfg.WalkableArea, m_triareas);
             RcRasterizations.RasterizeTriangles(m_ctx, verts, tris, m_triareas, ntris, m_solid, cfg.WalkableClimb);
         }
 

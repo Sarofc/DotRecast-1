@@ -84,7 +84,7 @@ public class MeshSetReaderWriterTest
                     m_vertsPerPoly,
                     m_detailSampleDist, m_detailSampleMaxError,
                     true, true, true,
-                    SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+                    SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
                 RcBuilderConfig bcfg = new(cfg, bmin, bmax, x, y);
                 TestDetourBuilder db = new();
                 DtMeshData data = db.Build(geom, bcfg, m_agentHeight, m_agentRadius, m_agentMaxClimb, x, y, true);

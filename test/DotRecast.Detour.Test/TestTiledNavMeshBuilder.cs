@@ -77,7 +77,7 @@ public class TestTiledNavMeshBuilder
             vertsPerPoly,
             detailSampleDist, detailSampleMaxError,
             true, true, true,
-            SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+            SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
         RcBuilder rcBuilder = new();
         List<RcBuilderResult> rcResult = rcBuilder.BuildTiles(geom, cfg, false, true);
 

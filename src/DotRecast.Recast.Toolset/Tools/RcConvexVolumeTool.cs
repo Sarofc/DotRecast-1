@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using DotRecast.Core;
@@ -101,7 +101,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return null != volume;
         }
 
-        public bool TryAdd(IInputGeomProvider geom, Vector3 p, RcAreaModification areaType, float boxDescent, float boxHeight, float polyOffset, out RcConvexVolume volume)
+        public bool TryAdd(IInputGeomProvider geom, Vector3 p, int areaType, float boxDescent, float boxHeight, float polyOffset, out RcConvexVolume volume)
         {
             // Create
 
@@ -139,7 +139,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return false;
         }
 
-        public static RcConvexVolume CreateConvexVolume(List<Vector3> pts, List<int> hull, RcAreaModification areaType, float boxDescent, float boxHeight, float polyOffset)
+        public static RcConvexVolume CreateConvexVolume(List<Vector3> pts, List<int> hull, int areaType, float boxDescent, float boxHeight, float polyOffset)
         {
             // Create shape.
             float[] verts = new float[hull.Count * 3];
@@ -174,7 +174,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 verts = verts,
                 hmin = minh,
                 hmax = maxh,
-                areaMod = areaType,
+                area = areaType,
             };
         }
     }

@@ -57,20 +57,22 @@ namespace DotRecast.Recast.Toolset.Tools
             return _moveTargetPos;
         }
 
-        public void Setup(float agentRadius, DtNavMesh navMesh)
+        public void Setup(RcAreaConfig areaConfig, float agentRadius, DtNavMesh navMesh)
         {
             DtCrowdConfig config = new(agentRadius);
             crowd = new DtCrowd(config, navMesh, __ =>
             {
                 var filter = new DtQueryDefaultFilter();
-                filter.SetIncludeFlags(SampleAreaModifications.SAMPLE_POLYFLAGS_ALL);
-                filter.SetExcludeFlags(SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, 1f);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER, 10f);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD, 1f);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR, 1f);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS, 2f);
-                filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_JUMP, 1.5f);
+                filter.SetIncludeFlags(RcBuiltInAreas.POLYFLAGS_ALL);
+                filter.SetExcludeFlags(RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE);
+
+                // SetAreaCosts
+                var areas = areaConfig.Areas;
+                for (int i = 0; i < areas.Length; i++)
+                {
+                    var area = areas[i];
+                    filter.SetAreaCost(i, area.Cost);
+                }
 
                 return filter;
             });

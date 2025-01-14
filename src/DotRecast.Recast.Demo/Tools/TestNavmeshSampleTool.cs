@@ -27,7 +27,7 @@ public class TestNavmeshSampleTool : ISampleTool
     private RcTestNavmeshToolMode _mode = RcTestNavmeshToolMode.Values[RcTestNavmeshToolMode.PATHFIND_FOLLOW.Idx];
 
     // flags
-    private int _includeFlags = SampleAreaModifications.SAMPLE_POLYFLAGS_ALL;
+    private int _includeFlags = RcBuiltInAreas.POLYFLAGS_ALL ^ RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE;
     private int _excludeFlags = 0;
 
     // for pathfind straight mode
@@ -73,14 +73,18 @@ public class TestNavmeshSampleTool : ISampleTool
         _tool = new();
 
         m_filter = new DtQueryDefaultFilter();
-        m_filter.SetIncludeFlags(SampleAreaModifications.SAMPLE_POLYFLAGS_ALL ^ SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED);
+        m_filter.SetIncludeFlags(RcBuiltInAreas.POLYFLAGS_ALL ^ RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE);
         m_filter.SetExcludeFlags(0);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, 1f);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER, 10f);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD, 1f);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR, 1f);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS, 2f);
-        m_filter.SetAreaCost(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_JUMP, 1.5f);
+    }
+
+    void SetAreaCosts()
+    {
+        var areas = _sample.GetAreaConfig().Areas;
+        for (int i = 0; i < areas.Length; i++)
+        {
+            var area = areas[i];
+            m_filter.SetAreaCost(i, area.Cost);
+        }
     }
 
     public void Layout()
@@ -137,24 +141,32 @@ public class TestNavmeshSampleTool : ISampleTool
         ImGui.Text("Common");
         ImGui.Separator();
 
+        var areas = _sample.GetAreaConfig().Areas;
+
+        SetAreaCosts(); // 每帧都设置，也无所谓吧
+
         ImGui.Text("Include Flags");
         ImGui.Separator();
-        ImGui.CheckboxFlags("Walk", ref _includeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_WALK);
-        ImGui.CheckboxFlags("Swim", ref _includeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM);
-        ImGui.CheckboxFlags("Door", ref _includeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR);
-        ImGui.CheckboxFlags("Jump", ref _includeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_JUMP);
+        for (int i = 1; i < areas.Length; i++) // skip 0
+        {
+            var area = areas[i];
+            if (!area.Set)
+                continue;
+            ImGui.CheckboxFlags($"{area.Name}##in", ref _includeFlags, 1 << i);
+        }
         ImGui.NewLine();
-
         m_filter.SetIncludeFlags(_includeFlags);
 
-        ImGui.Text("Exclude Flags");
+        ImGui.Text("Exclude Flags"); // TODO CheckboxFlags label 同名，导致无效
         ImGui.Separator();
-        ImGui.CheckboxFlags("Walk", ref _excludeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_WALK);
-        ImGui.CheckboxFlags("Swim", ref _excludeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM);
-        ImGui.CheckboxFlags("Door", ref _excludeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR);
-        ImGui.CheckboxFlags("Jump", ref _excludeFlags, SampleAreaModifications.SAMPLE_POLYFLAGS_JUMP);
+        for (int i = 1; i < areas.Length; i++) // skip 0
+        {
+            var area = areas[i];
+            if (!area.Set)
+                continue;
+            ImGui.CheckboxFlags($"{area.Name}##ex", ref _excludeFlags, 1 << i);
+        }
         ImGui.NewLine();
-
         m_filter.SetExcludeFlags(_excludeFlags);
 
         if (prevMode != _mode || prevIncludeFlags != _includeFlags

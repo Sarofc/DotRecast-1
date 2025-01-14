@@ -59,7 +59,7 @@ namespace DotRecast.Recast.Toolset.Builder
                 vertsPerPoly,
                 detailSampleDist, detailSampleMaxError,
                 filterLowHangingObstacles, filterLedgeSpans, filterWalkableLowHeightSpans,
-                SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
+                RcBuiltInAreas.POLYAREA_WALKABLE, true);
 
             RcBuilderResult rcResult = BuildRecastResult(geom, cfg, keepInterResults);
             var meshData = BuildMeshData(geom, cellSize, cellHeight, agentHeight, agentRadius, agentMaxClimb, rcResult);

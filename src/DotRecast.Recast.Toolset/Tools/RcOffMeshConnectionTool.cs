@@ -22,8 +22,8 @@ namespace DotRecast.Recast.Toolset.Tools
             if (null == geom)
                 return;
 
-            int area = SampleAreaModifications.SAMPLE_POLYAREA_TYPE_JUMP;
-            int flags = SampleAreaModifications.SAMPLE_POLYFLAGS_JUMP;
+            int area = RcBuiltInAreas.POLYAREA_JUMP;
+            int flags = RcBuiltInAreas.POLYFLAGS_JUMP;
             geom.AddOffMeshConnection(start, end, settings.agentRadius, bidir, area, flags);
         }
 

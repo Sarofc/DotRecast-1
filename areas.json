@@ -1,0 +1,68 @@
+{
+  "Areas": [
+    {
+      "Name": "Not Walkable",
+      "Cost": 1
+    },
+    {
+      "Name": "Walkable",
+      "Cost": 1
+    },
+    {
+      "Name": "Jump",
+      "Cost": 1.5
+    },
+    {
+      "Name": "Water",
+      "Cost": 3
+    },
+    {
+      "Name": "Grass",
+      "Cost": 2
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    },
+    {
+      "Name": "",
+      "Cost": 1
+    }
+  ]
+}

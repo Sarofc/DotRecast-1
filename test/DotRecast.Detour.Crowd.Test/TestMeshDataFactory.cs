@@ -65,7 +65,7 @@ public class TestMeshDataFactory
             vertsPerPoly,
             detailSampleDist, detailSampleMaxError,
             true, true, true,
-            SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+            SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
         RcBuilderConfig bcfg = new(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax());
         RcBuilder rcBuilder = new();
         RcBuilderResult rcResult = rcBuilder.Build(geom, bcfg, false);

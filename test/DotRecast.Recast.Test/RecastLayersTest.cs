@@ -152,7 +152,7 @@ public class RecastLayersTest
             m_vertsPerPoly,
             m_detailSampleDist, m_detailSampleMaxError,
             true, true, true,
-            SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+            SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
         RcBuilderConfig bcfg = new(cfg, geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), x, y);
         RcHeightfieldLayerSet lset = builder.BuildLayers(geom, bcfg);
         return lset;

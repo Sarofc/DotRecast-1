@@ -93,7 +93,7 @@ namespace DotRecast.Recast
          **/
         public readonly float DetailSampleMaxError;
 
-        public readonly RcAreaModification WalkableAreaMod;
+        public readonly int WalkableArea;
         public readonly bool FilterLowHangingObstacles;
         public readonly bool FilterLedgeSpans;
         public readonly bool FilterWalkableLowHeightSpans;
@@ -125,7 +125,7 @@ namespace DotRecast.Recast
             int vertsPerPoly,
             float detailSampleDist, float detailSampleMaxError,
             bool filterLowHangingObstacles, bool filterLedgeSpans, bool filterWalkableLowHeightSpans,
-            RcAreaModification walkableAreaMod, bool buildMeshDetail)
+            int walkableArea, bool buildMeshDetail)
             : this(false, 0, 0, 0,
                 partitionType,
                 cellSize, cellHeight,
@@ -135,7 +135,7 @@ namespace DotRecast.Recast
                 vertsPerPoly,
                 detailSampleDist, detailSampleMaxError,
                 filterLowHangingObstacles, filterLedgeSpans, filterWalkableLowHeightSpans,
-                walkableAreaMod, buildMeshDetail)
+                walkableArea, buildMeshDetail)
         {
             // Note: area = size*size in [Units: wu]
         }
@@ -150,7 +150,7 @@ namespace DotRecast.Recast
             float edgeMaxLen, float edgeMaxError, int vertsPerPoly,
             float detailSampleDist, float detailSampleMaxError,
             bool filterLowHangingObstacles, bool filterLedgeSpans, bool filterWalkableLowHeightSpans,
-            RcAreaModification walkableAreaMod, bool buildMeshDetail)
+            int walkableArea, bool buildMeshDetail)
         {
             UseTiles = useTiles;
             TileSizeX = tileSizeX;
@@ -176,7 +176,7 @@ namespace DotRecast.Recast
             MaxVertsPerPoly = vertsPerPoly;
             DetailSampleDist = detailSampleDist < 0.9f ? 0 : cellSize * detailSampleDist;
             DetailSampleMaxError = cellHeight * detailSampleMaxError;
-            WalkableAreaMod = walkableAreaMod;
+            WalkableArea = walkableArea;
             FilterLowHangingObstacles = filterLowHangingObstacles;
             FilterLedgeSpans = filterLedgeSpans;
             FilterWalkableLowHeightSpans = filterWalkableLowHeightSpans;

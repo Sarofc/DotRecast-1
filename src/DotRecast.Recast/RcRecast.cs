@@ -26,15 +26,17 @@ namespace DotRecast.Recast
 {
     public static class RcRecast
     {
+        /// The maximum number of user defined area ids.
+        public const byte RC_MAX_AREAS = 16;
+
         /// Represents the null area.
         /// When a data element is given this value it is considered to no longer be 
         /// assigned to a usable area.  (E.g. It is un-walkable.)
         public const byte RC_NULL_AREA = 0;
 
         /// The default area id used to indicate a walkable polygon. 
-        /// This is also the maximum allowed area id, and the only non-null area id 
         /// recognized by some steps in the build process. 
-        public const int RC_WALKABLE_AREA = 63;
+        public const byte RC_WALKABLE_AREA = 1;
 
         /// The value returned by #rcGetCon if the specified direction is not connected
         /// to another span. (Has no neighbor.)
@@ -185,7 +187,7 @@ namespace DotRecast.Recast
         /// See the #rcConfig documentation for more information on the configuration parameters.
         ///
         /// @see rcHeightfield, rcClearUnwalkableTriangles, rcRasterizeTriangles
-        public static void MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, RcAreaModification areaMod, Span<byte> areas)
+        public static void MarkWalkableTriangles(RcContext ctx, float walkableSlopeAngle, ReadOnlySpan<float> verts, ReadOnlySpan<int> tris, int nt, byte areaId, Span<byte> areas)
         {
             float walkableThr = MathF.Cos(float.DegreesToRadians(walkableSlopeAngle));
             Vector3 norm = default;
@@ -198,7 +200,7 @@ namespace DotRecast.Recast
                 CalcTriNormal(v0, v1, v2, ref norm);
                 // Check if the face is walkable.
                 if (norm.Y > walkableThr)
-                    areas[i] = areaMod.Apply(areas[i]);
+                    areas[i] = areaId;
             }
         }
 

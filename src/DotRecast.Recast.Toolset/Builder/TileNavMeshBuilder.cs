@@ -103,7 +103,7 @@ namespace DotRecast.Recast.Toolset.Builder
                 vertsPerPoly,
                 detailSampleDist, detailSampleMaxError,
                 filterLowHangingObstacles, filterLedgeSpans, filterWalkableLowHeightSpans,
-                SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
+                RcBuiltInAreas.POLYAREA_WALKABLE, true);
             RcBuilder rcBuilder = new();
             return rcBuilder.BuildTiles(geom, cfg, keepInterResults, buildAll, Environment.ProcessorCount + 1, Task.Factory);
         }

@@ -62,7 +62,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 setting.vertsPerPoly,
                 setting.detailSampleDist, setting.detailSampleMaxError,
                 true, true, true,
-                SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true);
+                RcBuiltInAreas.POLYAREA_WALKABLE, true);
 
             var builder = new DtTileCacheLayerBuilder(LZ4Compressor.Shared);
             var results = builder.Build(geom, cfg, 8, tw, th);

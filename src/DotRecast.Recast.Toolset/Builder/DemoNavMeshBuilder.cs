@@ -81,25 +81,27 @@ namespace DotRecast.Recast.Toolset.Builder
             // Update poly flags from areas.
             for (int i = 0; i < meshData.polys.Length; ++i)
             {
-                if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE)
-                {
-                    meshData.polys[i].SetArea(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND);
-                }
+                meshData.polys[i].flags = (ushort)(1 << meshData.polys[i].GetArea());
 
-                if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND
-                    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS
-                    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD)
-                {
-                    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_WALK;
-                }
-                else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER)
-                {
-                    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM;
-                }
-                else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR)
-                {
-                    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR;
-                }
+                //if (meshData.polys[i].GetArea() == SampleAreaModifications.POLYAREA_WALKABLE)
+                //{
+                //    meshData.polys[i].SetArea(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND);
+                //}
+
+                //if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND
+                //    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS
+                //    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD)
+                //{
+                //    meshData.polys[i].flags = SampleAreaModifications.POLYFLAGS_WALKABLE;
+                //}
+                //else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER)
+                //{
+                //    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM;
+                //}
+                //else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR)
+                //{
+                //    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR;
+                //}
             }
 
             return meshData;

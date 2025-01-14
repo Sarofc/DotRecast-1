@@ -483,7 +483,7 @@ public class CrowdSampleTool : ISampleTool
         if (navMesh != null && m_nav != navMesh)
         {
             m_nav = navMesh;
-            _tool.Setup(settings.agentRadius, navMesh);
+            _tool.Setup(_sample.GetAreaConfig(), settings.agentRadius, navMesh);
         }
     }
 
@@ -537,7 +537,7 @@ public class CrowdSampleTool : ISampleTool
                     var status = nav.GetPolyFlags(refs, out var f);
                     if (status.Succeeded())
                     {
-                        nav.SetPolyFlags(refs, f ^ SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED);
+                        nav.SetPolyFlags(refs, f ^ RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE);
                     }
                 }
             }

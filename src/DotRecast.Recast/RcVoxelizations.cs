@@ -65,7 +65,7 @@ namespace DotRecast.Recast
                         Span<byte> m_triareas = triAreaIDs.AsSpan(0, ntris);
                         m_triareas.Clear();
 
-                        RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod, m_triareas);
+                        RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, (byte)cfg.WalkableArea, m_triareas);
                         RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                     }
                 }
@@ -79,7 +79,7 @@ namespace DotRecast.Recast
                     Span<byte> m_triareas = triAreaIDs.AsSpan(0, ntris);
                     m_triareas.Clear();
 
-                    RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, cfg.WalkableAreaMod, m_triareas);
+                    RcRecast.MarkWalkableTriangles(ctx, cfg.WalkableSlopeAngle, verts, tris, ntris, (byte)cfg.WalkableArea, m_triareas);
                     RcRasterizations.RasterizeTriangles(ctx, verts, tris, m_triareas, ntris, solid, cfg.WalkableClimb);
                 }
             }

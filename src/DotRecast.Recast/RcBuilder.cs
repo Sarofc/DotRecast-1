@@ -278,7 +278,7 @@ namespace DotRecast.Recast
             {
                 foreach (RcConvexVolume vol in geom.ConvexVolumes())
                 {
-                    MarkConvexPolyArea(ctx, vol.verts, vol.hmin, vol.hmax, vol.areaMod, chf);
+                    MarkConvexPolyArea(ctx, vol.verts, vol.hmin, vol.hmax, vol.area, chf);
                 }
             }
 

@@ -142,7 +142,7 @@ public class RecastDebugDraw : DebugDraw
                 }
                 else
                 {
-                    if ((p.flags & SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED) != 0)
+                    if ((p.flags & RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE) != 0)
                     {
                         col = DuRGBA(64, 64, 64, 64);
                     }
@@ -495,7 +495,7 @@ public class RecastDebugDraw : DebugDraw
 
                     int area = chf.areas[i];
                     int color;
-                    if (area == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE)
+                    if (area == RcBuiltInAreas.POLYAREA_WALKABLE)
                     {
                         color = DuRGBA(0, 192, 255, 64);
                     }
@@ -825,7 +825,7 @@ public class RecastDebugDraw : DebugDraw
                 RcSpan s = hf.spans[x + y * w];
                 while (s != null)
                 {
-                    if (s.area == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE)
+                    if (s.area == RcBuiltInAreas.POLYAREA_WALKABLE)
                     {
                         fcol[0] = DuRGBA(64, 128, 160, 255);
                     }
@@ -947,7 +947,7 @@ public class RecastDebugDraw : DebugDraw
             int area = mesh.areas[i];
 
             int color;
-            if (area == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE)
+            if (area == RcBuiltInAreas.POLYAREA_WALKABLE)
             {
                 color = DuRGBA(0, 192, 255, 64);
             }

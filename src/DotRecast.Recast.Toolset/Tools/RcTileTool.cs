@@ -88,7 +88,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 settings.vertsPerPoly,
                 settings.detailSampleDist, settings.detailSampleMaxError,
                 settings.filterLowHangingObstacles, settings.filterLedgeSpans, settings.filterWalkableLowHeightSpans,
-                SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true
+                RcBuiltInAreas.POLYAREA_WALKABLE, true
             );
 
             var beginTick = RcFrequency.Ticks;

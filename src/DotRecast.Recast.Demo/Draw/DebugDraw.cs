@@ -539,41 +539,25 @@ public class DebugDraw
         return x * x + y * y + z * z;
     }
 
-    //    public static int AreaToCol(int area) {
-    //        if (area == 0) {
-    //            return DuRGBA(0, 192, 255, 255);
-    //        } else {
-    //            return DuIntToCol(area, 255);
-    //        }
-    //    }
-
     public static int AreaToCol(int area)
     {
-        switch (area)
+        return (area % 5) switch
         {
-            // Ground (0) : light blue
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE:
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND:
-                return DuRGBA(0, 192, 255, 255);
-            // Water : blue
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER:
-                return DuRGBA(0, 0, 255, 255);
-            // Road : brown
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD:
-                return DuRGBA(50, 20, 12, 255);
-            // Door : cyan
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR:
-                return DuRGBA(0, 255, 255, 255);
-            // Grass : green
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS:
-                return DuRGBA(0, 255, 0, 255);
-            // Jump : yellow
-            case SampleAreaModifications.SAMPLE_POLYAREA_TYPE_JUMP:
-                return DuRGBA(255, 255, 0, 255);
-            // Unexpected : red
-            default:
-                return DuRGBA(255, 0, 0, 255);
-        }
+            // red
+            RcBuiltInAreas.POLYAREA_NOT_WALKABLE => DuRGBA(255, 0, 0, 255),
+            // light blue
+            RcBuiltInAreas.POLYAREA_WALKABLE => DuRGBA(0, 192, 255, 255),
+            // yellow
+            RcBuiltInAreas.POLYAREA_JUMP => DuRGBA(255, 255, 0, 255),
+            // blue
+            3 => DuRGBA(0, 0, 255, 255),
+            // green
+            4 => DuRGBA(0, 255, 0, 255),
+            // brown
+            5 => DuRGBA(50, 20, 12, 255),
+            // cyan
+            _ => DuRGBA(0, 255, 255, 255),
+        };
     }
 
     public static int DuRGBA(int r, int g, int b, int a)

@@ -34,7 +34,7 @@ namespace DotRecast.Detour
         public const byte DT_OFFMESH_CON_BIDIR = 1;
 
         /// The maximum number of user defined area ids.
-        public const int DT_MAX_AREAS = 64;
+        public const byte DT_MAX_AREAS = 16;
 
         /// Limit raycasting during any angle pahfinding
         /// The limit is given as a multiple of the character radius

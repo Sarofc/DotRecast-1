@@ -68,7 +68,7 @@ public class TestTileLayerBuilder : DtTileCacheLayerBuilder
             VertsPerPoly,
             DetailSampleDist, DetailSampleMaxError,
             true, true, true,
-            SampleAreaModifications.SAMPLE_AREAMOD_GROUND, true);
+            SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND, true);
 
         Vector3 bmin = geom.GetMeshBoundsMin();
         Vector3 bmax = geom.GetMeshBoundsMax();

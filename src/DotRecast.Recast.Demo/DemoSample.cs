@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System.Collections.Generic;
 using DotRecast.Detour;
 using DotRecast.Recast.Toolset;
+using DotRecast.Recast.Toolset.Builder;
 using DotRecast.Recast.Toolset.Geom;
 
 namespace DotRecast.Recast.Demo
@@ -28,15 +29,19 @@ namespace DotRecast.Recast.Demo
     public class DemoSample
     {
         private DemoInputGeomProvider _geom;
+        private RcAreaConfig _areaConfig;
         private DtNavMesh _navMesh;
         private DtNavMeshQuery _navMeshQuery;
         private readonly RcNavMeshBuildSettings _settings;
         private IList<RcBuilderResult> _recastResults;
         private bool _changed;
 
+        const string CONFIG = "areas.json";
+
         public DemoSample(DemoInputGeomProvider geom, IList<RcBuilderResult> recastResults, DtNavMesh navMesh)
         {
             _geom = geom;
+            _areaConfig = RcAreaConfig.Load(CONFIG);
             _recastResults = recastResults;
             _navMesh = navMesh;
             _settings = new RcNavMeshBuildSettings();
@@ -53,6 +58,16 @@ namespace DotRecast.Recast.Demo
         public DemoInputGeomProvider GetInputGeom()
         {
             return _geom;
+        }
+
+        public RcAreaConfig GetAreaConfig()
+        {
+            return _areaConfig;
+        }
+
+        public void SaveAreaConfig()
+        {
+            RcAreaConfig.Save(_areaConfig, CONFIG);
         }
 
         public IList<RcBuilderResult> GetRecastResults()

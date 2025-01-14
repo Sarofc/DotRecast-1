@@ -121,7 +121,7 @@ public class NavMeshRenderer
             if (drawMode == DrawMode.DRAWMODE_NAVMESH_NODES)
             {
                 _debugDraw.DebugDrawNavMeshNodes(navQuery);
-                _debugDraw.DebugDrawNavMeshPolysWithFlags(navMesh, SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED, DebugDraw.DuRGBA(0, 0, 0, 128));
+                _debugDraw.DebugDrawNavMeshPolysWithFlags(navMesh, RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE, DebugDraw.DuRGBA(0, 0, 0, 128));
             }
         }
 
@@ -266,7 +266,7 @@ public class NavMeshRenderer
 
         foreach (RcConvexVolume vol in geom.ConvexVolumes())
         {
-            int col = DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.areaMod.GetMaskedValue()), 32);
+            int col = DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.area), 32);
             for (int j = 0, k = vol.verts.Length - 3; j < vol.verts.Length; k = j, j += 3)
             {
                 var va = new Vector3(vol.verts[k], vol.verts[k + 1], vol.verts[k + 2]);
@@ -291,7 +291,7 @@ public class NavMeshRenderer
         _debugDraw.Begin(DebugDrawPrimitives.LINES, 2.0f);
         foreach (RcConvexVolume vol in geom.ConvexVolumes())
         {
-            int col = DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.areaMod.GetMaskedValue()), 220);
+            int col = DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.area), 220);
             for (int j = 0, k = vol.verts.Length - 3; j < vol.verts.Length; k = j, j += 3)
             {
                 var va = new Vector3(vol.verts[k], vol.verts[k + 1], vol.verts[k + 2]);
@@ -310,7 +310,7 @@ public class NavMeshRenderer
         _debugDraw.Begin(DebugDrawPrimitives.POINTS, 3.0f);
         foreach (RcConvexVolume vol in geom.ConvexVolumes())
         {
-            int col = DebugDraw.DuDarkenCol(DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.areaMod.GetMaskedValue()), 220));
+            int col = DebugDraw.DuDarkenCol(DebugDraw.DuTransCol(DebugDraw.AreaToCol(vol.area), 220));
             for (int j = 0; j < vol.verts.Length; j += 3)
             {
                 _debugDraw.Vertex(vol.verts[j + 0], vol.verts[j + 1] + 0.1f, vol.verts[j + 2], col);

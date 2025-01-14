@@ -344,7 +344,7 @@ namespace DotRecast.Recast
         /// @param[in]		boxMaxBounds		The maximum extents of the bounding box. [(x, y, z)] [Units: wu]
         /// @param[in]		areaId				The area id to apply. [Limit: <= #RC_WALKABLE_AREA]
         /// @param[in,out]	compactHeightfield	A populated compact heightfield.
-        public static void MarkBoxArea(RcContext context, float[] boxMinBounds, float[] boxMaxBounds, RcAreaModification areaId, RcCompactHeightfield compactHeightfield)
+        public static void MarkBoxArea(RcContext context, float[] boxMinBounds, float[] boxMaxBounds, int areaId, RcCompactHeightfield compactHeightfield)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_MARK_BOX_AREA);
 
@@ -423,7 +423,7 @@ namespace DotRecast.Recast
                         }
 
                         // Mark the span.
-                        compactHeightfield.areas[spanIndex] = areaId.Apply(compactHeightfield.areas[spanIndex]);
+                        compactHeightfield.areas[spanIndex] = (byte)areaId;
                     }
                 }
             }
@@ -447,7 +447,7 @@ namespace DotRecast.Recast
         /// @param[in]		areaId				The area id to apply. [Limit: <= #RC_WALKABLE_AREA]
         /// @param[in,out]	compactHeightfield	A populated compact heightfield.
         public static void MarkConvexPolyArea(RcContext context, float[] verts,
-            float minY, float maxY, RcAreaModification areaId,
+            float minY, float maxY, int areaId,
             RcCompactHeightfield compactHeightfield)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_MARK_CONVEXPOLY_AREA);
@@ -546,7 +546,7 @@ namespace DotRecast.Recast
 
                         if (PointInPoly(verts, point))
                         {
-                            compactHeightfield.areas[spanIndex] = areaId.Apply(compactHeightfield.areas[spanIndex]);
+                            compactHeightfield.areas[spanIndex] = (byte)areaId;
                         }
                     }
                 }
@@ -567,7 +567,7 @@ namespace DotRecast.Recast
         /// @param[in]		areaId				The area id to apply. [Limit: <= #RC_WALKABLE_AREA]
         /// @param[in,out]	compactHeightfield	A populated compact heightfield.
         public static void MarkCylinderArea(RcContext context, float[] position, float radius, float height,
-            RcAreaModification areaId, RcCompactHeightfield compactHeightfield)
+            int areaId, RcCompactHeightfield compactHeightfield)
         {
             using var timer = context.ScopedTimer(RcTimerLabel.RC_TIMER_MARK_CYLINDER_AREA);
 
@@ -671,7 +671,7 @@ namespace DotRecast.Recast
                         // Mark if y extents overlap.
                         if (span.y >= miny && span.y <= maxy)
                         {
-                            compactHeightfield.areas[spanIndex] = areaId.Apply(compactHeightfield.areas[spanIndex]);
+                            compactHeightfield.areas[spanIndex] = (byte)areaId;
                         }
                     }
                 }

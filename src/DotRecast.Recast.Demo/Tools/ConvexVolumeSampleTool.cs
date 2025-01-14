@@ -42,8 +42,7 @@ public class ConvexVolumeSampleTool : ISampleTool
     private float _boxDescent = 1f;
     private float _polyOffset = 0f;
 
-    private int _areaTypeValue = SampleAreaModifications.SAMPLE_AREAMOD_GRASS.Value;
-    private RcAreaModification _areaType = SampleAreaModifications.SAMPLE_AREAMOD_GRASS;
+    private int _areaType = RcBuiltInAreas.POLYAREA_NOT_WALKABLE;
 
 
     public ConvexVolumeSampleTool()
@@ -58,22 +57,17 @@ public class ConvexVolumeSampleTool : ISampleTool
         ImGui.SliderFloat("Poly Offset", ref _polyOffset, 0.1f, 10f, "%.1f");
         ImGui.NewLine();
 
-        int prevAreaTypeValue = _areaTypeValue;
-
         ImGui.Text("Area Type");
         ImGui.Separator();
-        ImGui.RadioButton("Ground", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_GROUND.Value);
-        ImGui.RadioButton("Water", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_WATER.Value);
-        ImGui.RadioButton("Road", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_ROAD.Value);
-        ImGui.RadioButton("Door", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_DOOR.Value);
-        ImGui.RadioButton("Grass", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_GRASS.Value);
-        ImGui.RadioButton("Jump", ref _areaTypeValue, SampleAreaModifications.SAMPLE_AREAMOD_JUMP.Value);
-        ImGui.NewLine();
-
-        if (prevAreaTypeValue != _areaTypeValue)
+        var areas = _sample.GetAreaConfig().Areas;
+        for (int i = 0; i < areas.Length; i++)
         {
-            _areaType = SampleAreaModifications.OfValue(_areaTypeValue);
+            var area = areas[i];
+            if (!area.Set)
+                continue;
+            ImGui.RadioButton($"{area.Name}##t", ref _areaType, i);
         }
+        ImGui.NewLine();
 
         if (ImGui.Button("Clear Shape"))
         {

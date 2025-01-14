@@ -128,7 +128,30 @@ public class RcSettingsView : IRcView
         ImGui.SliderFloat("Max Slope", ref settings.agentMaxSlope, 1f, 90f, "%.0f");
         ImGui.SliderFloat("Max Acceleration", ref settings.agentMaxAcceleration, 8f, 999f, "%.1f");
         ImGui.SliderFloat("Max Speed", ref settings.agentMaxSpeed, 1f, 10f, "%.1f");
+        ImGui.NewLine();
 
+        //ImGui.Separator();
+        if (ImGui.TreeNode("Area Type"))
+        {
+            var areas = _sample.GetAreaConfig().Areas;
+            var changed = false;
+
+            for (int i = 0; i < areas.Length; i++)
+            {
+                ImGuiInputTextFlags flag = i >= 3 ?
+                    ImGuiInputTextFlags.None :
+                    ImGuiInputTextFlags.ReadOnly;
+
+                var item = areas[i];
+                changed |= ImGui.InputText($"{i}##name{i}", ref item.Name, 18, flag);
+                ImGui.SameLine();
+                changed |= ImGui.InputFloat($"##cost{i}", ref item.Cost);
+            }
+            if (changed)
+                _sample.SaveAreaConfig();
+
+            ImGui.TreePop();
+        }
         ImGui.NewLine();
 
         ImGui.Text("Region");

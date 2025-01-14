@@ -124,13 +124,13 @@ namespace DotRecast.Recast.Toolset.Geom
             OffMeshConFlags[i] = OffMeshConFlags[m_offMeshConCount];
         }
 
-        public void AddConvexVolume(float[] verts, float minh, float maxh, RcAreaModification areaMod)
+        public void AddConvexVolume(float[] verts, float minh, float maxh, int area)
         {
             RcConvexVolume volume = new();
             volume.verts = verts;
             volume.hmin = minh;
             volume.hmax = maxh;
-            volume.areaMod = areaMod;
+            volume.area = area;
             AddConvexVolume(volume);
         }
 

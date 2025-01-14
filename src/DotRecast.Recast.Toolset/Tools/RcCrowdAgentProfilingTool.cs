@@ -142,8 +142,8 @@ namespace DotRecast.Recast.Toolset.Tools
         private void CreateCrowd()
         {
             _crowd = new DtCrowd(_crowdCfg, _navMesh, __ => new DtQueryDefaultFilter(
-                SampleAreaModifications.SAMPLE_POLYFLAGS_ALL,
-                SampleAreaModifications.SAMPLE_POLYFLAGS_DISABLED,
+                RcBuiltInAreas.POLYFLAGS_ALL,
+                RcBuiltInAreas.POLYFLAGS_NOT_WALKABLE,
                 [1f, 10f, 1f, 1f, 2f, 1.5f])
             );
 
