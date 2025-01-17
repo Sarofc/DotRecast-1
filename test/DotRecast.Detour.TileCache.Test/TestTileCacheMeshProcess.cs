@@ -1,7 +1,12 @@
-﻿namespace DotRecast.Detour.TileCache.Test;
+using DotRecast.Recast.Geom;
+
+namespace DotRecast.Detour.TileCache.Test;
 
 public class TestTileCacheMeshProcess : IDtTileCacheMeshProcess
 {
+    public void Init(IInputGeomProvider geom)
+    { }
+
     public void Process(DtNavMeshCreateParams option)
     {
         for (int i = 0; i < option.polyCount; ++i)

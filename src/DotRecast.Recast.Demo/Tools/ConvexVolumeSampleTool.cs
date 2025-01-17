@@ -165,7 +165,7 @@ public class ConvexVolumeSampleTool : ISampleTool
 
     public void HandleUpdate(float dt)
     {
-        // TODO Auto-generated method stub
+        
     }
 
     public void HandleClickRay(Vector3 start, Vector3 direction, bool shift)

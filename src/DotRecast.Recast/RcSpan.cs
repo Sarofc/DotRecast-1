@@ -23,18 +23,16 @@ namespace DotRecast.Recast
     /** Represents a span in a heightfield. */
     public class RcSpan // TODO 生成 tilemesh nav_test.obj 分配了 11m 内存
     {
-        // TODO c#不直接支持位域，这里直接 16 + 16 + 8 代替吧，c++里是 13 + 13 + 6
-
         /** The lower limit of the span. [Limit: &lt; smax] */
-        public ushort smin;
+        public ushort smin; // 13bit
 
         /** The upper limit of the span. [Limit: &lt;= SPAN_MAX_HEIGHT] */
-        public ushort smax;
+        public ushort smax; // 13 bit
 
         /** The area id assigned to the span. */
-        public byte area;
+        public byte area; // 8bit
 
         /** The next span higher up in column. */
-        public RcSpan next;
+        public RcSpan next; // 64bit
     }
 }

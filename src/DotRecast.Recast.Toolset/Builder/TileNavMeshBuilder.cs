@@ -117,7 +117,7 @@ namespace DotRecast.Recast.Toolset.Builder
 
             // Snprintf(text, 64, "Tiles %d x %d", tw, th);
 
-            navMeshParams.maxTiles = GetMaxTiles(geom, cellSize, tileSize, EXPECTED_LAYERS_PER_TILE); // TODO tests
+            navMeshParams.maxTiles = GetMaxTiles(geom, cellSize, tileSize, EXPECTED_LAYERS_PER_TILE);
             navMeshParams.maxPolys = GetMaxPolysPerTile(geom, cellSize, tileSize, EXPECTED_LAYERS_PER_TILE);
             DtNavMesh navMesh = new();
             navMesh.Init(navMeshParams, vertsPerPoly);
@@ -172,7 +172,7 @@ namespace DotRecast.Recast.Toolset.Builder
             return tileBits;
         }
 
-        public static (int tw, int th) GetTiles(DemoInputGeomProvider geom, float cellSize, int tileSize)
+        public static (int tw, int th) GetTiles(IInputGeomProvider geom, float cellSize, int tileSize)
         {
             RcRecast.CalcGridSize(geom.GetMeshBoundsMin(), geom.GetMeshBoundsMax(), cellSize, out var gw, out var gh);
             int tw = (gw + tileSize - 1) / tileSize;

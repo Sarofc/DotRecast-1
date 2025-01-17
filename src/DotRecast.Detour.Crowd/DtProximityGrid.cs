@@ -82,10 +82,6 @@ namespace DotRecast.Detour.Crowd
 
         public void AddItem(ushort id, float minx, float miny, float maxx, float maxy)
         {
-            // TODO simd ?
-            // Vector.Floor()
-            // Vector.Min()
-
             int iminx = (int)MathF.Floor(minx * m_invCellSize);
             int iminy = (int)MathF.Floor(miny * m_invCellSize);
             int imaxx = (int)MathF.Floor(maxx * m_invCellSize);

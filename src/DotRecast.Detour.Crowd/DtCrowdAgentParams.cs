@@ -22,7 +22,7 @@ namespace DotRecast.Detour.Crowd
 {
     /// Configuration parameters for a crowd agent.
     /// @ingroup crowd
-    public struct DtCrowdAgentParams // TODO 检查
+    public struct DtCrowdAgentParams
     {
         /// < Agent radius. [Limit: >= 0]
         public float radius;

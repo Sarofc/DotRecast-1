@@ -1038,8 +1038,6 @@ namespace DotRecast.Detour.Crowd
 
         void BuildNeighbours(ReadOnlySpan<DtCrowdAgent> agents)
         {
-            // TODO performance check
-
             using var timer = m_telemetry.ScopedTimer(DtCrowdTimerLabel.BuildNeighbours);
 
             for (var i = 0; i < agents.Length; i++)

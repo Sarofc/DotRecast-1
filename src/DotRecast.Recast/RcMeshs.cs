@@ -32,7 +32,7 @@ namespace DotRecast.Recast
         public const int VERTEX_BUCKET_COUNT = (1 << 12);
 
 
-        private unsafe static void BuildMeshAdjacency(ushort[] polys, int npolys, int nverts, int vertsPerPoly)
+        private unsafe static void BuildMeshAdjacency(Span<ushort> polys, int npolys, int nverts, int vertsPerPoly)
         {
             // Based on code by Eric Lengyel from:
             // http://www.terathon.com/code/edges.php
@@ -448,7 +448,7 @@ namespace DotRecast.Recast
             return ntris;
         }
 
-        private static int CountPolyVerts(ushort[] p, int j, int nvp)
+        private static int CountPolyVerts(Span<ushort> p, int j, int nvp)
         {
             for (int i = 0; i < nvp; ++i)
                 if (p[i + j] == RC_MESH_NULL_IDX)
@@ -456,13 +456,13 @@ namespace DotRecast.Recast
             return nvp;
         }
 
-        private static bool Uleft(ushort[] verts, int a, int b, int c)
+        private static bool Uleft(Span<ushort> verts, int a, int b, int c)
         {
             return (verts[b + 0] - verts[a + 0]) * (verts[c + 2] - verts[a + 2])
                 - (verts[c + 0] - verts[a + 0]) * (verts[b + 2] - verts[a + 2]) < 0;
         }
 
-        private static int GetPolyMergeValue(ushort[] polys, int pa, int pb, ushort[] verts, out int ea, out int eb, int nvp)
+        private static int GetPolyMergeValue(Span<ushort> polys, int pa, int pb, Span<ushort> verts, out int ea, out int eb, int nvp)
         {
             ea = 0;
             eb = 0;
@@ -534,13 +534,14 @@ namespace DotRecast.Recast
             return (dx * dx) + (dy * dy);
         }
 
-        private static void MergePolyVerts(ushort[] polys, int pa, int pb, int ea, int eb, int tmp, int nvp)
+        private static void MergePolyVerts(Span<ushort> polys, int pa, int pb, int ea, int eb, int tmp, int nvp)
         {
             int na = CountPolyVerts(polys, pa, nvp);
             int nb = CountPolyVerts(polys, pb, nvp);
 
             // Merge polygons.
-            Array.Fill<ushort>(polys, RC_MESH_NULL_IDX, tmp, (tmp + nvp) - (tmp));
+            //Array.Fill<ushort>(polys, RC_MESH_NULL_IDX, tmp, (tmp + nvp) - (tmp));
+            polys[tmp..(tmp + nvp)].Fill(RC_MESH_NULL_IDX);
             int n = 0;
             // Add pa
             for (int i = 0; i < na - 1; ++i)
@@ -852,15 +853,16 @@ namespace DotRecast.Recast
             }
 
             // Merge the hole triangles back to polygons.
-            ushort[] polys = new ushort[(ntris + 1) * nvp]; // TODO alloc
-            ushort[] pregs = new ushort[ntris];
-            ushort[] pareas = new ushort[ntris];
+            Span<ushort> polys = stackalloc ushort[(ntris + 1) * nvp];
+            Span<ushort> pregs = stackalloc ushort[ntris];
+            Span<ushort> pareas = stackalloc ushort[ntris];
 
             int tmpPoly = ntris * nvp;
 
             // Build initial polygons.
             int npolys = 0;
-            Array.Fill(polys, RC_MESH_NULL_IDX, 0, (ntris * nvp) - (0));
+            //Array.Fill(polys, RC_MESH_NULL_IDX, 0, (ntris * nvp) - (0));
+            polys[..(ntris * nvp)].Fill(RC_MESH_NULL_IDX);
             for (int j = 0; j < ntris; ++j)
             {
                 int t = j * 3;
@@ -993,7 +995,7 @@ namespace DotRecast.Recast
                 throw new Exception("rcBuildPolyMesh: Too many vertices " + maxVertices);
             }
 
-            ushort[] vflags = new ushort[maxVertices]; // TODO alloc
+            Span<ushort> vflags = stackalloc ushort[maxVertices];
 
             mesh.verts = new ushort[maxVertices * 3];
             mesh.polys = new ushort[maxTris * nvp * 2];
@@ -1006,14 +1008,14 @@ namespace DotRecast.Recast
             mesh.nvp = nvp;
             mesh.maxpolys = maxTris;
 
-            int[] nextVert = new int[maxVertices];  // TODO alloc
+            Span<int> nextVert = stackalloc int[maxVertices];
 
             Span<int> firstVert = stackalloc int[VERTEX_BUCKET_COUNT];
             firstVert.Fill(-1);
 
-            int[] indices = new int[maxVertsPerCont];
-            int[] tris = new int[maxVertsPerCont * 3];
-            ushort[] polys = new ushort[(maxVertsPerCont + 1) * nvp];
+            Span<int> indices = stackalloc int[maxVertsPerCont];
+            Span<int> tris = stackalloc int[maxVertsPerCont * 3];
+            Span<ushort> polys = stackalloc ushort[(maxVertsPerCont + 1) * nvp];
 
             int tmpPoly = maxVertsPerCont * nvp;
 
@@ -1052,7 +1054,7 @@ namespace DotRecast.Recast
 
                 // Build initial polygons.
                 int npolys = 0;
-                Array.Fill(polys, RC_MESH_NULL_IDX);
+                polys.Fill(RC_MESH_NULL_IDX);
                 for (int j = 0; j < ntris; ++j)
                 {
                     int t = j * 3;

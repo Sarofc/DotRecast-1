@@ -87,7 +87,7 @@ namespace DotRecast.Detour
             ushort i = m_first[bucket];
             while (i != DT_NULL_IDX)
             {
-                if (m_nodes[i].id == id /*&& m_nodes[i].state == state*/) // TODO test
+                if (m_nodes[i].id == id /*&& m_nodes[i].state == state*/)
                     return m_nodes[i];
                 i = m_next[i];
             }

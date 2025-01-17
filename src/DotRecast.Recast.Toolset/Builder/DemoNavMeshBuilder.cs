@@ -50,29 +50,6 @@ namespace DotRecast.Recast.Toolset.Builder
             option.offMeshConFlags = geom.OffMeshConFlags;
             option.offMeshConUserID = geom.OffMeshConId;
 
-            //var offMeshConnections = geom.GetOffMeshConnections();
-            //option.offMeshConCount = offMeshConnections.Count;
-            //option.offMeshConVerts = new float[option.offMeshConCount * 6];
-            //option.offMeshConRad = new float[option.offMeshConCount];
-            //option.offMeshConDir = new bool[option.offMeshConCount];
-            //option.offMeshConAreas = new int[option.offMeshConCount];
-            //option.offMeshConFlags = new int[option.offMeshConCount];
-            //option.offMeshConUserID = new int[option.offMeshConCount];
-            //for (int i = 0; i < option.offMeshConCount; i++)
-            //{
-            //    RcOffMeshConnection offMeshCon = offMeshConnections[i];
-            //    for (int j = 0; j < 6; j++)
-            //    {
-            //        option.offMeshConVerts[6 * i + j] = offMeshCon.verts[j];
-            //    }
-
-            //    option.offMeshConRad[i] = offMeshCon.radius;
-            //    option.offMeshConDir[i] = offMeshCon.bidir ? 1 : 0;
-            //    option.offMeshConAreas[i] = offMeshCon.area;
-            //    option.offMeshConFlags[i] = offMeshCon.flags;
-            //     option.offMeshConUserID[i] = offMeshCon.userId;
-            //}
-
             return option;
         }
 
@@ -82,26 +59,6 @@ namespace DotRecast.Recast.Toolset.Builder
             for (int i = 0; i < meshData.polys.Length; ++i)
             {
                 meshData.polys[i].flags = (ushort)(1 << meshData.polys[i].GetArea());
-
-                //if (meshData.polys[i].GetArea() == SampleAreaModifications.POLYAREA_WALKABLE)
-                //{
-                //    meshData.polys[i].SetArea(SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND);
-                //}
-
-                //if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND
-                //    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS
-                //    || meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD)
-                //{
-                //    meshData.polys[i].flags = SampleAreaModifications.POLYFLAGS_WALKABLE;
-                //}
-                //else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER)
-                //{
-                //    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM;
-                //}
-                //else if (meshData.polys[i].GetArea() == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR)
-                //{
-                //    meshData.polys[i].flags = SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR;
-                //}
             }
 
             return meshData;

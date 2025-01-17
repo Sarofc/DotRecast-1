@@ -77,7 +77,7 @@ namespace DotRecast.Core
 #endif
         }
 
-        [Conditional("PROFILE")]
+        //[Conditional("PROFILE")]
         public void Warn(string message)
         {
             Console.WriteLine(message);

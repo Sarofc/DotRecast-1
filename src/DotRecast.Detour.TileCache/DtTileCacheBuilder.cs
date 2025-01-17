@@ -734,7 +734,7 @@ namespace DotRecast.Detour.TileCache
             return (int)(n & (VERTEX_BUCKET_COUNT2 - 1));
         }
 
-        static ushort AddVertex(ushort x, ushort y, ushort z, ushort[] verts, Span<ushort> firstVert, ushort[] nextVert, int nv)
+        static ushort AddVertex(ushort x, ushort y, ushort z, ushort[] verts, Span<ushort> firstVert, Span<ushort> nextVert, int nv)
         {
             int bucket = ComputeVertexHash2(x, 0, z);
             var i = firstVert[bucket];
@@ -1555,7 +1555,6 @@ namespace DotRecast.Detour.TileCache
 
             // Build initial polygons.
             int npolys = 0;
-            //Array.Fill(polys, DT_TILECACHE_NULL_IDX, 0, ntris * maxVertsPerPoly);
             polys.Slice(0, ntris * maxVertsPerPoly).Fill(DT_TILECACHE_NULL_IDX);
             for (int j = 0; j < ntris; ++j)
             {
@@ -1657,7 +1656,7 @@ namespace DotRecast.Detour.TileCache
 
             DtTileCachePolyMesh mesh = new(maxVertsPerPoly);
 
-            byte[] vflags = new byte[maxVertices]; // TODO alloc
+            Span<byte> vflags = stackalloc byte[maxVertices];
 
             mesh.verts = new ushort[maxVertices * 3];
             mesh.polys = new ushort[maxTris * maxVertsPerPoly * 2];
@@ -1672,14 +1671,12 @@ namespace DotRecast.Detour.TileCache
             Array.Fill(mesh.polys, DT_TILECACHE_NULL_IDX);
 
             Span<ushort> firstVert = stackalloc ushort[(int)VERTEX_BUCKET_COUNT2];
-            for (int i = 0; i < VERTEX_BUCKET_COUNT2; ++i)
-                firstVert[i] = DT_TILECACHE_NULL_IDX;
+            firstVert.Fill(DT_TILECACHE_NULL_IDX);
 
-            // TODO alloc
-            ushort[] nextVert = new ushort[maxVertices];
-            ushort[] indices = new ushort[maxVertsPerCont];
-            ushort[] tris = new ushort[maxVertsPerCont * 3];
-            ushort[] polys = new ushort[maxVertsPerCont * maxVertsPerPoly];
+            Span<ushort> nextVert = stackalloc ushort[maxVertices];
+            Span<ushort> indices = stackalloc ushort[maxVertsPerCont];
+            Span<ushort> tris = stackalloc ushort[maxVertsPerCont * 3];
+            Span<ushort> polys = stackalloc ushort[maxVertsPerCont * maxVertsPerPoly];
 
             for (int i = 0; i < lcset.nconts; ++i)
             {
@@ -1716,7 +1713,7 @@ namespace DotRecast.Detour.TileCache
 
                 // Build initial polygons.
                 int npolys = 0;
-                Array.Fill(polys, DT_TILECACHE_NULL_IDX);
+                polys.Fill(DT_TILECACHE_NULL_IDX);
                 for (int j = 0; j < ntris; ++j)
                 {
                     int t = j * 3;

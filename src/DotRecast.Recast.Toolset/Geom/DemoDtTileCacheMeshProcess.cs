@@ -1,7 +1,6 @@
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
 using DotRecast.Recast.Geom;
-using DotRecast.Recast.Toolset.Builder;
 
 namespace DotRecast.Recast.Toolset.Geom
 {
@@ -23,25 +22,7 @@ namespace DotRecast.Recast.Toolset.Geom
             // Update poly flags from areas.
             for (int i = 0; i < option.polyCount; ++i)
             {
-                option.polyFlags[i] = (ushort)(1 << option.polyAreas[i]); // TODO ushort 无法容纳32位
-
-                //if (option.polyAreas[i] == DtTileCacheBuilder.DT_TILECACHE_WALKABLE_AREA)
-                //    option.polyAreas[i] = SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND;
-
-                //if (option.polyAreas[i] == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GROUND ||
-                //    option.polyAreas[i] == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_GRASS ||
-                //    option.polyAreas[i] == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_ROAD)
-                //{
-                //    option.polyFlags[i] = SampleAreaModifications.POLYFLAGS_WALKABLE;
-                //}
-                //else if (option.polyAreas[i] == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WATER)
-                //{
-                //    option.polyFlags[i] = SampleAreaModifications.SAMPLE_POLYFLAGS_SWIM;
-                //}
-                //else if (option.polyAreas[i] == SampleAreaModifications.SAMPLE_POLYAREA_TYPE_DOOR)
-                //{
-                //    option.polyFlags[i] = SampleAreaModifications.POLYFLAGS_WALKABLE | SampleAreaModifications.SAMPLE_POLYFLAGS_DOOR;
-                //}
+                option.polyFlags[i] = (ushort)(1 << option.polyAreas[i]);
             }
 
             // Pass in off-mesh connections.

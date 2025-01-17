@@ -17,14 +17,17 @@ namespace DotRecast.Recast.Toolset.Tools
     {
         const int EXPECTED_LAYERS_PER_TILE = 4;
 
-        private readonly DemoDtTileCacheMeshProcess _proc;
+        private readonly IDtTileCacheMeshProcess _tmproc;
         private DtTileCache _tc;
         private IRcCompressor _compressor;
 
-        public RcObstacleTool(IRcCompressor compressor)
+        public RcObstacleTool(IRcCompressor compressor) : this(compressor, new DemoDtTileCacheMeshProcess())
+        { }
+
+        public RcObstacleTool(IRcCompressor compressor, IDtTileCacheMeshProcess tmproc)
         {
             _compressor = compressor;
-            _proc = new DemoDtTileCacheMeshProcess();
+            _tmproc = tmproc;
         }
 
         public string GetName()
@@ -39,7 +42,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 return new NavMeshBuildResult();
             }
 
-            _proc.Init(geom);
+            _tmproc.Init(geom);
 
             // Init cache
             var bmin = geom.GetMeshBoundsMin();
@@ -107,7 +110,7 @@ namespace DotRecast.Recast.Toolset.Tools
             using var fs = new FileStream(file, FileMode.Open);
             using var br = new BinaryReader(fs);
 
-            _tc = reader.Read(br, 6, _proc);
+            _tc = reader.Read(br, 6, _tmproc);
         }
 
         public void ClearAllTempObstacles()
@@ -199,7 +202,7 @@ namespace DotRecast.Recast.Toolset.Tools
 
             var navMesh = new DtNavMesh();
             navMesh.Init(navMeshParams, 6);
-            DtTileCache tc = new(option, navMesh, _compressor, _proc);
+            DtTileCache tc = new(option, navMesh, _compressor, _tmproc);
             return tc;
         }
 

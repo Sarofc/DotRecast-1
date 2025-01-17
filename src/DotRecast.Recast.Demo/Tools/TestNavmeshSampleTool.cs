@@ -157,7 +157,7 @@ public class TestNavmeshSampleTool : ISampleTool
         ImGui.NewLine();
         m_filter.SetIncludeFlags(_includeFlags);
 
-        ImGui.Text("Exclude Flags"); // TODO CheckboxFlags label 同名，导致无效
+        ImGui.Text("Exclude Flags");
         ImGui.Separator();
         for (int i = 1; i < areas.Length; i++) // skip 0
         {

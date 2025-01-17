@@ -975,7 +975,7 @@ namespace DotRecast.Detour
                 }
             }
 
-            var status = GetPathToNode(lastBestNode, path, ref pathCount); // TODO test
+            var status = GetPathToNode(lastBestNode, path, ref pathCount);
 
             if (lastBestNode.id != endRef)
                 status |= DtStatus.DT_PARTIAL_RESULT;
@@ -1320,7 +1320,6 @@ namespace DotRecast.Detour
                     m_query.status |= DtStatus.DT_PARTIAL_RESULT;
                 }
 
-                // TODO test status
                 m_query.status |= GetPathToNode(m_query.lastBestNode, path, ref n);
             }
 
@@ -1392,7 +1391,6 @@ namespace DotRecast.Detour
                 status |= GetPathToNode(node, path, ref n);
             }
 
-            // TODO test status 
             var details = status | m_query.status & DtStatus.DT_STATUS_DETAIL_MASK;
 
             // Reset query.
