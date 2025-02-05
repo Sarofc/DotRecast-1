@@ -110,9 +110,13 @@ namespace DotRecast.Recast
         /// @param[in]	flagMergeThreshold	How close two spans maximum extents need to be to merge area type IDs
         public static void AddSpan(RcHeightfield heightfield, int x, int z, int min, int max, int areaID, int flagMergeThreshold)
         {
+            // 效果还没直接new好，TODO 可能跟多线程有关？
+            // span pool + 单线程 = 80MB
+            // 多线程 + new = 100MB
+
             // Create the new span.
             RcSpan newSpan = new();
-            //RcSpan newSpan = AllocSpan(heightfield); // 效果还没直接new好
+            //RcSpan newSpan = AllocSpan(heightfield); 
             newSpan.smin = (ushort)min;
             newSpan.smax = (ushort)max;
             newSpan.area = (byte)areaID;
@@ -168,7 +172,7 @@ namespace DotRecast.Recast
                     // Remove the current span since it's now merged with newSpan.
                     // Keep going because there might be other overlapping spans that also need to be merged.
                     RcSpan next = currentSpan.next;
-                    //FreeSpan(heightfield, currentSpan);
+                    //FreeSpan(heightfield, currentSpan); // TODO span pool
                     if (previousSpan != null)
                     {
                         previousSpan.next = next;

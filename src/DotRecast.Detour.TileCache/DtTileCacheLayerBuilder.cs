@@ -39,7 +39,7 @@ namespace DotRecast.Detour.TileCache
 
         public List<DtTileCacheLayerBuildResult> Build(IInputGeomProvider geom, RcConfig cfg, int threads, int tw, int th)
         {
-            if (threads == 1)
+            if (threads <= 1)
             {
                 return BuildSingleThread(geom, cfg, tw, th);
             }

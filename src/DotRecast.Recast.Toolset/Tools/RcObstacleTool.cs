@@ -42,6 +42,10 @@ namespace DotRecast.Recast.Toolset.Tools
                 return new NavMeshBuildResult();
             }
 
+            // TODO settings 
+            //const int Threads = 1; // 1s
+            int Threads = Environment.ProcessorCount;// 0.6s
+
             _tmproc.Init(geom);
 
             // Init cache
@@ -68,7 +72,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 RcBuiltInAreas.POLYAREA_WALKABLE, true);
 
             var builder = new DtTileCacheLayerBuilder(LZ4Compressor.Shared);
-            var results = builder.Build(geom, cfg, 8, tw, th);
+            var results = builder.Build(geom, cfg, Threads, tw, th);
             var layers = results
                 .SelectMany(x => x.layers)
                 .ToList();
