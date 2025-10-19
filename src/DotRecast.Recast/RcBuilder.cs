@@ -184,7 +184,7 @@ namespace DotRecast.Recast
             //     if you have large open areas with small obstacles (not a problem if you use tiles)
             //   * good choice to use for tiled navmesh with medium and small sized tiles
 
-            if (cfg.Partition == RcPartitionType.WATERSHED.Value)
+            if (cfg.Partition == (int)RcPartition.WATERSHED)
             {
                 // Prepare for region partitioning, by calculating distance field along the walkable surface.
                 RcRegions.BuildDistanceField(ctx, chf);
@@ -192,7 +192,7 @@ namespace DotRecast.Recast
                 // Partition the walkable surface into simple regions without holes.
                 RcRegions.BuildRegions(ctx, chf, cfg.MinRegionArea, cfg.MergeRegionArea);
             }
-            else if (cfg.Partition == RcPartitionType.MONOTONE.Value)
+            else if (cfg.Partition == (int)RcPartition.MONOTONE)
             {
                 // Partition the walkable surface into simple regions without holes.
                 // Monotone partitioning does not need distancefield.

@@ -29,7 +29,7 @@ namespace DotRecast.Recast.Toolset.Builder
         public NavMeshBuildResult Build(IInputGeomProvider geom, RcNavMeshBuildSettings settings)
         {
             return Build(geom,
-                RcPartitionType.OfValue(settings.partitioning),
+                settings.partitioning,
                 settings.cellSize, settings.cellHeight,
                 settings.agentMaxSlope, settings.agentHeight, settings.agentRadius, settings.agentMaxClimb,
                 settings.minRegionSize, settings.mergedRegionSize,

@@ -156,7 +156,7 @@ namespace DotRecast.Recast
             TileSizeX = tileSizeX;
             TileSizeZ = tileSizeZ;
             BorderSize = borderSize;
-            Partition = RcPartitionType.Of(partition).Value;
+            Partition = (int)partition;
             Cs = cellSize;
             Ch = cellHeight;
             WalkableSlopeAngle = agentMaxSlope;

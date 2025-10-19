@@ -61,7 +61,7 @@ namespace DotRecast.Recast.Toolset.Tools
             RcConfig cfg = new(
                 true, setting.tileSize, setting.tileSize,
                 walkableRadius + 3,
-                RcPartitionType.OfValue(setting.partitioning),
+                setting.partitioning,
                 setting.cellSize, setting.cellHeight,
                 setting.agentMaxSlope, setting.agentHeight, setting.agentRadius, setting.agentMaxClimb,
                 (int)RcMath.Sqr(setting.minRegionSize), (int)RcMath.Sqr(setting.mergedRegionSize), // Note: area = size*size

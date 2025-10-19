@@ -41,7 +41,7 @@ public static class TestMeshDataFactory
     public static DtMeshData Create()
     {
         IInputGeomProvider geom = SimpleInputGeomProvider.LoadFile("dungeon.obj");
-        RcPartition partition = RcPartition.WATERSHED;
+        var partition = RcPartition.WATERSHED;
         float cellSize = m_cellSize;
         float cellHeight = m_cellHeight;
         float agentMaxSlope = m_agentMaxSlope;

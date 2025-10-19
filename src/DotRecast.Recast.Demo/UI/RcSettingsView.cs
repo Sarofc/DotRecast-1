@@ -162,10 +162,12 @@ public class RcSettingsView : IRcView
 
         ImGui.Text("Partitioning");
         ImGui.Separator();
-        foreach (var partition in RcPartitionType.Values)
+        foreach (var partition in Enum.GetValues<RcPartition>())
         {
-            var label = partition.Name.Substring(0, 1).ToUpper() + partition.Name.Substring(1).ToLower();
-            ImGui.RadioButton(label, ref settings.partitioning, partition.Value);
+            var label = partition.ToString();
+            var v = (int)settings.partitioning;
+            ImGui.RadioButton(label, ref v, (int)partition);
+            settings.partitioning = (RcPartition)v;
         }
         ImGui.NewLine();
 
