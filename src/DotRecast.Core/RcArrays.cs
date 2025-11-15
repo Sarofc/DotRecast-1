@@ -5,12 +5,12 @@ namespace DotRecast.Core
     public static class RcArrays
     {
         // Type Safe Copy
-        public static void Copy<T>(T[] sourceArray, long sourceIndex, T[] destinationArray, long destinationIndex, long length)
+        public static void Copy<T>(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
         {
             Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
         }
 
-        public static void Copy<T>(Span<T> sourceArray, int sourceIndex, Span<T> destinationArray, int destinationIndex, int length)
+        public static void Copy<T>(ReadOnlySpan<T> sourceArray, int sourceIndex, Span<T> destinationArray, int destinationIndex, int length)
         {
             sourceArray.Slice(sourceIndex, length).CopyTo(destinationArray.Slice(destinationIndex));
         }
@@ -22,32 +22,7 @@ namespace DotRecast.Core
             {
                 deatArr[i] = source[startIdx + i];
             }
-
             return deatArr;
-        }
-
-        public static T[] CopyOf<T>(T[] source, long length)
-        {
-            var deatArr = new T[length];
-            var count = Math.Max(0, Math.Min(source.Length, length));
-            for (int i = 0; i < count; ++i)
-            {
-                deatArr[i] = source[i];
-            }
-
-            return deatArr;
-        }
-
-        public static T[][] Of<T>(int len1, int len2)
-        {
-            var temp = new T[len1][];
-
-            for (int i = 0; i < len1; ++i)
-            {
-                temp[i] = new T[len2];
-            }
-
-            return temp;
         }
     }
 }
