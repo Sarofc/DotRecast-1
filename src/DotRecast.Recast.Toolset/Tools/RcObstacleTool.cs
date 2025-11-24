@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using DotRecast.Core;
 using DotRecast.Detour;
 using DotRecast.Detour.TileCache;
@@ -42,7 +44,7 @@ namespace DotRecast.Recast.Toolset.Tools
                 return new NavMeshBuildResult();
             }
 
-            // TODO settings 
+            // TODO settings
             //const int Threads = 1; // 1s
             int Threads = Environment.ProcessorCount;// 0.6s
 
@@ -90,12 +92,13 @@ namespace DotRecast.Recast.Toolset.Tools
             return new NavMeshBuildResult(ImmutableArray<RcBuilderResult>.Empty, _tc.GetNavMesh());
         }
 
-        public bool Save(string file)
+        #region Save/Load All
+        public bool SaveAll(string file)
         {
             if (_tc == null)
                 return false;
 
-            var writer = new DtTileCacheWriter(_compressor);
+            var writer = new DtTileCacheWriter();
 
             using var fs = new FileStream(file, FileMode.Create);
             using var bw = new BinaryWriter(fs);
@@ -107,7 +110,7 @@ namespace DotRecast.Recast.Toolset.Tools
             return true;
         }
 
-        public void Load(string file)
+        public void LoadAll(string file)
         {
             var reader = new DtTileCacheReader(_compressor);
 
@@ -116,6 +119,120 @@ namespace DotRecast.Recast.Toolset.Tools
 
             _tc = reader.Read(br, 6, _tmproc);
         }
+
+        #endregion
+
+        #region Save/Load Chunk
+
+        public bool TestSaveChunk(string file)
+        {
+            if (_tc == null)
+                return false;
+
+            // header
+            {
+                var writer = new DtTileCacheWriter();
+
+                var header_file = file + ".header";
+                using var fs = new FileStream(header_file, FileMode.Create);
+                using var bw = new BinaryWriter(fs);
+
+                writer.WriteHeader(bw, _tc);
+            }
+
+            // chunks
+            {
+                var tiles = new List<DtCompressedTile>();
+
+                for (int i = 0; i < _tc.GetTileCount(); i++)
+                {
+                    var tile = _tc.GetTile(i);
+                    if (tile == null || tile.data == null)
+                        continue;
+                    tiles.Add(tile);
+                }
+
+                WriteChunk($"{file}.1.tile", tiles, 0, 0, 4, 4);
+                WriteChunk($"{file}.2.tile", tiles, 4, 0, 8, 4);
+                WriteChunk($"{file}.3.tile", tiles, 8, 0, 12, 4);
+
+                void WriteChunk(string file, List<DtCompressedTile> tiles, int tminx, int tminy, int tmaxx, int tmaxy)
+                {
+                    var tile_file = $"{file}";
+                    using var fs = new FileStream(tile_file, FileMode.Create);
+                    using var bw = new BinaryWriter(fs);
+
+                    var writer = new DtTileCacheWriter();
+
+                    var towrites = new List<DtCompressedTile>();
+                    foreach (var tile in tiles)
+                    {
+                        var tx = tile.header.tx;
+                        var ty = tile.header.ty;
+
+                        if (tx < tminx || tx >= tmaxx)
+                            continue;
+                        if (ty < tminy || ty >= tmaxy)
+                            continue;
+
+                        towrites.Add(tile);
+                    }
+
+                    Console.WriteLine($"<{tminx},{tminy}> <{tmaxx},{tmaxy}> towrites={towrites.Count}");
+                    bw.Write(towrites.Count);
+                    foreach (var tile in towrites)
+                    {
+                        writer.WriteTile(bw, _tc, tile);
+                    }
+                }
+            }
+
+            // TODO convex volume 保存了，但是 link 没保存
+
+            return true;
+        }
+
+        public async Task TestLoadChunk(string file)
+        {
+            var reader = new DtTileCacheReader(_compressor);
+
+            DtTileCacheSetHeader header;
+            // header
+            {
+                var header_file = file + ".header";
+                using var fs = new FileStream(header_file, FileMode.Open);
+                using var br = new BinaryReader(fs);
+
+                header = reader.ReadHeader(br);
+            }
+
+            // create tc
+            _tc = reader.Create(header, 6, _tmproc);
+
+            // chunks
+            {
+                ReadChunk($"{file}.1.tile", 0, 0);
+                //ReadChunk($"{file}.2.tile", 0, 0);
+                ReadChunk($"{file}.3.tile", -4, 0);
+
+                void ReadChunk(string file, int tx, int ty)
+                {
+                    var tile_file = $"{file}";
+                    using var fs = new FileStream(tile_file, FileMode.Open);
+                    using var br = new BinaryReader(fs);
+
+                    var reader = new DtTileCacheReader(_compressor);
+
+                    var num = br.ReadInt32();
+                    for (int i = 0; i < num; i++)
+                    {
+                        reader.ReadTile(br, _tc, tx, ty);
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         public void ClearAllTempObstacles()
         {

@@ -201,8 +201,8 @@ public class RcSettingsView : IRcView
         if (settings.tiled)
         {
             ImGui.SliderInt("Tile Size", ref settings.tileSize, 16, 128);
-            if (0 < (settings.tileSize % 8))
-                settings.tileSize = settings.tileSize + (8 - (settings.tileSize % 8));
+            //if (0 < (settings.tileSize % 8))
+            //    settings.tileSize = settings.tileSize + (8 - (settings.tileSize % 8));
 
             ImGui.Text($"Tiles {tiles[0]} x {tiles[1]}");
             ImGui.Text($"Max Tiles {maxTiles}");

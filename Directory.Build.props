@@ -18,10 +18,4 @@
     <!--<IsPackable>true</IsPackable>-->
   </PropertyGroup>
 
-  <!--
-  <PropertyGroup>
-    <SourceLinkCreate>true</SourceLinkCreate>
-    <SourceLinkOriginUrl>https://github.com/dotnet/orleans</SourceLinkOriginUrl>
-  </PropertyGroup> -->
-
 </Project>

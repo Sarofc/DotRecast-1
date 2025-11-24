@@ -24,44 +24,52 @@ using DotRecast.Detour.Io;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public struct DtTileCacheWriter
+    public readonly struct DtTileCacheWriter
     {
-        private readonly DtNavMeshParamWriter paramWriter = new();
-        private readonly IRcCompressor _compressor;
-
-        public DtTileCacheWriter(IRcCompressor compFactory)
+        public void Write(BinaryWriter stream, DtTileCache tc)
         {
-            _compressor = compFactory;
+            WriteHeader(stream, tc);
+            WriteTiles(stream, tc);
         }
 
-        public void Write(BinaryWriter stream, DtTileCache cache)
+        public void WriteHeader(BinaryWriter stream, DtTileCache tc)
         {
             RcIO.Write(stream, DtTileCacheSetHeader.TILECACHESET_MAGIC);
             RcIO.Write(stream, DtTileCacheSetHeader.TILECACHESET_VERSION);
             int numTiles = 0;
-            for (int i = 0; i < cache.GetTileCount(); ++i)
+            for (int i = 0; i < tc.GetTileCount(); ++i)
             {
-                DtCompressedTile tile = cache.GetTile(i);
+                DtCompressedTile tile = tc.GetTile(i);
                 if (tile == null || tile.data == null)
                     continue;
                 numTiles++;
             }
 
             RcIO.Write(stream, numTiles);
-            paramWriter.Write(stream, cache.GetNavMesh().GetParams());
-            WriteCacheParams(stream, cache.GetParams());
-            for (int i = 0; i < cache.GetTileCount(); i++)
+            DtNavMeshParamWriter paramWriter;
+            paramWriter.Write(stream, tc.GetNavMesh().GetParams());
+            WriteCacheParams(stream, tc.GetParams());
+        }
+
+        public void WriteTiles(BinaryWriter stream, DtTileCache tc)
+        {
+            for (int i = 0; i < tc.GetTileCount(); i++)
             {
-                DtCompressedTile tile = cache.GetTile(i);
+                DtCompressedTile tile = tc.GetTile(i);
+
                 if (tile == null || tile.data == null)
-                    continue;
-                RcIO.Write(stream, (int)cache.GetTileRef(tile));
-                byte[] data = tile.data;
-                DtTileCacheLayer layer = cache.DecompressTile(tile);
-                data = DtTileCacheBuilder.CompressTileCacheLayer(_compressor, layer);
-                RcIO.Write(stream, data.Length);
-                stream.Write(data);
+                    return;
+
+                WriteTile(stream, tc, tile);
             }
+        }
+
+        public void WriteTile(BinaryWriter stream, DtTileCache tc, DtCompressedTile tile)
+        {
+            RcIO.Write(stream, (int)tc.GetTileRef(tile));
+            byte[] data = tile.data;
+            RcIO.Write(stream, data.Length);
+            stream.Write(data);
         }
 
         private void WriteCacheParams(BinaryWriter stream, DtTileCacheParams option)

@@ -21,6 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using DotRecast.Core;
@@ -28,6 +29,7 @@ using DotRecast.Detour.TileCache.Io;
 
 namespace DotRecast.Detour.TileCache
 {
+    using static System.Runtime.InteropServices.JavaScript.JSType;
     using static DtDetour;
 
     public class DtTileCache
@@ -273,7 +275,34 @@ namespace DotRecast.Detour.TileCache
             return GetTileRef(tile);
         }
 
-        private int Align4(int i)
+        internal byte[] AddTilePosition(byte[] data, int tx, int ty)
+        {
+            var sr = new RcSpanReader(data);
+            var reader = new DtTileCacheLayerHeaderReader();
+            DtTileCacheLayerHeader header = reader.Read(ref sr);
+
+            // change position
+            var newdata = data.ToArray();
+            {
+                var cp = GetParams();
+
+                header.tx += tx;
+                header.ty += ty;
+
+                header.bmin.X = cp.orig.X + header.tx * cp.width * cp.cs;
+                header.bmin.Z = cp.orig.Z + header.ty * cp.height * cp.cs;
+                header.bmax.X = header.bmin.X + cp.width * cp.cs;
+                header.bmax.Z = header.bmin.Z + cp.height * cp.cs;
+
+                var sw = new RcSpanWriter(newdata);
+                var writer = new DtTileCacheLayerHeaderWriter();
+                writer.Write(sw, header);
+            }
+
+            return newdata;
+        }
+
+        private static int Align4(int i)
         {
             return (i + 3) & (~3);
         }

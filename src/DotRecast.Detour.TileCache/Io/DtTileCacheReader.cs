@@ -24,9 +24,8 @@ using DotRecast.Detour.Io;
 
 namespace DotRecast.Detour.TileCache.Io
 {
-    public struct DtTileCacheReader
+    public readonly struct DtTileCacheReader
     {
-        private readonly DtNavMeshParamsReader paramReader = new();
         private readonly IRcCompressor _compressor;
 
         public DtTileCacheReader(IRcCompressor compressor)
@@ -36,7 +35,23 @@ namespace DotRecast.Detour.TileCache.Io
 
         public DtTileCache Read(BinaryReader bb, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
         {
-            DtTileCacheSetHeader header = new();
+            var header = ReadHeader(bb);
+            var tc = Create(header, maxVertPerPoly, meshProcessor);
+            ReadTiles(bb, tc, header);
+            return tc;
+        }
+
+        public DtTileCache Create(DtTileCacheSetHeader header, int maxVertPerPoly, IDtTileCacheMeshProcess meshProcessor)
+        {
+            DtNavMesh mesh = new();
+            mesh.Init(header.meshParams, maxVertPerPoly);
+            DtTileCache tc = new(header.cacheParams, mesh, _compressor, meshProcessor);
+            return tc;
+        }
+
+        public DtTileCacheSetHeader ReadHeader(BinaryReader bb)
+        {
+            DtTileCacheSetHeader header = default;
             header.magic = bb.ReadInt32();
             if (header.magic != DtTileCacheSetHeader.TILECACHESET_MAGIC)
             {
@@ -53,30 +68,51 @@ namespace DotRecast.Detour.TileCache.Io
             }
 
             header.numTiles = bb.ReadInt32();
+            DtNavMeshParamsReader paramReader;
             header.meshParams = paramReader.Read(bb);
             header.cacheParams = ReadCacheParams(bb);
-            DtNavMesh mesh = new();
-            mesh.Init(header.meshParams, maxVertPerPoly);
-            DtTileCache tc = new(header.cacheParams, mesh, _compressor, meshProcessor);
+
+            return header;
+        }
+
+        public void ReadTiles(BinaryReader bb, DtTileCache tc, DtTileCacheSetHeader header)
+        {
             // Read tiles.
             for (int i = 0; i < header.numTiles; ++i)
             {
-                long tileRef = bb.ReadInt32();
-                int dataSize = bb.ReadInt32();
-                if (tileRef == 0 || dataSize == 0)
-                {
-                    break;
-                }
-
-                byte[] data = bb.ReadBytes(dataSize);
-                long tile = tc.AddTile(data, 0);
-                if (tile != 0)
-                {
-                    tc.BuildNavMeshTile(tile);
-                }
+                ReadTile(bb, tc);
             }
+        }
 
-            return tc;
+        public void ReadTile(BinaryReader bb, DtTileCache tc)
+        {
+            long tileRef = bb.ReadInt32();
+            int dataSize = bb.ReadInt32();
+            if (tileRef == 0 || dataSize == 0)
+                return;
+
+            byte[] data = bb.ReadBytes(dataSize);
+            long tile = tc.AddTile(data, 0);
+            if (tile != 0)
+            {
+                tc.BuildNavMeshTile(tile);
+            }
+        }
+
+        public void ReadTile(BinaryReader bb, DtTileCache tc, int tx, int ty)
+        {
+            long tileRef = bb.ReadInt32();
+            int dataSize = bb.ReadInt32();
+            if (tileRef == 0 || dataSize == 0)
+                return;
+
+            byte[] data = bb.ReadBytes(dataSize);
+            data = tc.AddTilePosition(data, tx, ty);
+            long tile = tc.AddTile(data, 0);
+            if (tile != 0)
+            {
+                tc.BuildNavMeshTile(tile);
+            }
         }
 
         private DtTileCacheParams ReadCacheParams(BinaryReader bb)

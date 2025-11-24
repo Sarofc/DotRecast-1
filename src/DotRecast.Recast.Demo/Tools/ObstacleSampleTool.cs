@@ -45,7 +45,7 @@ public class ObstacleSampleTool : ISampleTool
 
         if (ImGui.Button("Save Tile Cache"))
         {
-            var success = _tool.Save("sample.tilecache");
+            var success = _tool.SaveAll("resources/sample.tilecache");
             if (success)
             {
                 Logger.Information("Save Tile Cache success");
@@ -54,11 +54,28 @@ public class ObstacleSampleTool : ISampleTool
 
         if (ImGui.Button("Load Tile Cache"))
         {
-            _tool.Load("sample.tilecache");
+            _tool.LoadAll("resources/sample.tilecache");
             _sample.Update(_sample.GetInputGeom(), Array.Empty<RcBuilderResult>(), _tool.GetTileCache().GetNavMesh());
         }
 
+        ImGui.Spacing();
         ImGui.Separator();
+        if (ImGui.Button("Save per Tiles"))
+        {
+            var success = _tool.TestSaveChunk("resources/sample.tilecache");
+            if (success)
+            {
+                Logger.Information("Save Tile Cache success");
+            }
+        }
+
+        if (ImGui.Button("Load per Tiles"))
+        {
+            _tool.TestLoadChunk("resources/sample.tilecache");
+            _sample.Update(_sample.GetInputGeom(), Array.Empty<RcBuilderResult>(), _tool.GetTileCache().GetNavMesh());
+        }
+        ImGui.Separator();
+        ImGui.Spacing();
 
         ImGui.Text("Click LMB to create an obstacle.");
         ImGui.Text("Shift+LMB to remove an obstacle.");

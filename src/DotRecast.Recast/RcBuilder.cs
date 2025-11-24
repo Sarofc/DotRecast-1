@@ -273,6 +273,7 @@ namespace DotRecast.Recast
 
             // Erode the walkable area by agent radius.
             ErodeWalkableArea(ctx, cfg.WalkableRadius, chf);
+
             // (Optional) Mark areas.
             if (geom != null)
             {
